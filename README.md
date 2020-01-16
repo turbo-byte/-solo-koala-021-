@@ -6,4 +6,7 @@ HTML5 MPEG2-TS stream player written in TypeScript & JavaScript.
 
 mpegts.js is optimized for low-latency live stream playback, such as DVB/ISDB television or surveillance cameras.
 
-This project is based on [flv.js]
+This project is based on [flv.js](https://github.com/bilibili/flv.js).
+
+## Overview
+mpegts.js works by transmuxing MPEG2-TS stream into ISO BMFF (Fragmented MP4) segments, followed by feeding mp4 segments into an HTML5 `<video
