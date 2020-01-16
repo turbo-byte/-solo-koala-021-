@@ -9,4 +9,9 @@ mpegts.js is optimized for low-latency live stream playback, such as DVB/ISDB te
 This project is based on [flv.js](https://github.com/bilibili/flv.js).
 
 ## Overview
-mpegts.js works by transmuxing MPEG2-TS stream into ISO BMFF (Fragmented MP4) segments, followed by feeding mp4 segments into an HTML5 `<video
+mpegts.js works by transmuxing MPEG2-TS stream into ISO BMFF (Fragmented MP4) segments, followed by feeding mp4 segments into an HTML5 `<video>` element through [Media Source Extensions][] API.
+
+[Media Source Extensions]: https://w3c.github.io/media-source/
+
+## News
+H.265/HEVC over MPEG-TS/FLV support has been introduced in
