@@ -22,4 +22,6 @@ H.265/HEVC over MPEG-TS/FLV support has been introduced in v1.7.0!
 [demo with aribb24.js](http://xqq.github.io/mpegts.js/demo/arib.html)
 
 ## Features
-- Playback f
+- Playback for MPEG2-TS stream with H.264/H.265 + AAC codec transported in http(s) or WebSocket
+- Playback for FLV stream with H.264/H.265 + AAC codec transported in http(s) or WebSocket
+- Extremely l
