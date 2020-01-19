@@ -24,4 +24,6 @@ H.265/HEVC over MPEG-TS/FLV support has been introduced in v1.7.0!
 ## Features
 - Playback for MPEG2-TS stream with H.264/H.265 + AAC codec transported in http(s) or WebSocket
 - Playback for FLV stream with H.264/H.265 + AAC codec transported in http(s) or WebSocket
-- Extremely l
+- Extremely low latency of less than 1 second in the best case
+- Playback for `.m2ts` file like BDAV/BDMV with 192 bytes TS packet, or 204 bytes TS packet
+- Support handling dynamic codec parameters change (
