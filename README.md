@@ -28,4 +28,6 @@ H.265/HEVC over MPEG-TS/FLV support has been introduced in v1.7.0!
 - Playback for `.m2ts` file like BDAV/BDMV with 192 bytes TS packet, or 204 bytes TS packet
 - Support handling dynamic codec parameters change (e.g. video resolution change)
 - Support Chrome, FireFox, Safari, Edge (Old or Chromium) or any Chromium-based browsers
-- Support chasing latency automatically for internal buffer of HTMLMediaElemen
+- Support chasing latency automatically for internal buffer of HTMLMediaElement
+- Low CPU overhead and low memory usage (JS heap takes about 10MiB for each instance)
+- Support extracting PES private data (stream_type=0x06) like ARIB B24 subtitles (with [arib
