@@ -54,4 +54,10 @@ npm run build               # packaged & minimized js will be emitted in dist fo
 
 [cnpm](https://github.com/cnpm/cnpm) mirror is recommended if you are in Mainland China.
 
-## G
+## Getting Started
+```html
+<script src="mpegts.js"></script>
+<video id="videoElement"></video>
+<script>
+    if (mpegts.getFeatureList().mseLivePlayback) {
+        var videoElement = do
