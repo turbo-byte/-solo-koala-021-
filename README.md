@@ -64,4 +64,12 @@ npm run build               # packaged & minimized js will be emitted in dist fo
         var player = mpegts.createPlayer({
             type: 'mse',  // could also be mpegts, m2ts, flv
             isLive: true,
-            
+            url: 'http://example.com/live/livestream.ts'
+        });
+        player.attachMediaElement(videoElement);
+        player.load();
+        player.play();
+    }
+</script>
+```
+mpegts.js could be tested
