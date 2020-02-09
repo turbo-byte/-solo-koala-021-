@@ -40,4 +40,12 @@ If you use standalone video server for MPEG2-TS stream, `Access-Control-Allow-Or
 
 See [cors.md](docs/cors.md) for more details.
 
-## I
+## Installation
+```bash
+npm install --save mpegts.js
+```
+
+## Build
+```bash
+npm install                 # install dev-dependences
+npm install -g webpack-cli  # install build too
