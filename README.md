@@ -30,4 +30,10 @@ H.265/HEVC over MPEG-TS/FLV support has been introduced in v1.7.0!
 - Support Chrome, FireFox, Safari, Edge (Old or Chromium) or any Chromium-based browsers
 - Support chasing latency automatically for internal buffer of HTMLMediaElement
 - Low CPU overhead and low memory usage (JS heap takes about 10MiB for each instance)
-- Support extracting PES private data (stream_type=0x06) like ARIB B24 subtitles (with [arib
+- Support extracting PES private data (stream_type=0x06) like ARIB B24 subtitles (with [aribb24.js][])
+- Support Timed ID3 Metadata (stream_type=0x15) callback (TIMED_ID3_METADATA_ARRIVED)
+
+[aribb24.js]: https://github.com/monyone/aribb24.js
+
+## CORS
+If you use standalone video server
