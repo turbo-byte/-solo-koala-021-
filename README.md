@@ -72,4 +72,9 @@ npm run build               # packaged & minimized js will be emitted in dist fo
     }
 </script>
 ```
-mpegts.js could be tested
+mpegts.js could be tested with [Simple Realtime Server](https://github.com/ossrs/srs/).
+
+## TODO
+- MPEG2-TS static file playback (seeking is not supported now)
+- MP3/AC3 audio codec support
+- AV1/OPUS codec over
