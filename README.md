@@ -36,4 +36,8 @@ H.265/HEVC over MPEG-TS/FLV support has been introduced in v1.7.0!
 [aribb24.js]: https://github.com/monyone/aribb24.js
 
 ## CORS
-If you use standalone video server
+If you use standalone video server for MPEG2-TS stream, `Access-Control-Allow-Origin` header must be configured correctly on video server for cross-origin resource fetching.
+
+See [cors.md](docs/cors.md) for more details.
+
+## I
