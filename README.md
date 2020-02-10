@@ -77,4 +77,9 @@ mpegts.js could be tested with [Simple Realtime Server](https://github.com/ossrs
 ## TODO
 - MPEG2-TS static file playback (seeking is not supported now)
 - MP3/AC3 audio codec support
-- AV1/OPUS codec over
+- AV1/OPUS codec over MPEG2-TS stream support (?)
+
+## Limitations
+- mpeg2video is not supported
+- HTTP MPEG2-TS live stream could not work on old browsers like IE11
+- mpegts.js is not usable on iOS caused by the bann
