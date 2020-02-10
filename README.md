@@ -82,4 +82,8 @@ mpegts.js could be tested with [Simple Realtime Server](https://github.com/ossrs
 ## Limitations
 - mpeg2video is not supported
 - HTTP MPEG2-TS live stream could not work on old browsers like IE11
-- mpegts.js is not usable on iOS caused by the bann
+- mpegts.js is not usable on iOS caused by the banning of [Media Source Extensions][] (available on iPadOS)
+
+## Features inherited from flv.js
+- FLV container with H.264 + AAC / MP3 codec playback
+- Multipart segmented video 
