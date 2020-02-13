@@ -86,4 +86,8 @@ mpegts.js could be tested with [Simple Realtime Server](https://github.com/ossrs
 
 ## Features inherited from flv.js
 - FLV container with H.264 + AAC / MP3 codec playback
-- Multipart segmented video 
+- Multipart segmented video playback
+- HTTP FLV low latency live stream playback
+- FLV over WebSocket live stream playback
+- Compatible with Chrome, FireFox, Safari 10, IE11 and Edge
+- Extremely low overhead, and hardware accelerated by y
