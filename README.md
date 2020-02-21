@@ -90,4 +90,8 @@ mpegts.js could be tested with [Simple Realtime Server](https://github.com/ossrs
 - HTTP FLV low latency live stream playback
 - FLV over WebSocket live stream playback
 - Compatible with Chrome, FireFox, Safari 10, IE11 and Edge
-- Extremely low overhead, and hardware accelerated by y
+- Extremely low overhead, and hardware accelerated by your browser!
+
+## FLV playback limitations
+- MP3 audio codec is currently not working on IE11 / Edge
+- HTTP FLV live stream is not currently working on all browsers, see [livestream.md]
