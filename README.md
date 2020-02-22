@@ -100,4 +100,13 @@ mpegts.js could be tested with [Simple Realtime Server](https://github.com/ossrs
 You only have to provide a playlist for `MediaDataSource`. See [multipart.md](docs/multipart.md)
 
 ## Livestream playback
-See [livestream.m
+See [livestream.md](docs/livestream.md)
+
+## API and Configuration
+See [api.md](docs/api.md)
+
+## Debug
+```bash
+npm install                 # install dev-dependences
+npm install -g webpack-cli  # install build tool
+npm run
