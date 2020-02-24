@@ -109,4 +109,13 @@ See [api.md](docs/api.md)
 ```bash
 npm install                 # install dev-dependences
 npm install -g webpack-cli  # install build tool
-npm run
+npm run build:debug         # packaged & minimized js will be emitted in dist folder
+```
+
+## Design
+See [design.md](docs/design.md)
+
+## License
+```
+Copyright (C) 2021 magicxqq. All Rights Reserved.
+
