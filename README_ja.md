@@ -37,3 +37,93 @@ H.265/HEVC 再生支援（over FLV/MPEG-TS）は v1.7.0 から導入されてい
 MPEG2-TS ストリームが別のサーバー上にある場合、`Access-Control-Allow-Origin` は必須です。
 
 [cors.md](docs/cors.md) を参照してください。
+
+## Installation
+```bash
+npm install --save mpegts.js
+```
+
+## Build
+```bash
+npm install                 # install dev-dependences
+npm install -g webpack-cli  # install build tool
+npm run build               # packaged & minimized js will be emitted in dist folder
+```
+
+## Getting Started
+```html
+<script src="mpegts.js"></script>
+<video id="videoElement"></video>
+<script>
+    if (mpegts.getFeatureList().mseLivePlayback) {
+        var videoElement = document.getElementById('videoElement');
+        var player = mpegts.createPlayer({
+            type: 'mse',  // could also be mpegts, m2ts, flv
+            isLive: true,
+            url: 'http://example.com/live/livestream.ts'
+        });
+        player.attachMediaElement(videoElement);
+        player.load();
+        player.play();
+    }
+</script>
+```
+[Simple Realtime Server](https://github.com/ossrs/srs/) を用いて mpegts.js をテストすることができます。
+
+## TODO
+- 静的 MPEG2-TS ファイルの再生 （現時点ではシークできません）
+- MP3/AC3 audio codec の支援
+- AV1/OPUS codec over MPEG2-TS stream support (?)
+
+## Limitations
+- mpeg2video はサポートしていません。映像は H.264 であることが求められます
+- IE11 などの古いブラウザでは、HTTP MPEG2-TS がライブ視聴できません
+- iOS では、[Media Source Extensions][] が禁じられたため使えませんが、iPadOS では使用可能
+
+## Features inherited from flv.js
+- H.264 + AAC/MP3 codec の FLV ファイルが再生可能
+- マルチパットな複数の FLV ファイルも一緒に再生可能
+- HTTP FLV のライブストリームが低遅延で再生可能
+- WebSocket で伝送する FLV ストリームも再生可能
+- Chrome, FireFox, Safari 10, IE11 and Edge のブラウザで実行可能
+- ブラウザによる hardware accelerated があるためコストは非常に低い
+
+## FLV playback limitations
+- MP3 audio codec は IE11 / Edge でサポートされていません
+- HTTP FLV のライブストリームは一部のブラウザで再生できません。[livestream.md](docs/livestream.md) を参照
+
+## FLV Multipart playback
+[multipart.md](docs/multipart.md) を参照
+
+## Livestream playback
+[livestream.md](docs/livestream.md) を参照
+
+## API and Configuration
+[api.md](docs/api.md) を参照
+
+## Debug
+```bash
+npm install                 # install dev-dependences
+npm install -g webpack-cli  # install build tool
+npm run build:debug         # packaged & minimized js will be emitted in dist folder
+```
+
+## Design
+[design.md](docs/design.md) を参照
+
+## License
+```
+Copyright (C) 2021 magicxqq. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
