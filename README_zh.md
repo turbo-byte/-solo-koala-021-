@@ -4,4 +4,9 @@ mpegts.js  [![npm](https://img.shields.io/npm/v/mpegts.js.svg?style=flat)](https
 
 mpegts.js 是在 HTML5 上直接播放 MPEG2-TS 流的播放器，针对低延迟直播优化，可用于 DVB/ISDB 数字电视流或监控摄像头等的低延迟回放。
 
-mpegts.js 基于 [flv.js](https://github.com/bilibili/flv.js) 改造而来
+mpegts.js 基于 [flv.js](https://github.com/bilibili/flv.js) 改造而来。
+
+## Overview
+mpegts.js 通过在 JavaScript 中渐进化解析 MPEG2-TS 流并实时转封装为 ISO BMFF (Fragmented MP4)，然后通过 [Media Source Extensions][] 把音视频数据喂入 HTML5 `<video>` 元素。
+
+[Media Source Extensions]: https://w3c.gith
