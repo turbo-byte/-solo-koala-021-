@@ -9,4 +9,13 @@ mpegts.js 基于 [flv.js](https://github.com/bilibili/flv.js) 改造而来。
 ## Overview
 mpegts.js 通过在 JavaScript 中渐进化解析 MPEG2-TS 流并实时转封装为 ISO BMFF (Fragmented MP4)，然后通过 [Media Source Extensions][] 把音视频数据喂入 HTML5 `<video>` 元素。
 
-[Media Source Extensions]: https://w3c.gith
+[Media Source Extensions]: https://w3c.github.io/media-source/
+
+## News
+H.265/HEVC 播放支持（FLV 或 MPEG-TS 均已支持）已在 v1.7.0 版本登场！
+
+## Demo
+[http://xqq.github.io/mpegts.js/demo/](http://xqq.github.io/mpegts.js/demo/)
+
+## Features
+- 回放
