@@ -22,4 +22,7 @@ H.265/HEVC 播放支持（FLV 或 MPEG-TS 均已支持）已在 v1.7.0 版本登
 - 超低延迟，最佳情况延迟可低达 1 秒以内
 - 回放 TS packet 为 192 字节的 `.m2ts` 文件（BDAV/BDMV）或 204 字节的 TS 流
 - 支持动态编码参数切换，如视频分辨率动态变化
-- 支持 Chrome, FireFox, Safari, Edg
+- 支持 Chrome, FireFox, Safari, Edge (Old or Chromium) 或任何基于 Chromium 的浏览器
+- 支持对 HTMLMediaElement 内部缓冲的自动延迟追赶
+- 极低的 CPU 使用率和内存使用量（单个实例约使用 JS 堆 10MiB）
+- 支持 PES private data 回调 (stream_type=0x06)，如 ARIB B
