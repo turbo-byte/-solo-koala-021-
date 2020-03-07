@@ -42,4 +42,9 @@ npm install --save mpegts.js
 
 ## Build
 ```bash
-npm install   
+npm install                 # install dev-dependences
+npm install -g webpack-cli  # install build tool
+npm run build               # packaged & minimized js will be emitted in dist folder
+```
+
+若在中国大陆可尝试 [cnpm](https://github.com
