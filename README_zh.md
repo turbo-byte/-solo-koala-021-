@@ -47,4 +47,12 @@ npm install -g webpack-cli  # install build tool
 npm run build               # packaged & minimized js will be emitted in dist folder
 ```
 
-若在中国大陆可尝试 [cnpm](https://github.com
+若在中国大陆可尝试 [cnpm](https://github.com/cnpm/cnpm) 镜像。
+
+## Getting Started
+```html
+<script src="mpegts.js"></script>
+<video id="videoElement"></video>
+<script>
+    if (mpegts.getFeatureList().mseLivePlayback) {
+        var vide
