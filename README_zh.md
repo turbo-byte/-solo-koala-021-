@@ -30,4 +30,16 @@ H.265/HEVC 播放支持（FLV 或 MPEG-TS 均已支持）已在 v1.7.0 版本登
 
 [aribb24.js]: https://github.com/monyone/aribb24.js
 
-## CO
+## CORS
+若在与页面不同的独立的服务器串流，必须设置 CORS 的 `Access-Control-Allow-Origin` 头。
+
+参阅 [cors.md](docs/cors.md)。
+
+## Installation
+```bash
+npm install --save mpegts.js
+```
+
+## Build
+```bash
+npm install   
