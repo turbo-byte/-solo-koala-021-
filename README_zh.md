@@ -25,4 +25,9 @@ H.265/HEVC 播放支持（FLV 或 MPEG-TS 均已支持）已在 v1.7.0 版本登
 - 支持 Chrome, FireFox, Safari, Edge (Old or Chromium) 或任何基于 Chromium 的浏览器
 - 支持对 HTMLMediaElement 内部缓冲的自动延迟追赶
 - 极低的 CPU 使用率和内存使用量（单个实例约使用 JS 堆 10MiB）
-- 支持 PES private data 回调 (stream_type=0x06)，如 ARIB B
+- 支持 PES private data 回调 (stream_type=0x06)，如 ARIB B24 字幕 （可配合 [aribb24.js][]）
+- 支持 Timed ID3 Metadata (stream_type=0x15) 回调 (TIMED_ID3_METADATA_ARRIVED)
+
+[aribb24.js]: https://github.com/monyone/aribb24.js
+
+## CO
