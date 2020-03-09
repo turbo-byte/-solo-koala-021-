@@ -55,4 +55,7 @@ npm run build               # packaged & minimized js will be emitted in dist fo
 <video id="videoElement"></video>
 <script>
     if (mpegts.getFeatureList().mseLivePlayback) {
-        var vide
+        var videoElement = document.getElementById('videoElement');
+        var player = mpegts.createPlayer({
+            type: 'mse',  // could also be mpegts, m2ts, flv
+            
