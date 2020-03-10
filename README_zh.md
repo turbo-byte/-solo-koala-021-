@@ -64,4 +64,14 @@ npm run build               # packaged & minimized js will be emitted in dist fo
         player.attachMediaElement(videoElement);
         player.load();
         player.play();
-  
+    }
+</script>
+```
+可使用 [Simple Realtime Server](https://github.com/ossrs/srs/) 来测试 mpegts.js。
+
+## TODO
+- MPEG2-TS 静态文件回放 （目前还不支持 seek）
+- MP3/AC3 音频编码支持
+- AV1/OPUS codec over MPEG2-TS stream support (?)
+
+##
