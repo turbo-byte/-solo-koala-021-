@@ -74,4 +74,10 @@ npm run build               # packaged & minimized js will be emitted in dist fo
 - MP3/AC3 音频编码支持
 - AV1/OPUS codec over MPEG2-TS stream support (?)
 
-##
+## Limitations
+- 不支持 mpeg2video
+- IE11 等旧浏览器不支持 HTTP MPEG2-TS/FLV 直播流回放
+- iOS 由于屏蔽了 [Media Source Extensions][] 因而无法使用，但在 iPadOS 上可用
+
+## Features inherited from flv.js
+- H.264 + AAC / MP3 编码的 FLV 文件回放
