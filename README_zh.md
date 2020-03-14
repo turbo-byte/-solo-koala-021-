@@ -81,3 +81,11 @@ npm run build               # packaged & minimized js will be emitted in dist fo
 
 ## Features inherited from flv.js
 - H.264 + AAC / MP3 编码的 FLV 文件回放
+- 多分段 FLV 视频无缝播放
+- HTTP FLV 低延迟直播流回放
+- FLV over WebSocket 直播流回放
+- 兼容 Chrome, FireFox, Safari 10, IE11, Edge
+- 超低开销并且由你的浏览器硬件加速
+
+## FLV playback limitations
+- MP3 编码在 IE11 和旧版 Edge 上
