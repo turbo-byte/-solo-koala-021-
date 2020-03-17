@@ -88,4 +88,11 @@ npm run build               # packaged & minimized js will be emitted in dist fo
 - 超低开销并且由你的浏览器硬件加速
 
 ## FLV playback limitations
-- MP3 编码在 IE11 和旧版 Edge 上
+- MP3 编码在 IE11 和旧版 Edge 上不受支持
+- HTTP FLV 直播不支持部分旧浏览器，参阅 [livestream.md](docs/livestream.md)
+
+## FLV Multipart playback
+多段播放需要在 `MediaDataSource` 中提供文件列表。参阅 [multipart.md](docs/multipart.md)
+
+## Livestream playback
+参阅 [livestream.md](
