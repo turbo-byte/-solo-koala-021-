@@ -103,4 +103,13 @@ npm run build               # packaged & minimized js will be emitted in dist fo
 ## Debug
 ```bash
 npm install                 # install dev-dependences
-npm install -g webpack-cli  # install b
+npm install -g webpack-cli  # install build tool
+npm run build:debug         # packaged & minimized js will be emitted in dist folder
+```
+
+## Design
+参阅 [design.md](docs/design.md)
+
+## License
+```
+Copyright 
