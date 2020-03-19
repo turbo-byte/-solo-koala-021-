@@ -359,3 +359,87 @@ declare namespace Mpegts {
         globalTag: string;
         enableAll: boolean;
         enableDebug: boolean;
+        enableVerbose: boolean;
+        enableInfo: boolean;
+        enableWarn: boolean;
+        enableError: boolean;
+    }
+
+    interface LoggingControl extends LoggingControlConfig {
+        getConfig(): LoggingControlConfig;
+        applyConfig(config: Partial<LoggingControlConfig>): void;
+        addLogListener(listener: (...args: any[]) => void): void;
+        removeLogListener(listener: (...args: any[]) => void): void;
+    }
+
+    interface Events {
+        ERROR: string;
+        LOADING_COMPLETE: string;
+        RECOVERED_EARLY_EOF: string;
+        MEDIA_INFO: string;
+        METADATA_ARRIVED: string;
+        SCRIPTDATA_ARRIVED: string;
+        TIMED_ID3_METADATA_ARRIVED: string;
+        SMPTE2038_METADATA_ARRIVED: string;
+        PES_PRIVATE_DATA_DESCRIPTOR: string;
+        PES_PRIVATE_DATA_ARRIVED: string;
+        STATISTICS_INFO: string;
+    }
+
+    interface ErrorTypes {
+        NETWORK_ERROR: string;
+        MEDIA_ERROR: string;
+        OTHER_ERROR: string;
+    }
+
+    interface ErrorDetails {
+        NETWORK_EXCEPTION: string;
+        NETWORK_STATUS_CODE_INVALID: string;
+        NETWORK_TIMEOUT: string;
+        NETWORK_UNRECOVERABLE_EARLY_EOF: string;
+
+        MEDIA_MSE_ERROR: string;
+
+        MEDIA_FORMAT_ERROR: string;
+        MEDIA_FORMAT_UNSUPPORTED: string;
+        MEDIA_CODEC_UNSUPPORTED: string;
+    }
+}
+
+declare var Mpegts: {
+    createPlayer(mediaDataSource: Mpegts.MediaDataSource, config?: Mpegts.Config): Mpegts.Player;
+    isSupported(): boolean;
+    getFeatureList(): Mpegts.FeatureList;
+
+    /**
+     * @deprecated Use `Mpegts.BaseLoaderConstructor` instead.
+     *              Because it's not available on `mpegts` variable.
+     * @desc implement interface `BaseLoader`
+     * @since 1.4
+     */
+    BaseLoader: Mpegts.BaseLoaderConstructor;
+    /**
+     * @deprecated Use `Mpegts.BaseLoaderConstructor` instead.
+     *              Because it's not available on `mpegts` variable.
+     * @since 1.4
+     */
+    LoaderStatus: Mpegts.LoaderStatus;
+    /**
+     * @deprecated Use `Mpegts.BaseLoaderConstructor` instead.
+     *              Because it's not available on `mpegts` variable.
+     * @since 1.4
+     */
+    LoaderErrors: Mpegts.LoaderErrors;
+
+    readonly version: string;
+
+    readonly Events: Readonly<Mpegts.Events>;
+    readonly ErrorTypes: Readonly<Mpegts.ErrorTypes>;
+    readonly ErrorDetails: Readonly<Mpegts.ErrorDetails>;
+
+    readonly MSEPlayer: Mpegts.PlayerConstructor;
+    readonly NativePlayer: Mpegts.PlayerConstructor;
+    readonly LoggingControl: Mpegts.LoggingControl;
+};
+
+export default Mpegts;
