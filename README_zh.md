@@ -95,4 +95,12 @@ npm run build               # packaged & minimized js will be emitted in dist fo
 多段播放需要在 `MediaDataSource` 中提供文件列表。参阅 [multipart.md](docs/multipart.md)
 
 ## Livestream playback
-参阅 [livestream.md](
+参阅 [livestream.md](docs/livestream.md)
+
+## API and Configuration
+参阅 [api.md](docs/api.md)
+
+## Debug
+```bash
+npm install                 # install dev-dependences
+npm install -g webpack-cli  # install b
