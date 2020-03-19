@@ -112,4 +112,8 @@ npm run build:debug         # packaged & minimized js will be emitted in dist fo
 
 ## License
 ```
-Copyright 
+Copyright (C) 2021 magicxqq. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain 
