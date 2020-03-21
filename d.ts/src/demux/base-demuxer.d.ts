@@ -5,4 +5,6 @@ import { SCTE35Data } from './scte35';
 declare type OnErrorCallback = (type: string, info: string) => void;
 declare type OnMediaInfoCallback = (mediaInfo: MediaInfo) => void;
 declare type OnMetaDataArrivedCallback = (metadata: any) => void;
-declare type OnTrackMetadata
+declare type OnTrackMetadataCallback = (type: string, metadata: any) => void;
+declare type OnDataAvailableCallback = (videoTrack: any, audioTrack: any) => void;
+declare type O
