@@ -11,4 +11,9 @@ declare type OnTimedID3MetadataCallback = (timed_id3_data: PESPrivateData) => vo
 declare type OnSMPTE2038MetadataCallback = (smpte2038_data: SMPTE2038Data) => void;
 declare type OnSCTE35MetadataCallback = (scte35_data: SCTE35Data) => void;
 declare type OnPESPrivateDataCallback = (private_data: PESPrivateData) => void;
-declare type OnPESPrivateDataDescriptorCallback = (private_data_descriptor: PESPrivateDataDes
+declare type OnPESPrivateDataDescriptorCallback = (private_data_descriptor: PESPrivateDataDescriptor) => void;
+export default abstract class BaseDemuxer {
+    onError: OnErrorCallback;
+    onMediaInfo: OnMediaInfoCallback;
+    onMetaDataArrived: OnMetaDataArrivedCallback;
+    onTrackM
