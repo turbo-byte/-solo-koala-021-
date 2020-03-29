@@ -16,4 +16,7 @@ export default abstract class BaseDemuxer {
     onError: OnErrorCallback;
     onMediaInfo: OnMediaInfoCallback;
     onMetaDataArrived: OnMetaDataArrivedCallback;
-    onTrackM
+    onTrackMetadata: OnTrackMetadataCallback;
+    onDataAvailable: OnDataAvailableCallback;
+    onTimedID3Metadata: OnTimedID3MetadataCallback;
+    onSMPTE2038Metadata: OnSMPTE2038MetadataCall
