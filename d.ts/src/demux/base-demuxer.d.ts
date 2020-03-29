@@ -19,4 +19,8 @@ export default abstract class BaseDemuxer {
     onTrackMetadata: OnTrackMetadataCallback;
     onDataAvailable: OnDataAvailableCallback;
     onTimedID3Metadata: OnTimedID3MetadataCallback;
-    onSMPTE2038Metadata: OnSMPTE2038MetadataCall
+    onSMPTE2038Metadata: OnSMPTE2038MetadataCallback;
+    onSCTE35Metadata: OnSCTE35MetadataCallback;
+    onPESPrivateData: OnPESPrivateDataCallback;
+    onPESPrivateDataDescriptor: OnPESPrivateDataDescriptorCallback;
+    constructo
