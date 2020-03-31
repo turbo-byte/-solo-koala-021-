@@ -19,4 +19,11 @@ export declare class H264NaluPayload {
     type: H264NaluType;
     data: Uint8Array;
 }
-export declare class H264
+export declare class H264NaluAVC1 {
+    type: H264NaluType;
+    data: Uint8Array;
+    constructor(nalu: H264NaluPayload);
+}
+export declare class H264AnnexBParser {
+    private readonly TAG;
+   
