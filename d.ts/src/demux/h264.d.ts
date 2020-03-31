@@ -11,4 +11,12 @@ export declare enum H264NaluType {
     kSliceAUD = 9,
     kEndOfSequence = 10,
     kEndOfStream = 11,
-    
+    kFiller = 12,
+    kSPSExt = 13,
+    kReserved0 = 14
+}
+export declare class H264NaluPayload {
+    type: H264NaluType;
+    data: Uint8Array;
+}
+export declare class H264
