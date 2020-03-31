@@ -23,4 +23,8 @@ export default abstract class BaseDemuxer {
     onSCTE35Metadata: OnSCTE35MetadataCallback;
     onPESPrivateData: OnPESPrivateDataCallback;
     onPESPrivateDataDescriptor: OnPESPrivateDataDescriptorCallback;
-    constructo
+    constructor();
+    destroy(): void;
+    abstract parseChunks(chunk: ArrayBuffer, byteStart: number): number;
+}
+export {};
