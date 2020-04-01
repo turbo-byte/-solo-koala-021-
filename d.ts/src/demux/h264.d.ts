@@ -26,4 +26,9 @@ export declare class H264NaluAVC1 {
 }
 export declare class H264AnnexBParser {
     private readonly TAG;
-   
+    private data_;
+    private current_startcode_offset_;
+    private eof_flag_;
+    constructor(data: Uint8Array);
+    private findNextStartCodeOffset;
+    readNextNaluPayload(): H264NaluPayload
