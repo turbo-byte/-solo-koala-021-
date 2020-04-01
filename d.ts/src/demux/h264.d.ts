@@ -31,4 +31,9 @@ export declare class H264AnnexBParser {
     private eof_flag_;
     constructor(data: Uint8Array);
     private findNextStartCodeOffset;
-    readNextNaluPayload(): H264NaluPayload
+    readNextNaluPayload(): H264NaluPayload | null;
+}
+export declare class AVCDecoderConfigurationRecord {
+    private data;
+    constructor(sps: Uint8Array, pps: Uint8Array, sps_details: any);
+    getData(): Uint8Array
