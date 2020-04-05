@@ -14,3 +14,10 @@ export declare class H265NaluPayload {
 export declare class H265NaluHVC1 {
     type: H265NaluType;
     data: Uint8Array;
+    constructor(nalu: H265NaluPayload);
+}
+export declare class H265AnnexBParser {
+    private readonly TAG;
+    private data_;
+    private current_startcode_offset_;
+    private eof_fla
