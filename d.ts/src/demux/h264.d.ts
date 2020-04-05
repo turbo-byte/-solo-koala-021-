@@ -36,4 +36,5 @@ export declare class H264AnnexBParser {
 export declare class AVCDecoderConfigurationRecord {
     private data;
     constructor(sps: Uint8Array, pps: Uint8Array, sps_details: any);
-    getData(): Uint8Array
+    getData(): Uint8Array;
+}
