@@ -5,4 +5,12 @@ export declare enum H265NaluType {
     kSliceVPS = 32,
     kSliceSPS = 33,
     kSlicePPS = 34,
-    kS
+    kSliceAUD = 35
+}
+export declare class H265NaluPayload {
+    type: H265NaluType;
+    data: Uint8Array;
+}
+export declare class H265NaluHVC1 {
+    type: H265NaluType;
+    data: Uint8Array;
