@@ -20,4 +20,10 @@ export declare class H265AnnexBParser {
     private readonly TAG;
     private data_;
     private current_startcode_offset_;
-    private eof_fla
+    private eof_flag_;
+    constructor(data: Uint8Array);
+    private findNextStartCodeOffset;
+    readNextNaluPayload(): H265NaluPayload | null;
+}
+export declare type HEVCDecoderConfigurationRecordType = {
+    configurationVersio
