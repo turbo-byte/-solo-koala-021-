@@ -26,4 +26,7 @@ export declare class H265AnnexBParser {
     readNextNaluPayload(): H265NaluPayload | null;
 }
 export declare type HEVCDecoderConfigurationRecordType = {
-    configurationVersio
+    configurationVersion: 1;
+} & VPSHEVCDecoderConfigurationRecordType & SPSHEVCDecoderConfigurationRecordType & PPSHEVCDecoderConfigurationRecordType;
+export declare type VPSHEVCDecoderConfigurationRecordType = {
+    n
