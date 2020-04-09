@@ -29,4 +29,9 @@ export declare type HEVCDecoderConfigurationRecordType = {
     configurationVersion: 1;
 } & VPSHEVCDecoderConfigurationRecordType & SPSHEVCDecoderConfigurationRecordType & PPSHEVCDecoderConfigurationRecordType;
 export declare type VPSHEVCDecoderConfigurationRecordType = {
-    n
+    num_temporal_layers: number;
+    temporal_id_nested: boolean;
+};
+export declare type SPSHEVCDecoderConfigurationRecordType = {
+    general_profile_space: number;
+    general_tier_flag: n
