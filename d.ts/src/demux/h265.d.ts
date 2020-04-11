@@ -39,4 +39,7 @@ export declare type SPSHEVCDecoderConfigurationRecordType = {
     general_profile_compatibility_flags_1: number;
     general_profile_compatibility_flags_2: number;
     general_profile_compatibility_flags_3: number;
-    g
+    general_profile_compatibility_flags_4: number;
+    general_constraint_indicator_flags_1: number;
+    general_constraint_indicator_flags_2: number;
+    general_constraint_indicator_flag
