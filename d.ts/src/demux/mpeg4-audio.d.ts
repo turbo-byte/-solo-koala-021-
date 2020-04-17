@@ -10,3 +10,12 @@ export declare enum MPEG4AudioObjectTypes {
     kLayer2 = 33,
     kLayer3 = 34
 }
+export declare enum MPEG4SamplingFrequencyIndex {
+    k96000Hz = 0,
+    k88200Hz = 1,
+    k64000Hz = 2,
+    k48000Hz = 3,
+    k44100Hz = 4,
+    k32000Hz = 5,
+    k24000Hz = 6,
+    k22050Hz
