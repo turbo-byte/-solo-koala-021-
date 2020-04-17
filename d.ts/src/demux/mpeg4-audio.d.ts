@@ -18,4 +18,11 @@ export declare enum MPEG4SamplingFrequencyIndex {
     k44100Hz = 4,
     k32000Hz = 5,
     k24000Hz = 6,
-    k22050Hz
+    k22050Hz = 7,
+    k16000Hz = 8,
+    k12000Hz = 9,
+    k11025Hz = 10,
+    k8000Hz = 11,
+    k7350Hz = 12
+}
+export declare const MPEG4SamplingFrequencies: number[];
