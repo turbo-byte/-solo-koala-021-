@@ -52,4 +52,9 @@ export declare type SPSHEVCDecoderConfigurationRecordType = {
     bit_depth_luma_minus8: number;
     bit_depth_chroma_minus8: number;
 };
-export declare type PPSHEVCDecoderConfigurationRecordType = 
+export declare type PPSHEVCDecoderConfigurationRecordType = {
+    parallelismType: number;
+};
+export declare class HEVCDecoderConfigurationRecord {
+    private data;
+    constructor(vps: Uint8Array, sps: Uint8Array, pps: Uint8Array, detail: HEVCDecod
