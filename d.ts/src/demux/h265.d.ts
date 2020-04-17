@@ -57,4 +57,6 @@ export declare type PPSHEVCDecoderConfigurationRecordType = {
 };
 export declare class HEVCDecoderConfigurationRecord {
     private data;
-    constructor(vps: Uint8Array, sps: Uint8Array, pps: Uint8Array, detail: HEVCDecod
+    constructor(vps: Uint8Array, sps: Uint8Array, pps: Uint8Array, detail: HEVCDecoderConfigurationRecordType);
+    getData(): Uint8Array;
+}
