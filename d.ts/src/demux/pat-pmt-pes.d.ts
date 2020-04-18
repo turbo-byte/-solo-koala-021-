@@ -17,4 +17,12 @@ export declare enum StreamType {
     kH265 = 36
 }
 interface PIDToStreamTypeMap {
-    [pid: number]
+    [pid: number]: StreamType;
+}
+export declare class PMT {
+    program_number: number;
+    version_number: number;
+    pcr_pid: number;
+    pid_stream_type: PIDToStreamTypeMap;
+    common_pids: {
+        h264: number |
