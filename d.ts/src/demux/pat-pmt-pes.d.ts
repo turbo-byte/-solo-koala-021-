@@ -25,4 +25,12 @@ export declare class PMT {
     pcr_pid: number;
     pid_stream_type: PIDToStreamTypeMap;
     common_pids: {
-        h264: number |
+        h264: number | undefined;
+        h265: number | undefined;
+        adts_aac: number | undefined;
+        mp3: number | undefined;
+    };
+    pes_private_data_pids: {
+        [pid: number]: boolean;
+    };
+ 
