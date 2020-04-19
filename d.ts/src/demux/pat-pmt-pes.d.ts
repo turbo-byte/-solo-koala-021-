@@ -33,4 +33,12 @@ export declare class PMT {
     pes_private_data_pids: {
         [pid: number]: boolean;
     };
- 
+    timed_id3_pids: {
+        [pid: number]: boolean;
+    };
+    scte_35_pids: {
+        [pid: number]: boolean;
+    };
+    smpte2038_pids: {
+        [oid: number]: boolean;
+    };
