@@ -59,4 +59,11 @@ export declare class SectionData {
     file_position: number;
     random_access_indicator: number;
 }
-export
+export declare class SliceQueue {
+    slices: Uint8Array[];
+    total_length: number;
+    expected_length: number;
+    file_position: number;
+    random_access_indicator: 0;
+}
+export interface PIDToSliceQueu
