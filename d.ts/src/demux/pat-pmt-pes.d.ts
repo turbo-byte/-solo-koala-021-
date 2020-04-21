@@ -42,3 +42,12 @@ export declare class PMT {
     smpte2038_pids: {
         [oid: number]: boolean;
     };
+}
+export interface ProgramToPMTMap {
+    [program: number]: PMT;
+}
+export declare class PESData {
+    pid: number;
+    data: Uint8Array;
+    stream_type: StreamType;
+    file_position: 
