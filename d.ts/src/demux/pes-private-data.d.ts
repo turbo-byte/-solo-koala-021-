@@ -9,4 +9,6 @@ export declare class PESPrivateData {
 }
 export declare class PESPrivateDataDescriptor {
     pid: number;
-    stream_
+    stream_type: number;
+    descriptor: Uint8Array;
+}
