@@ -6,4 +6,11 @@ declare class TSDemuxer extends BaseDemuxer {
     private sync_offset_;
     private first_parse_;
     private media_info_;
-    private times
+    private timescale_;
+    private duration_;
+    private pat_;
+    private current_program_;
+    private current_pmt_pid_;
+    private pmt_;
+    private program_pmt_map_;
+    private pes_slice
