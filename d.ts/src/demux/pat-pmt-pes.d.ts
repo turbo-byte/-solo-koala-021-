@@ -50,4 +50,13 @@ export declare class PESData {
     pid: number;
     data: Uint8Array;
     stream_type: StreamType;
-    file_position: 
+    file_position: number;
+    random_access_indicator: number;
+}
+export declare class SectionData {
+    pid: number;
+    data: Uint8Array;
+    file_position: number;
+    random_access_indicator: number;
+}
+export
