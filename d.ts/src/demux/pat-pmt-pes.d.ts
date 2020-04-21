@@ -66,4 +66,7 @@ export declare class SliceQueue {
     file_position: number;
     random_access_indicator: 0;
 }
-export interface PIDToSliceQueu
+export interface PIDToSliceQueues {
+    [pid: number]: SliceQueue;
+}
+export {};
