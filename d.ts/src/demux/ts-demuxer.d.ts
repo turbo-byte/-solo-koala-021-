@@ -13,4 +13,10 @@ declare class TSDemuxer extends BaseDemuxer {
     private current_pmt_pid_;
     private pmt_;
     private program_pmt_map_;
-    private pes_slice
+    private pes_slice_queues_;
+    private section_slice_queues_;
+    private video_metadata_;
+    private audio_metadata_;
+    private aac_last_sample_pts_;
+    private aac_last_incomplete_data_;
+    privat
