@@ -19,4 +19,10 @@ declare class TSDemuxer extends BaseDemuxer {
     private audio_metadata_;
     private aac_last_sample_pts_;
     private aac_last_incomplete_data_;
-    privat
+    private has_video_;
+    private has_audio_;
+    private video_init_segment_dispatched_;
+    private audio_init_segment_dispatched_;
+    private video_metadata_changed_;
+    private audio_metadata_changed_;
+  
