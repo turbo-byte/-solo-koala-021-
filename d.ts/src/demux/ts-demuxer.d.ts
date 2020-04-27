@@ -25,4 +25,10 @@ declare class TSDemuxer extends BaseDemuxer {
     private audio_init_segment_dispatched_;
     private video_metadata_changed_;
     private audio_metadata_changed_;
-  
+    private video_track_;
+    private audio_track_;
+    constructor(probe_data: any, config: any);
+    destroy(): void;
+    static probe(buffer: ArrayBuffer): {
+        needMoreData: boolean;
+   
