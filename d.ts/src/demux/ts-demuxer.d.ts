@@ -31,4 +31,10 @@ declare class TSDemuxer extends BaseDemuxer {
     destroy(): void;
     static probe(buffer: ArrayBuffer): {
         needMoreData: boolean;
-   
+        match?: undefined;
+        consumed?: undefined;
+        ts_packet_size?: undefined;
+        sync_offset?: undefined;
+    } | {
+        match: boolean;
+        needMoreData?: undefined
