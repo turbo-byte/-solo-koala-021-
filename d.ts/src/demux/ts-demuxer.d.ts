@@ -45,4 +45,10 @@ declare class TSDemuxer extends BaseDemuxer {
         match: boolean;
         consumed: number;
         ts_packet_size: number;
-        sync_o
+        sync_offset: number;
+        needMoreData?: undefined;
+    };
+    bindDataSource(loader: any): this;
+    resetMediaInfo(): void;
+    parseChunks(chunk: ArrayBuffer, byte_start: number): number;
+    privat
