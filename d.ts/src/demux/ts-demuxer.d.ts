@@ -57,4 +57,11 @@ declare class TSDemuxer extends BaseDemuxer {
     private emitSectionSlices;
     private emitPESSlices;
     private clearSlices;
-    private parseSect
+    private parseSection;
+    private parsePES;
+    private parsePAT;
+    private parsePMT;
+    private parseSCTE35;
+    private parseH264Payload;
+    private parseH265Payload;
+    pr
