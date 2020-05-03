@@ -64,4 +64,8 @@ declare class TSDemuxer extends BaseDemuxer {
     private parseSCTE35;
     private parseH264Payload;
     private parseH265Payload;
-    pr
+    private detectVideoMetadataChange;
+    private isInitSegmentDispatched;
+    private dispatchVideoInitSegment;
+    private dispatchVideoMediaSegment;
+    private dispatchAudioMediaSegment;
