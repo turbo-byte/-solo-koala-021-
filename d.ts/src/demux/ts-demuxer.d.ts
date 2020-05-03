@@ -37,4 +37,12 @@ declare class TSDemuxer extends BaseDemuxer {
         sync_offset?: undefined;
     } | {
         match: boolean;
-        needMoreData?: undefined
+        needMoreData?: undefined;
+        consumed?: undefined;
+        ts_packet_size?: undefined;
+        sync_offset?: undefined;
+    } | {
+        match: boolean;
+        consumed: number;
+        ts_packet_size: number;
+        sync_o
