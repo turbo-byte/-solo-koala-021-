@@ -79,3 +79,185 @@
 
             return payload;
         }
+
+        function player_load() {
+            console.log('isSupported: ' + mpegts.getFeatureList().mseLivePlayback);
+            if (mediaSourceURL.className === '') {
+                var url = document.getElementById('msURL').value;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.onload = function (e) {
+                    var mediaDataSource = JSON.parse(xhr.response);
+                    player_load_mds(mediaDataSource);
+                }
+                xhr.send();
+            } else {
+                var i;
+                var mediaDataSource = {
+                    type: 'mse'
+                };
+                for (i = 0; i < checkBoxFields.length; i++) {
+                    var field = checkBoxFields[i];
+                    /** @type {HTMLInputElement} */
+                    var checkbox = document.getElementById(field);
+                    mediaDataSource[field] = checkbox.checked;
+                }
+                mediaDataSource['url'] = document.getElementById('sURL').value;
+                console.log('MediaDataSource', mediaDataSource);
+                player_load_mds(mediaDataSource);
+            }
+        }
+
+        function player_load_mds(mediaDataSource) {
+            var element = document.getElementsByName('videoElement')[0];
+            if (typeof player !== "undefined") {
+                if (player != null) {
+                    player.unload();
+                    player.detachMediaElement();
+                    player.destroy();
+                    player = null;
+                }
+                if (captionRenderer != null) {
+                    captionRenderer.dispose();
+                    captionRenderer = null;
+                }
+                if (superimposeRenderer != null) {
+                    superimposeRenderer.dispose();
+                    superimposeRenderer = null;
+                }
+            }
+            player = mpegts.createPlayer(mediaDataSource, {
+                enableWorker: false,
+                liveBufferLatencyChasing: document.getElementById('liveBufferLatencyChasing').checked,
+            });
+            player.attachMediaElement(element);
+            player.load();
+
+            captionRenderer = new aribb24js.CanvasRenderer({
+                data_identifer: 0x80,
+                forceStrokeColor: 'black',
+                normalFont: '"Windows TV MaruGothic", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", "Yu Gothic Medium", sans-serif',
+                gaijiFont: '"Windows TV MaruGothic", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", "Yu Gothic Medium", sans-serif',
+                drcsReplacement: true,
+                useStrokeText: true,
+            });
+            captionRenderer.attachMedia(element);
+            captionRenderer.show();
+
+            superimposeRenderer = new aribb24js.CanvasRenderer({
+                data_identifer: 0x81,
+                forceStrokeColor: 'black',
+                normalFont: '"Windows TV MaruGothic", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", "Yu Gothic Medium", sans-serif',
+                gaijiFont: '"Windows TV MaruGothic", "Hiragino Maru Gothic Pro", "HGMaruGothicMPRO", "Yu Gothic Medium", sans-serif',
+                drcsReplacement: true,
+                useStrokeText: true,
+            });
+            superimposeRenderer.attachMedia(element);
+            superimposeRenderer.show();
+
+            player.on(mpegts.Events.PES_PRIVATE_DATA_ARRIVED, function(data) {
+                if (arib_caption_transmit_mode !== 'private_stream_1') {
+                    return;
+                }
+                if (data.stream_id === 0xBD && data.data[0] === 0x80) {  // private_stream_1, caption
+                    captionRenderer.pushData(data.pid, data.data, data.pts / 1000);
+                } else if (data.stream_id === 0xBF) {  // private_stream_2, superimpose
+                    var payload = data.data;
+                    if (payload[0] !== 0x81) {
+                        payload = parseMalformedPES(data.data);
+                    }
+                    if (payload[0] !== 0x81) {
+                        return;
+                    }
+                    superimposeRenderer.pushData(data.pid, payload, data.nearest_pts / 1000);
+                }
+            });
+
+            player.on(mpegts.Events.TIMED_ID3_METADATA_ARRIVED, function(data) {
+                if (arib_caption_transmit_mode !== 'timed_id3') {
+                    return;
+                }
+                captionRenderer.pushID3v2Data(data.pts / 1000, data.data);
+            });
+
+            player.on(mpegts.Events.PES_PRIVATE_DATA_DESCRIPTOR, function(data) {
+                // var str = JSON.stringify(data);
+                // logcatbox.value = logcatbox.value + str + '\n';
+                // logcatbox.scrollTop = logcatbox.scrollHeight;
+            });
+        }
+
+        function player_start() {
+            player.play();
+        }
+
+        function player_pause() {
+            player.pause();
+        }
+
+        function player_destroy() {
+            player.pause();
+            player.unload();
+            player.detachMediaElement();
+            player.destroy();
+            player = null;
+        }
+
+        function player_seekto() {
+            var input = document.getElementsByName('seekpoint')[0];
+            player.currentTime = parseFloat(input.value);
+        }
+
+        function switch_url() {
+            streamURL.className = '';
+            mediaSourceURL.className = 'hidden';
+            saveSettings();
+        }
+
+        function switch_mds() {
+            streamURL.className = 'hidden';
+            mediaSourceURL.className = '';
+            saveSettings();
+        }
+
+        function ls_get(key, def) {
+            try {
+                var ret = localStorage.getItem('mpegts_demo.' + key);
+                if (ret === null) {
+                    ret = def;
+                }
+                return ret;
+            } catch (e) {}
+            return def;
+        }
+
+        function ls_set(key, value) {
+            try {
+                localStorage.setItem('mpegts_demo.' + key, value);
+            } catch (e) {}
+        }
+
+        function saveSettings() {
+            if (document.getElementById('radio_private_stream_1').checked) {
+                arib_caption_transmit_mode = 'private_stream_1';
+                ls_set('aribCaptionTransmitMode', 'private_stream_1');
+            } else if (document.getElementById('radio_timed_id3').checked) {
+                arib_caption_transmit_mode = 'timed_id3';
+                ls_set('aribCaptionTransmitMode', 'timed_id3');
+            }
+
+            if (mediaSourceURL.className === '') {
+                ls_set('inputMode', 'MediaDataSource');
+            } else {
+                ls_set('inputMode', 'StreamURL');
+            }
+            var i;
+            for (i = 0; i < checkBoxFields.length; i++) {
+                var field = checkBoxFields[i];
+                /** @type {HTMLInputElement} */
+                var checkbox = document.getElementById(field);
+                ls_set(field, checkbox.checked ? '1' : '0');
+            }
+            var msURL = document.getElementById('msURL');
+            var sURL = document.getElementById('sURL');
