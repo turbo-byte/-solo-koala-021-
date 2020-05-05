@@ -261,3 +261,72 @@
             }
             var msURL = document.getElementById('msURL');
             var sURL = document.getElementById('sURL');
+            ls_set('msURL', msURL.value);
+            ls_set('sURL', sURL.value);
+            console.log('save');
+        }
+
+        function loadSettings() {
+            arib_caption_transmit_mode = ls_get('aribCaptionTransmitMode', 'private_stream_1');
+            if (arib_caption_transmit_mode == "timed_id3") {
+                document.getElementById('radio_private_stream_1').checked = false;
+                document.getElementById('radio_timed_id3').checked = true;
+            }
+
+            var i;
+            for (i = 0; i < checkBoxFields.length; i++) {
+                var field = checkBoxFields[i];
+                /** @type {HTMLInputElement} */
+                var checkbox = document.getElementById(field);
+                var c = ls_get(field, checkbox.checked ? '1' : '0');
+                checkbox.checked = c === '1' ? true : false;
+            }
+
+            var msURL = document.getElementById('msURL');
+            var sURL = document.getElementById('sURL');
+            msURL.value = ls_get('msURL', msURL.value);
+            sURL.value = ls_get('sURL', sURL.value);
+            if (ls_get('inputMode', 'StreamURL') === 'StreamURL') {
+                switch_url();
+            } else {
+                switch_mds();
+            }
+        }
+
+        function showVersion() {
+            var version = mpegts.version;
+            document.title = document.title + " (v" + version + ")";
+        }
+
+        var sURL = document.getElementById('sURL');
+        sURL.onkeyup = function(event) {
+            if (event.key === 'Enter' || event.keyCode === 13) {
+                saveSettings()
+                if (player != null) {
+                    player.unload();
+                    player.detachMediaElement();
+                    player.destroy();
+                    player = null;
+                }
+                player_load();
+            }
+        };
+
+        var logcatbox = document.getElementsByName('logcatbox')[0];
+        mpegts.LoggingControl.addLogListener(function(type, str) {
+            logcatbox.value = logcatbox.value + str + '\n';
+            logcatbox.scrollTop = logcatbox.scrollHeight;
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            streamURL = document.getElementById('streamURL');
+            mediaSourceURL = document.getElementById('mediaSourceURL');
+            loadSettings();
+            showVersion();
+            player_load();
+        });
+    </script>
+
+</body>
+
+</html>
