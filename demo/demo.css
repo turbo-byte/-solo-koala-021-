@@ -101,3 +101,9 @@
 }
 
 .options {
+    margin-top: 5px;
+}
+
+.hidden {
+    display: none;
+}
