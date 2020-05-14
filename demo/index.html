@@ -55,3 +55,8 @@
     <script src="../dist/mpegts.js"></script>
     
     <script>
+        var checkBoxFields = ['isLive', 'withCredentials', 'liveBufferLatencyChasing'];
+        var streamURL, mediaSourceURL;
+
+        function player_load() {
+            console.log('isSupported: ' +
