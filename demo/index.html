@@ -66,4 +66,11 @@
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', url, true);
                 xhr.onload = function (e) {
-                    var mediaDataSource = JSON.parse(xhr.res
+                    var mediaDataSource = JSON.parse(xhr.response);
+                    player_load_mds(mediaDataSource);
+                }
+                xhr.send();
+            } else {
+                var i;
+                var mediaDataSource = {
+          
