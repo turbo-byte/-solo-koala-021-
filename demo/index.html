@@ -59,4 +59,8 @@
         var streamURL, mediaSourceURL;
 
         function player_load() {
-            console.log('isSupported: ' +
+            console.log('isSupported: ' + mpegts.isSupported());
+            if (mediaSourceURL.className === '') {
+                var url = document.getElementById('msURL').value;
+    
+                
