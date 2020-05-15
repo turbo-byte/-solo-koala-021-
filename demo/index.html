@@ -63,4 +63,7 @@
             if (mediaSourceURL.className === '') {
                 var url = document.getElementById('msURL').value;
     
-                
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.onload = function (e) {
+                    var mediaDataSource = JSON.parse(xhr.res
