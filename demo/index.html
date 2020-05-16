@@ -79,4 +79,8 @@
                     var field = checkBoxFields[i];
                     /** @type {HTMLInputElement} */
                     var checkbox = document.getElementById(field);
-                    mediaDataSource[field] = checkbox.che
+                    mediaDataSource[field] = checkbox.checked;
+                }
+                mediaDataSource['url'] = document.getElementById('sURL').value;
+                console.log('MediaDataSource', mediaDataSource);
+                playe
