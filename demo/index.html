@@ -77,4 +77,6 @@
                 };
                 for (i = 0; i < checkBoxFields.length; i++) {
                     var field = checkBoxFields[i];
-         
+                    /** @type {HTMLInputElement} */
+                    var checkbox = document.getElementById(field);
+                    mediaDataSource[field] = checkbox.che
