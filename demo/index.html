@@ -83,4 +83,9 @@
                 }
                 mediaDataSource['url'] = document.getElementById('sURL').value;
                 console.log('MediaDataSource', mediaDataSource);
-                playe
+                player_load_mds(mediaDataSource);
+            }
+        }
+
+        function player_load_mds(mediaDataSource) {
+            var element = document.getElementsByName('videoElem
