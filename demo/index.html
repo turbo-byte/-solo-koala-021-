@@ -93,4 +93,9 @@
                 if (player != null) {
                     player.unload();
                     player.detachMediaElement();
-                   
+                    player.destroy();
+                    player = null;
+                }
+            }
+            player = mpegts.createPlayer(mediaDataSource, {
+                enableWorker: 
