@@ -88,4 +88,9 @@
         }
 
         function player_load_mds(mediaDataSource) {
-            var element = document.getElementsByName('videoElem
+            var element = document.getElementsByName('videoElement')[0];
+            if (typeof player !== "undefined") {
+                if (player != null) {
+                    player.unload();
+                    player.detachMediaElement();
+                   
