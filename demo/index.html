@@ -101,4 +101,14 @@
                 enableWorker: true,
                 lazyLoadMaxDuration: 3 * 60,
                 seekType: 'range',
-                liveBufferLatencyChasing: document.getElementById('liveBufferLatencyChasing').c
+                liveBufferLatencyChasing: document.getElementById('liveBufferLatencyChasing').checked,
+            });
+            player.attachMediaElement(element);
+            player.load();
+        }
+
+        function player_start() {
+            player.play();
+        }
+
+        fun
