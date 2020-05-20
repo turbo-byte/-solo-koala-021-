@@ -118,4 +118,11 @@
         function player_destroy() {
             player.pause();
             player.unload();
-            player.d
+            player.detachMediaElement();
+            player.destroy();
+            player = null;
+        }
+
+        function player_seekto() {
+            var input = document.getElementsByName('seekpoint')[0];
+ 
