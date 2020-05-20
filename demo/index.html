@@ -130,4 +130,11 @@
 
         function switch_url() {
             streamURL.className = '';
-            mediaSourceURL.className =
+            mediaSourceURL.className = 'hidden';
+            saveSettings();
+        }
+
+        function switch_mds() {
+            streamURL.className = 'hidden';
+            mediaSourceURL.className = '';
+            saveSettings();
