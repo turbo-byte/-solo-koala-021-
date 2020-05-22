@@ -144,4 +144,12 @@
             try {
                 var ret = localStorage.getItem('mpegts_demo.' + key);
                 if (ret === null) {
-             
+                    ret = def;
+                }
+                return ret;
+            } catch (e) {}
+            return def;
+        }
+
+        function ls_set(key, value) {
+         
