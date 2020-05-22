@@ -152,4 +152,10 @@
         }
 
         function ls_set(key, value) {
-         
+            try {
+                localStorage.setItem('mpegts_demo.' + key, value);
+            } catch (e) {}
+        }
+
+        function saveSettings() {
+            if (mediaSourceURL.className === '') 
