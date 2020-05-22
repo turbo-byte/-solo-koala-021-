@@ -158,4 +158,10 @@
         }
 
         function saveSettings() {
-            if (mediaSourceURL.className === '') 
+            if (mediaSourceURL.className === '') {
+                ls_set('inputMode', 'MediaDataSource');
+            } else {
+                ls_set('inputMode', 'StreamURL');
+            }
+            var i;
+          
