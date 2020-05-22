@@ -138,3 +138,10 @@
             streamURL.className = 'hidden';
             mediaSourceURL.className = '';
             saveSettings();
+        }
+
+        function ls_get(key, def) {
+            try {
+                var ret = localStorage.getItem('mpegts_demo.' + key);
+                if (ret === null) {
+             
