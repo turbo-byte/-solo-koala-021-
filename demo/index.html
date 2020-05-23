@@ -168,4 +168,8 @@
                 var field = checkBoxFields[i];
                 /** @type {HTMLInputElement} */
                 var checkbox = document.getElementById(field);
-                ls
+                ls_set(field, checkbox.checked ? '1' : '0');
+            }
+            var msURL = document.getElementById('msURL');
+            var sURL = document.getElementById('sURL');
+            ls_set('msUR
