@@ -172,4 +172,11 @@
             }
             var msURL = document.getElementById('msURL');
             var sURL = document.getElementById('sURL');
-            ls_set('msUR
+            ls_set('msURL', msURL.value);
+            ls_set('sURL', sURL.value);
+            console.log('save');
+        }
+
+        function loadSettings() {
+            var i;
+           
