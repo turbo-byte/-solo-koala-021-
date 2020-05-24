@@ -183,3 +183,8 @@
                 var field = checkBoxFields[i];
                 /** @type {HTMLInputElement} */
                 var checkbox = document.getElementById(field);
+                var c = ls_get(field, checkbox.checked ? '1' : '0');
+                checkbox.checked = c === '1' ? true : false;
+            }
+
+            var msURL = document.getElem
