@@ -187,4 +187,7 @@
                 checkbox.checked = c === '1' ? true : false;
             }
 
-            var msURL = document.getElem
+            var msURL = document.getElementById('msURL');
+            var sURL = document.getElementById('sURL');
+            msURL.value = ls_get('msURL', msURL.value);
+            sURL.value = ls_get('sURL', sURL.value);
