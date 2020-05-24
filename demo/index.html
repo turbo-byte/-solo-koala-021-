@@ -191,3 +191,8 @@
             var sURL = document.getElementById('sURL');
             msURL.value = ls_get('msURL', msURL.value);
             sURL.value = ls_get('sURL', sURL.value);
+            if (ls_get('inputMode', 'StreamURL') === 'StreamURL') {
+                switch_url();
+            } else {
+                switch_mds();
+           
