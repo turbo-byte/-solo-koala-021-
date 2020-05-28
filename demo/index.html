@@ -218,4 +218,9 @@
         };
 
         var logcatbox = document.getElementsByName('logcatbox')[0];
-        mpegts.LoggingControl.addLogListener(function(ty
+        mpegts.LoggingControl.addLogListener(function(type, str) {
+            logcatbox.value = logcatbox.value + str + '\n';
+            logcatbox.scrollTop = logcatbox.scrollHeight;
+        });
+
+        document.addEventListener('DOMContentLoaded', funct
