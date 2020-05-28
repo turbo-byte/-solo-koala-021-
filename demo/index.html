@@ -212,4 +212,10 @@
                     player.detachMediaElement();
                     player.destroy();
                     player = null;
-               
+                }
+                player_load();
+            }
+        };
+
+        var logcatbox = document.getElementsByName('logcatbox')[0];
+        mpegts.LoggingControl.addLogListener(function(ty
