@@ -223,4 +223,9 @@
             logcatbox.scrollTop = logcatbox.scrollHeight;
         });
 
-        document.addEventListener('DOMContentLoaded', funct
+        document.addEventListener('DOMContentLoaded', function () {
+            streamURL = document.getElementById('streamURL');
+            mediaSourceURL = document.getElementById('mediaSourceURL');
+            loadSettings();
+            showVersion();
+ 
