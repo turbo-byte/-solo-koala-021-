@@ -123,3 +123,108 @@ Return a `FeatureList` object which has following details:
 | `nativeWebmVP9Playback` | `boolean` | Indicates whether your browser support WebM VP9 video file natively. |
 
 
+
+### mpegts.MSEPlayer
+```typescript
+interface MSEPlayer extends Player {}
+```
+
+MSE player which implements the `Player` interface. Can be created by `new` operator directly.
+
+### mpegts.NativePlayer
+
+```typescript
+interface NativePlayer extends Player {}
+```
+
+Player wrapper for browser's native player (HTMLVideoElement) without MediaSource src, which implements the `Player` interface. Useful for singlepart **MP4** file playback.
+
+### interface Player (abstract)
+
+```typescript
+interface Player {
+    constructor(mediaDataSource: MediaDataSource, config?: Config): Player;
+    destroy(): void;
+    on(event: string, listener: Function): void;
+    off(event: string, listener: Function): void;
+    attachMediaElement(mediaElement: HTMLMediaElement): void;
+    detachMediaElement(): void;
+    load(): void;
+    unload(): void;
+    play(): Promise<void>;
+    pause(): void;
+    type: string;
+    buffered: TimeRanges;
+    duration: number;
+    volume: number;
+    muted: boolean;
+    currentTime: number;
+    mediaInfo: Object;
+    statisticsInfo: Object;
+}
+```
+
+### mpegts.LoggingControl
+
+A global interface which include several static getter/setter to set mpegts.js logcat verbose level.
+
+```typescript
+interface LoggingControl {
+    forceGlobalTag: boolean;
+    globalTag: string;
+    enableAll: boolean;
+    enableDebug: boolean;
+    enableVerbose: boolean;
+    enableInfo: boolean;
+    enableWarn: boolean;
+    enableError: boolean;
+    getConfig(): Object;
+    applyConfig(config: Object): void;
+    addLogListener(listener: Function): void;
+    removeLogListener(listener: Function): void;
+}
+```
+
+### mpegts.Events
+
+A series of constants that can be used with `Player.on()` / `Player.off()`. They require the prefix `mpegts.Events`.
+
+| Event               | Description                              |
+| ------------------- | ---------------------------------------- |
+| ERROR               | An error occurred by any cause during the playback |
+| LOADING_COMPLETE    | The input MediaDataSource has been completely buffered to end |
+| RECOVERED_EARLY_EOF | An unexpected network EOF occurred during buffering but automatically recovered |
+| MEDIA_INFO          | Provides technical information of the media like video/audio codec, bitrate, etc. |
+| METADATA_ARRIVED    | Provides metadata which FLV file(stream) can contain with an "onMetaData" marker.  |
+| SCRIPTDATA_ARRIVED  | Provides scriptdata (OnCuePoint / OnTextData) which FLV file(stream) can contain. |
+| TIMED_ID3_METADATA_ARRIVED |  Provides Timed ID3 Metadata packets containing private data (stream_type=0x15) callback |
+| SMPTE2038_METADATA_ARRIVED |  Provides SMPTE2038 Metadata packets containing private data callback |
+| SCTE35_METADATA_ARRIVED |  Provides SCTE35 Metadata packets containing section (stream_type=0x86) callback |
+| PES_PRIVATE_DATA_ARRIVED | Provides ISO/IEC 13818-1 PES packets containing private data (stream_type=0x06) callback |
+| STATISTICS_INFO     | Provides playback statistics information like dropped frames, current speed, etc. |
+
+### mpegts.ErrorTypes
+
+The possible errors that can come up during playback. They require the prefix `mpegts.ErrorTypes`.
+
+| Error         | Description                              |
+| ------------- | ---------------------------------------- |
+| NETWORK_ERROR | Errors related to the network            |
+| MEDIA_ERROR   | Errors related to the media (format error, decode issue, etc) |
+| OTHER_ERROR   | Any other unspecified error              |
+
+
+### mpegts.ErrorDetails
+
+Provide more verbose explanation for Network and Media errors. They require the prefix `mpegts.ErrorDetails`.
+
+| Error                           | Description                              |
+| ------------------------------- | ---------------------------------------- |
+| NETWORK_EXCEPTION               | Related to any other issues with the network; contains a `message` |
+| NETWORK_STATUS_CODE_INVALID     | Related to an invalid HTTP status code, such as 403, 404, etc. |
+| NETWORK_TIMEOUT                 | Related to timeout request issues        |
+| NETWORK_UNRECOVERABLE_EARLY_EOF | Related to unexpected network EOF which cannot be recovered |
+| MEDIA_MSE_ERROR                 | Related to MediaSource's error such as decode issue |
+| MEDIA_FORMAT_ERROR              | Related to any invalid parameters in the media stream |
+| MEDIA_FORMAT_UNSUPPORTED        | The input MediaDataSource format is not supported by mpegts.js |
+| MEDIA_CODEC_UNSUPPORTED         | The media stream contains video/audio codec which is not supported |
