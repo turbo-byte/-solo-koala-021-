@@ -20,4 +20,10 @@ Access-Control-Allow-Origin: *
 ```
 
 ## Static MPEG2-TS/FLV file playback
-For s
+For static MPEG2-TS/FLV file playback, we recommend you to add:
+
+```
+Access-Control-Expose-Headers: Content-Length
+```
+
+Or you should provide accurate f
