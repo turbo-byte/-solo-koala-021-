@@ -26,4 +26,7 @@ For static MPEG2-TS/FLV file playback, we recommend you to add:
 Access-Control-Expose-Headers: Content-Length
 ```
 
-Or you should provide accurate f
+Or you should provide accurate filesize in **MediaDataSource** object.
+
+## CORS with 301/302 redirect
+If your video server response with a 3xx redirection, the redirection's response headers **must** con
