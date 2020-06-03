@@ -31,4 +31,12 @@ Or you should provide accurate filesize in **MediaDataSource** object.
 ## CORS with 301/302 redirect
 If your video server response with a 3xx redirection, the redirection's response headers **must** contains `Access-Control-Allow-Origin`;
 
-Obviously the redirect target server should also response with CORS headers, but pay attention that the browser will send `Origin: null` in red
+Obviously the redirect target server should also response with CORS headers, but pay attention that the browser will send `Origin: null` in redirected request according to current CORS policy.
+
+It means that your actual edge server should response with:
+
+```
+Access-Control-Allow-Origin: null | *
+```
+
+Or you can determin
