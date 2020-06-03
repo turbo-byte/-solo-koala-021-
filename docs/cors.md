@@ -47,4 +47,11 @@ When use Range seek for cross-origin MPEG2-TS/FLV file, `Range` header added by 
 The browser will send an `OPTIONS` request before actual `GET` request, with following additional headers according to CORS policy:
 
 ```
-Access
+Access-Control-Request-Headers: range
+Access-Control-Request-Method: GET
+```
+
+This means your video server must response to OPTIONS request with following additional CORS headers:
+
+```
+Access-Co
