@@ -1,0 +1,36 @@
+
+{
+  "name": "mpegts.js",
+  "version": "1.7.2",
+  "description": "HTML5 MPEG2-TS Stream Player",
+  "main": "./dist/mpegts.js",
+  "types": "./d.ts/mpegts.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xqq/mpegts.js"
+  },
+  "keywords": [
+    "html5",
+    "mpegts",
+    "m2ts",
+    "mse",
+    "arib",
+    "dvb"
+  ],
+  "scripts": {
+    "build": "webpack --mode=production --progress",
+    "build:debug": "webpack --mode=development --progress",
+    "watch": "webpack --mode=development --progress --watch",
+    "serve": "webpack serve --mode=development --progress"
+  },
+  "dependencies": {
+    "es6-promise": "^4.2.5",
+    "webworkify-webpack": "^2.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.18",
+    "@types/express-serve-static-core": "4.17.30",
+    "@typescript-eslint/eslint-plugin": "^1.4.2",
+    "@typescript-eslint/parser": "^1.4.2",
+    "@webpack-cli/serve": "^1.7.0",
+    "browser-sync": "^2.26.10",
