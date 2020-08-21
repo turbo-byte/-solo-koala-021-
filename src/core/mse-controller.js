@@ -32,4 +32,10 @@ class MSEController {
         this._config = config;
         this._emitter = new EventEmitter();
 
-        if (this._config.isLive && t
+        if (this._config.isLive && this._config.autoCleanupSourceBuffer == undefined) {
+            // For live stream, do auto cleanup by default
+            this._config.autoCleanupSourceBuffer = true;
+        }
+
+        this.e = {
+        
