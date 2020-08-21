@@ -19,4 +19,9 @@
 import EventEmitter from 'events';
 import Log from '../utils/logger.js';
 import Browser from '../utils/browser.js';
-import MSEEvents fro
+import MSEEvents from './mse-events.js';
+import {SampleInfo, IDRSampleList} from './media-segment-info.js';
+import {IllegalStateException} from '../utils/exception.js';
+
+// Media Source Extensions controller
+class MSEControl
