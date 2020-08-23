@@ -46,4 +46,10 @@ class MSEController {
         };
 
         this._mediaSource = null;
-       
+        this._mediaSourceObjectURL = null;
+        this._mediaElement = null;
+
+        this._isBufferFull = false;
+        this._hasPendingEos = false;
+
+        this._requireSe
