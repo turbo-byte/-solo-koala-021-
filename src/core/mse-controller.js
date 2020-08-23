@@ -52,4 +52,10 @@ class MSEController {
         this._isBufferFull = false;
         this._hasPendingEos = false;
 
-        this._requireSe
+        this._requireSetMediaDuration = false;
+        this._pendingMediaDuration = 0;
+
+        this._pendingSourceBufferInit = [];
+        this._mimeTypes = {
+            video: null,
+         
