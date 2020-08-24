@@ -74,4 +74,13 @@ class MSEController {
         };
         this._pendingRemoveRanges = {
             video: [],
-            audio: 
+            audio: []
+        };
+        this._idrList = new IDRSampleList();
+    }
+
+    destroy() {
+        if (this._mediaElement || this._mediaSource) {
+            this.detachMediaElement();
+        }
+        thi
