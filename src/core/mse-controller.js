@@ -66,4 +66,12 @@ class MSEController {
         };
         this._lastInitSegments = {
             video: null,
-            
+            audio: null
+        };
+        this._pendingSegments = {
+            video: [],
+            audio: []
+        };
+        this._pendingRemoveRanges = {
+            video: [],
+            audio: 
