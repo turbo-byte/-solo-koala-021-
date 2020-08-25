@@ -83,4 +83,13 @@ class MSEController {
         if (this._mediaElement || this._mediaSource) {
             this.detachMediaElement();
         }
-        thi
+        this.e = null;
+        this._emitter.removeAllListeners();
+        this._emitter = null;
+    }
+
+    on(event, listener) {
+        this._emitter.addListener(event, listener);
+    }
+
+    off(event, listener) {
