@@ -93,3 +93,9 @@ class MSEController {
     }
 
     off(event, listener) {
+        this._emitter.removeListener(event, listener);
+    }
+
+    attachMediaElement(mediaElement) {
+        if (this._mediaSource) {
+            throw new IllegalStateException('
