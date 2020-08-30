@@ -110,4 +110,9 @@ class MSEController {
         mediaElement.src = this._mediaSourceObjectURL;
     }
 
-    detachMediaElem
+    detachMediaElement() {
+        if (this._mediaSource) {
+            let ms = this._mediaSource;
+            for (let type in this._sourceBuffers) {
+                // pending segments should be discard
+    
