@@ -119,4 +119,9 @@ class MSEController {
                 ps.splice(0, ps.length);
                 this._pendingSegments[type] = null;
                 this._pendingRemoveRanges[type] = null;
-            
+                this._lastInitSegments[type] = null;
+
+                // remove all sourcebuffers
+                let sb = this._sourceBuffers[type];
+                if (sb) {
+       
