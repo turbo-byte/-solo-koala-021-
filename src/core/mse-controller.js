@@ -134,4 +134,10 @@ class MSEController {
                         sb.removeEventListener('error', this.e.onSourceBufferError);
                         sb.removeEventListener('updateend', this.e.onSourceBufferUpdateEnd);
                     }
-                    this._mime
+                    this._mimeTypes[type] = null;
+                    this._sourceBuffers[type] = null;
+                }
+            }
+            if (ms.readyState === 'open') {
+                try {
+   
