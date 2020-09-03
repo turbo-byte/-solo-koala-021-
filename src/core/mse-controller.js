@@ -131,4 +131,7 @@ class MSEController {
                         } catch (error) {
                             Log.e(this.TAG, error.message);
                         }
-                        s
+                        sb.removeEventListener('error', this.e.onSourceBufferError);
+                        sb.removeEventListener('updateend', this.e.onSourceBufferUpdateEnd);
+                    }
+                    this._mime
