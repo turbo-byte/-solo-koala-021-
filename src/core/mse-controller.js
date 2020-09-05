@@ -165,4 +165,7 @@ class MSEController {
         }
     }
 
-    appendInitSegme
+    appendInitSegment(initSegment, deferred) {
+        if (!this._mediaSource || this._mediaSource.readyState !== 'open') {
+            // sourcebuffer creation requires mediaSource.readyState === 'open'
+        
