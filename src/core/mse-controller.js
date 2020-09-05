@@ -159,4 +159,10 @@ class MSEController {
             this._mediaElement.removeAttribute('src');
             this._mediaElement = null;
         }
-        
+        if (this._mediaSourceObjectURL) {
+            window.URL.revokeObjectURL(this._mediaSourceObjectURL);
+            this._mediaSourceObjectURL = null;
+        }
+    }
+
+    appendInitSegme
