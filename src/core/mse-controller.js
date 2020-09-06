@@ -175,4 +175,10 @@ class MSEController {
             return;
         }
 
-        
+        let is = initSegment;
+        let mimeType = `${is.container}`;
+        if (is.codec && is.codec.length > 0) {
+            mimeType += `;codecs=${is.codec}`;
+        }
+
+        let firstInitS
