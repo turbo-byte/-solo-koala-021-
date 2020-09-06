@@ -187,4 +187,6 @@ class MSEController {
         this._lastInitSegments[is.type] = is;
 
         if (mimeType !== this._mimeTypes[is.type]) {
-  
+            if (!this._mimeTypes[is.type]) {  // empty, first chance create sourcebuffer
+                firstInitSegment = true;
+                try {
