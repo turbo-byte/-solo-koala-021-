@@ -190,3 +190,5 @@ class MSEController {
             if (!this._mimeTypes[is.type]) {  // empty, first chance create sourcebuffer
                 firstInitSegment = true;
                 try {
+                    let sb = this._sourceBuffers[is.type] = this._mediaSource.addSourceBuffer(mimeType);
+                    sb.addEventListener('error'
