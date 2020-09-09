@@ -201,4 +201,9 @@ class MSEController {
             } else {
                 Log.v(this.TAG, `Notice: ${is.type} mimeType changed, origin: ${this._mimeTypes[is.type]}, target: ${mimeType}`);
             }
-           
+            this._mimeTypes[is.type] = mimeType;
+        }
+
+        if (!deferred) {
+            // deferred means this InitSegment has been pushed to pendingSegments queue
+            this._pendingSegme
