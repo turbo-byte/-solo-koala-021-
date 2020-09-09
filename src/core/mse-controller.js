@@ -199,3 +199,6 @@ class MSEController {
                     return;
                 }
             } else {
+                Log.v(this.TAG, `Notice: ${is.type} mimeType changed, origin: ${this._mimeTypes[is.type]}, target: ${mimeType}`);
+            }
+           
