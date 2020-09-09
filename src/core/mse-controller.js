@@ -191,4 +191,7 @@ class MSEController {
                 firstInitSegment = true;
                 try {
                     let sb = this._sourceBuffers[is.type] = this._mediaSource.addSourceBuffer(mimeType);
-                    sb.addEventListener('error'
+                    sb.addEventListener('error', this.e.onSourceBufferError);
+                    sb.addEventListener('updateend', this.e.onSourceBufferUpdateEnd);
+                } catch (error) {
+                
