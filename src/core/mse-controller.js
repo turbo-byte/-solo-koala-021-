@@ -209,4 +209,9 @@ class MSEController {
             this._pendingSegments[is.type].push(is);
         }
         if (!firstInitSegment) {  // append immediately only if init segment in subsequence
-            if (this._sourceBuffers[is.type] && !this.
+            if (this._sourceBuffers[is.type] && !this._sourceBuffers[is.type].updating) {
+                this._doAppendSegments();
+            }
+        }
+        if (Browser.safari && is.container === 'audio/mpeg' && is.mediaDuration > 0) {
+            // 'audio/mpeg' track un
