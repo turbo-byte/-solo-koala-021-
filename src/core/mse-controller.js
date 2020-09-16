@@ -226,4 +226,9 @@ class MSEController {
         let ms = mediaSegment;
         this._pendingSegments[ms.type].push(ms);
 
-        if (this._config.autoCleanupSourceBuffer &
+        if (this._config.autoCleanupSourceBuffer && this._needCleanupSourceBuffer()) {
+            this._doCleanupSourceBuffer();
+        }
+
+        let sb = this._sourceBuffers[ms.type];
+        if (sb && !sb.updating && !this._hasPendingRemoveR
