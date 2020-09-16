@@ -219,4 +219,11 @@ class MSEController {
             this._requireSetMediaDuration = true;
             this._pendingMediaDuration = is.mediaDuration / 1000;  // in seconds
             this._updateMediaSourceDuration();
-  
+        }
+    }
+
+    appendMediaSegment(mediaSegment) {
+        let ms = mediaSegment;
+        this._pendingSegments[ms.type].push(ms);
+
+        if (this._config.autoCleanupSourceBuffer &
