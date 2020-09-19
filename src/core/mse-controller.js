@@ -244,4 +244,7 @@ class MSEController {
             }
 
             // abort current buffer append algorithm
-            let sb = this._sourceB
+            let sb = this._sourceBuffers[type];
+            if (this._mediaSource.readyState === 'open') {
+                try {
+                    // If range removal algorithm is running, InvalidStateError wi
