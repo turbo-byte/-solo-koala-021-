@@ -247,4 +247,10 @@ class MSEController {
             let sb = this._sourceBuffers[type];
             if (this._mediaSource.readyState === 'open') {
                 try {
-                    // If range removal algorithm is running, InvalidStateError wi
+                    // If range removal algorithm is running, InvalidStateError will be throwed
+                    // Ignore it.
+                    sb.abort();
+                } catch (error) {
+                    Log.e(this.TAG, error.message);
+                }
+ 
