@@ -231,4 +231,11 @@ class MSEController {
         }
 
         let sb = this._sourceBuffers[ms.type];
-        if (sb && !sb.updating && !this._hasPendingRemoveR
+        if (sb && !sb.updating && !this._hasPendingRemoveRanges()) {
+            this._doAppendSegments();
+        }
+    }
+
+    seek(seconds) {
+        // remove all appended buffers
+        for (let type in this._sourceBuffers) 
