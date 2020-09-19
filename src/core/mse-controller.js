@@ -238,4 +238,10 @@ class MSEController {
 
     seek(seconds) {
         // remove all appended buffers
-        for (let type in this._sourceBuffers) 
+        for (let type in this._sourceBuffers) {
+            if (!this._sourceBuffers[type]) {
+                continue;
+            }
+
+            // abort current buffer append algorithm
+            let sb = this._sourceB
