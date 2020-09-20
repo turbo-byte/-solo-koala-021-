@@ -253,4 +253,11 @@ class MSEController {
                 } catch (error) {
                     Log.e(this.TAG, error.message);
                 }
- 
+            }
+
+            // IDRList should be clear
+            this._idrList.clear();
+
+            // pending segments should be discard
+            let ps = this._pendingSegments[type];
+            ps.s
