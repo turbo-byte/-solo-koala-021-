@@ -264,4 +264,9 @@ class MSEController {
 
             if (this._mediaSource.readyState === 'closed') {
                 // Parent MediaSource object has been detached from HTMLMediaElement
-      
+                continue;
+            }
+
+            // record ranges to be remove from SourceBuffer
+            for (let i = 0; i < sb.buffered.length; i++) {
+                let start = sb.buffere
