@@ -260,4 +260,8 @@ class MSEController {
 
             // pending segments should be discard
             let ps = this._pendingSegments[type];
-            ps.s
+            ps.splice(0, ps.length);
+
+            if (this._mediaSource.readyState === 'closed') {
+                // Parent MediaSource object has been detached from HTMLMediaElement
+      
