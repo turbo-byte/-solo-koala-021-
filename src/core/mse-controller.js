@@ -269,4 +269,9 @@ class MSEController {
 
             // record ranges to be remove from SourceBuffer
             for (let i = 0; i < sb.buffered.length; i++) {
-                let start = sb.buffere
+                let start = sb.buffered.start(i);
+                let end = sb.buffered.end(i);
+                this._pendingRemoveRanges[type].push({start, end});
+            }
+
+            // if sb is not updating, let's remo
