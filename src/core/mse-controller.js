@@ -279,4 +279,6 @@ class MSEController {
                 this._doRemoveRanges();
             }
 
-            // Safari 10 may get InvalidStateError in t
+            // Safari 10 may get InvalidStateError in the later appendBuffer() after SourceBuffer.remove() call
+            // Internal parser's state may be invalid at this time. Re-append last InitSegment to workaround.
+            // Related is
