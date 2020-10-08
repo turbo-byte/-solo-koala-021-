@@ -274,4 +274,9 @@ class MSEController {
                 this._pendingRemoveRanges[type].push({start, end});
             }
 
-            // if sb is not updating, let's remo
+            // if sb is not updating, let's remove ranges now!
+            if (!sb.updating) {
+                this._doRemoveRanges();
+            }
+
+            // Safari 10 may get InvalidStateError in t
