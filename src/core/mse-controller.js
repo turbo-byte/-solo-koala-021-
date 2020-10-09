@@ -288,4 +288,14 @@ class MSEController {
                     this._pendingSegments[type].push(lastInitSegment);
                     if (!sb.updating) {
                         this._doAppendSegments();
-                
+                    }
+                }
+            }
+        }
+    }
+
+    endOfStream() {
+        let ms = this._mediaSource;
+        let sb = this._sourceBuffers;
+        if (!ms || ms.readyState !== 'open') {
+         
