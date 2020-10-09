@@ -284,4 +284,8 @@ class MSEController {
             // Related issue: https://bugs.webkit.org/show_bug.cgi?id=159230
             if (Browser.safari) {
                 let lastInitSegment = this._lastInitSegments[type];
-                if (lastInitSeg
+                if (lastInitSegment) {
+                    this._pendingSegments[type].push(lastInitSegment);
+                    if (!sb.updating) {
+                        this._doAppendSegments();
+                
