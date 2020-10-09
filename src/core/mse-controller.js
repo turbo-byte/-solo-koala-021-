@@ -298,4 +298,6 @@ class MSEController {
         let ms = this._mediaSource;
         let sb = this._sourceBuffers;
         if (!ms || ms.readyState !== 'open') {
-         
+            if (ms && ms.readyState === 'closed' && this._hasPendingSegments()) {
+                // If MediaSource hasn't turned into open state, and there're pending segments
+                // Mark p
