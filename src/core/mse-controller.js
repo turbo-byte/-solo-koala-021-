@@ -308,4 +308,8 @@ class MSEController {
         if (sb.video && sb.video.updating || sb.audio && sb.audio.updating) {
             // If any sourcebuffer is updating, defer endOfStream operation
             // See _onSourceBufferUpdateEnd()
-            this
+            this._hasPendingEos = true;
+        } else {
+            this._hasPendingEos = false;
+            // Notify media data loading complete
+            // This is helpful for correcting total dura
