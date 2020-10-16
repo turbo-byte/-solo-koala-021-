@@ -325,4 +325,11 @@ class MSEController {
     _needCleanupSourceBuffer() {
         if (!this._config.autoCleanupSourceBuffer) {
             return false;
-        
+        }
+
+        let currentTime = this._mediaElement.currentTime;
+
+        for (let type in this._sourceBuffers) {
+            let sb = this._sourceBuffers[type];
+            if (sb) {
+                
