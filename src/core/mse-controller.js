@@ -332,4 +332,7 @@ class MSEController {
         for (let type in this._sourceBuffers) {
             let sb = this._sourceBuffers[type];
             if (sb) {
-                
+                let buffered = sb.buffered;
+                if (buffered.length >= 1) {
+                    if (currentTime - buffered.start(0) >= this._config.autoCleanupMaxBackwardDuration) {
+                     
