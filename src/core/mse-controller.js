@@ -335,4 +335,14 @@ class MSEController {
                 let buffered = sb.buffered;
                 if (buffered.length >= 1) {
                     if (currentTime - buffered.start(0) >= this._config.autoCleanupMaxBackwardDuration) {
-                     
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    _doCleanupSourceBuffer() {
+        let currentTime = 
