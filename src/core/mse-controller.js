@@ -358,4 +358,7 @@ class MSEController {
                     let end = buffered.end(i);
 
                     if (start <= currentTime && currentTime < end + 3) {  // padding 3 seconds
-                        if (currentTime - start >= this._config.
+                        if (currentTime - start >= this._config.autoCleanupMaxBackwardDuration) {
+                            doRemove = true;
+                            let removeEnd = currentTime - this._config.autoCleanupMinBackwardDuration;
+                  
