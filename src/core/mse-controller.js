@@ -370,4 +370,12 @@ class MSEController {
                 }
 
                 if (doRemove && !sb.updating) {
-                    thi
+                    this._doRemoveRanges();
+                }
+            }
+        }
+    }
+
+    _updateMediaSourceDuration() {
+        let sb = this._sourceBuffers;
+        if (this._mediaElement.readyState =
