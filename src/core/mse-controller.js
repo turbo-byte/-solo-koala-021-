@@ -365,3 +365,9 @@ class MSEController {
                         }
                     } else if (end < currentTime) {
                         doRemove = true;
+                        this._pendingRemoveRanges[type].push({start: start, end: end});
+                    }
+                }
+
+                if (doRemove && !sb.updating) {
+                    thi
