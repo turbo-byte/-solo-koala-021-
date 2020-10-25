@@ -393,4 +393,10 @@ class MSEController {
             this._mediaSource.duration = target;
         }
 
-        this._requireSetMediaDuratio
+        this._requireSetMediaDuration = false;
+        this._pendingMediaDuration = 0;
+    }
+
+    _doRemoveRanges() {
+        for (let type in this._pendingRemoveRanges) {
+            if (!this._sourceBuffers[type] || this._sourceBuffers[type].updating
