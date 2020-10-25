@@ -383,4 +383,10 @@ class MSEController {
         }
         if ((sb.video && sb.video.updating) || (sb.audio && sb.audio.updating)) {
             return;
-        
+        }
+
+        let current = this._mediaSource.duration;
+        let target = this._pendingMediaDuration;
+
+        if (target > 0 && (isNaN(current) || target > current)) {
+            Log.
