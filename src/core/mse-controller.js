@@ -404,4 +404,12 @@ class MSEController {
             }
             let sb = this._sourceBuffers[type];
             let ranges = this._pendingRemoveRanges[type];
-            while (ranges.length && !sb.updatin
+            while (ranges.length && !sb.updating) {
+                let range = ranges.shift();
+                sb.remove(range.start, range.end);
+            }
+        }
+    }
+
+    _doAppendSegments() {
+        let pendingSegments = this._pendi
