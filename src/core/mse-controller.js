@@ -430,4 +430,8 @@ class MSEController {
 
                     let delta = Math.abs(currentOffset - targetOffset);
                     if (delta > 0.1) {  // If time delta > 100ms
-                        Log.v(this.TAG, `Update MPEG audio timestampOffset from ${
+                        Log.v(this.TAG, `Update MPEG audio timestampOffset from ${currentOffset} to ${targetOffset}`);
+                        this._sourceBuffers[type].timestampOffset = targetOffset;
+                    }
+                    delete segment.timestampOffset;
+   
