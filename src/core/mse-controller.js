@@ -450,4 +450,6 @@ class MSEController {
                 } catch (error) {
                     this._pendingSegments[type].unshift(segment);
                     if (error.code === 22) {  // QuotaExceededError
-                        /* Notice that FireFox may not throw QuotaExceededErro
+                        /* Notice that FireFox may not throw QuotaExceededError if SourceBuffer is full
+                         * Currently we can only do lazy-load to avoid SourceBuffer become scattered.
+                         * SourceBuffer 
