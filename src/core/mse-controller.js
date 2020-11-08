@@ -452,4 +452,7 @@ class MSEController {
                     if (error.code === 22) {  // QuotaExceededError
                         /* Notice that FireFox may not throw QuotaExceededError if SourceBuffer is full
                          * Currently we can only do lazy-load to avoid SourceBuffer become scattered.
-                         * SourceBuffer 
+                         * SourceBuffer eviction policy may be changed in future version of FireFox.
+                         *
+                         * Related issues:
+                         * https://bugzilla.mozilla.org/show_b
