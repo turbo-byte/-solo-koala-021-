@@ -460,3 +460,7 @@ class MSEController {
                          */
 
                         // report buffer full, abort network IO
+                        if (!this._isBufferFull) {
+                            this._emitter.emit(MSEEvents.BUFFER_FULL);
+                        }
+                        this._isBufferFull =
