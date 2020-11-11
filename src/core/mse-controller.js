@@ -455,4 +455,8 @@ class MSEController {
                          * SourceBuffer eviction policy may be changed in future version of FireFox.
                          *
                          * Related issues:
-                         * https://bugzilla.mozilla.org/show_b
+                         * https://bugzilla.mozilla.org/show_bug.cgi?id=1279885
+                         * https://bugzilla.mozilla.org/show_bug.cgi?id=1280023
+                         */
+
+                        // report buffer full, abort network IO
