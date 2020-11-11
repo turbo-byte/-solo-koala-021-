@@ -463,4 +463,7 @@ class MSEController {
                         if (!this._isBufferFull) {
                             this._emitter.emit(MSEEvents.BUFFER_FULL);
                         }
-                        this._isBufferFull =
+                        this._isBufferFull = true;
+                    } else {
+                        Log.e(this.TAG, error.message);
+                        this._emitter.emit(MSEEvents.ERROR, {code: er
