@@ -466,4 +466,13 @@ class MSEController {
                         this._isBufferFull = true;
                     } else {
                         Log.e(this.TAG, error.message);
-                        this._emitter.emit(MSEEvents.ERROR, {code: er
+                        this._emitter.emit(MSEEvents.ERROR, {code: error.code, msg: error.message});
+                    }
+                }
+            }
+        }
+    }
+
+    _onSourceOpen() {
+        Log.v(this.TAG, 'MediaSource onSourceOpen');
+     
