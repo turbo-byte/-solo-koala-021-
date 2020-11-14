@@ -481,4 +481,9 @@ class MSEController {
             let pendings = this._pendingSourceBufferInit;
             while (pendings.length) {
                 let segment = pendings.shift();
-                this.appendInitSegment(segm
+                this.appendInitSegment(segment, true);
+            }
+        }
+        // there may be some pending media segments, append them
+        if (this._hasPendingSegments()) {
+            this._doA
