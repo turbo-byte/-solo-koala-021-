@@ -486,4 +486,14 @@ class MSEController {
         }
         // there may be some pending media segments, append them
         if (this._hasPendingSegments()) {
-            this._doA
+            this._doAppendSegments();
+        }
+        this._emitter.emit(MSEEvents.SOURCE_OPEN);
+    }
+
+    _onSourceEnded() {
+        // fired on endOfStream
+        Log.v(this.TAG, 'MediaSource onSourceEnded');
+    }
+
+    _
