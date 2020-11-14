@@ -475,4 +475,6 @@ class MSEController {
 
     _onSourceOpen() {
         Log.v(this.TAG, 'MediaSource onSourceOpen');
-     
+        this._mediaSource.removeEventListener('sourceopen', this.e.onSourceOpen);
+        // deferred sourcebuffer creation / initialization
+        if (this._pendingSourceBufferInit.length > 0)
