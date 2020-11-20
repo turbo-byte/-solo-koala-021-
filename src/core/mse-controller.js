@@ -525,4 +525,10 @@ class MSEController {
             this._doAppendSegments();
         } else if (this._hasPendingEos) {
             this.endOfStream();
-       
+        }
+        this._emitter.emit(MSEEvents.UPDATE_END);
+    }
+
+    _onSourceBufferError(e) {
+        Log.e(this.TAG, `SourceBuffer Error: ${e}`);
+        // this error might not
