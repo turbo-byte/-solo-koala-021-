@@ -516,4 +516,8 @@ class MSEController {
         return prr.video.length > 0 || prr.audio.length > 0;
     }
 
-    _on
+    _onSourceBufferUpdateEnd() {
+        if (this._requireSetMediaDuration) {
+            this._updateMediaSourceDuration();
+        } else if (this._hasPendingRemoveRanges()) {
+        
