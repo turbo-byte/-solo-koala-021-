@@ -105,3 +105,194 @@ class Transmuxer {
         if (this._worker) {
             this._worker.postMessage({cmd: 'start'});
         } else {
+            this._controller.start();
+        }
+    }
+
+    close() {
+        if (this._worker) {
+            this._worker.postMessage({cmd: 'stop'});
+        } else {
+            this._controller.stop();
+        }
+    }
+
+    seek(milliseconds) {
+        if (this._worker) {
+            this._worker.postMessage({cmd: 'seek', param: milliseconds});
+        } else {
+            this._controller.seek(milliseconds);
+        }
+    }
+
+    pause() {
+        if (this._worker) {
+            this._worker.postMessage({cmd: 'pause'});
+        } else {
+            this._controller.pause();
+        }
+    }
+
+    resume() {
+        if (this._worker) {
+            this._worker.postMessage({cmd: 'resume'});
+        } else {
+            this._controller.resume();
+        }
+    }
+
+    _onInitSegment(type, initSegment) {
+        // do async invoke
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.INIT_SEGMENT, type, initSegment);
+        });
+    }
+
+    _onMediaSegment(type, mediaSegment) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.MEDIA_SEGMENT, type, mediaSegment);
+        });
+    }
+
+    _onLoadingComplete() {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.LOADING_COMPLETE);
+        });
+    }
+
+    _onRecoveredEarlyEof() {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.RECOVERED_EARLY_EOF);
+        });
+    }
+
+    _onMediaInfo(mediaInfo) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.MEDIA_INFO, mediaInfo);
+        });
+    }
+
+    _onMetaDataArrived(metadata) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.METADATA_ARRIVED, metadata);
+        });
+    }
+
+    _onScriptDataArrived(data) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.SCRIPTDATA_ARRIVED, data);
+        });
+    }
+
+    _onTimedID3MetadataArrived (data) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.TIMED_ID3_METADATA_ARRIVED, data);
+        })
+    }
+
+    _onSMPTE2038MetadataArrived (data) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.SMPTE2038_METADATA_ARRIVED, data);
+        })
+    }
+
+    _onSCTE35MetadataArrived (data) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.SCTE35_METADATA_ARRIVED, data);
+        })
+    }
+
+    _onPESPrivateDataDescriptor(data) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.PES_PRIVATE_DATA_DESCRIPTOR, data);
+        });
+    }
+
+    _onPESPrivateDataArrived(data) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.PES_PRIVATE_DATA_ARRIVED, data);
+        });
+    }
+
+    _onStatisticsInfo(statisticsInfo) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.STATISTICS_INFO, statisticsInfo);
+        });
+    }
+
+    _onIOError(type, info) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.IO_ERROR, type, info);
+        });
+    }
+
+    _onDemuxError(type, info) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.DEMUX_ERROR, type, info);
+        });
+    }
+
+    _onRecommendSeekpoint(milliseconds) {
+        Promise.resolve().then(() => {
+            this._emitter.emit(TransmuxingEvents.RECOMMEND_SEEKPOINT, milliseconds);
+        });
+    }
+
+    _onLoggingConfigChanged(config) {
+        if (this._worker) {
+            this._worker.postMessage({cmd: 'logging_config', param: config});
+        }
+    }
+
+    _onWorkerMessage(e) {
+        let message = e.data;
+        let data = message.data;
+
+        if (message.msg === 'destroyed' || this._workerDestroying) {
+            this._workerDestroying = false;
+            this._worker.terminate();
+            this._worker = null;
+            return;
+        }
+
+        switch (message.msg) {
+            case TransmuxingEvents.INIT_SEGMENT:
+            case TransmuxingEvents.MEDIA_SEGMENT:
+                this._emitter.emit(message.msg, data.type, data.data);
+                break;
+            case TransmuxingEvents.LOADING_COMPLETE:
+            case TransmuxingEvents.RECOVERED_EARLY_EOF:
+                this._emitter.emit(message.msg);
+                break;
+            case TransmuxingEvents.MEDIA_INFO:
+                Object.setPrototypeOf(data, MediaInfo.prototype);
+                this._emitter.emit(message.msg, data);
+                break;
+            case TransmuxingEvents.METADATA_ARRIVED:
+            case TransmuxingEvents.SCRIPTDATA_ARRIVED:
+            case TransmuxingEvents.TIMED_ID3_METADATA_ARRIVED:
+            case TransmuxingEvents.SMPTE2038_METADATA_ARRIVED:
+            case TransmuxingEvents.SCTE35_METADATA_ARRIVED:
+            case TransmuxingEvents.PES_PRIVATE_DATA_DESCRIPTOR:
+            case TransmuxingEvents.PES_PRIVATE_DATA_ARRIVED:
+            case TransmuxingEvents.STATISTICS_INFO:
+                this._emitter.emit(message.msg, data);
+                break;
+            case TransmuxingEvents.IO_ERROR:
+            case TransmuxingEvents.DEMUX_ERROR:
+                this._emitter.emit(message.msg, data.type, data.info);
+                break;
+            case TransmuxingEvents.RECOMMEND_SEEKPOINT:
+                this._emitter.emit(message.msg, data);
+                break;
+            case 'logcat_callback':
+                Log.emitter.emit('log', data.type, data.logcat);
+                break;
+            default:
+                break;
+        }
+    }
+
+}
+
+export default Transmuxer;
