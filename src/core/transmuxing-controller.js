@@ -185,3 +185,195 @@ class TransmuxingController {
                 // current segment loading started, but mediainfo hasn't received yet
                 // wait for the metadata loaded, then seek to expected position
                 this._pendingSeekTime = milliseconds;
+            } else {
+                let keyframe = segmentInfo.getNearestKeyframe(milliseconds);
+                this._remuxer.seek(keyframe.milliseconds);
+                this._ioctl.seek(keyframe.fileposition);
+                // Will be resolved in _onRemuxerMediaSegmentArrival()
+                this._pendingResolveSeekPoint = keyframe.milliseconds;
+            }
+        } else {
+            // cross-segment seeking
+            let targetSegmentInfo = this._mediaInfo.segments[targetSegmentIndex];
+
+            if (targetSegmentInfo == undefined) {
+                // target segment hasn't been loaded. We need metadata then seek to expected time
+                this._pendingSeekTime = milliseconds;
+                this._internalAbort();
+                this._remuxer.seek();
+                this._remuxer.insertDiscontinuity();
+                this._loadSegment(targetSegmentIndex);
+                // Here we wait for the metadata loaded, then seek to expected position
+            } else {
+                // We have target segment's metadata, direct seek to target position
+                let keyframe = targetSegmentInfo.getNearestKeyframe(milliseconds);
+                this._internalAbort();
+                this._remuxer.seek(milliseconds);
+                this._remuxer.insertDiscontinuity();
+                this._demuxer.resetMediaInfo();
+                this._demuxer.timestampBase = this._mediaDataSource.segments[targetSegmentIndex].timestampBase;
+                this._loadSegment(targetSegmentIndex, keyframe.fileposition);
+                this._pendingResolveSeekPoint = keyframe.milliseconds;
+                this._reportSegmentMediaInfo(targetSegmentIndex);
+            }
+        }
+
+        this._enableStatisticsReporter();
+    }
+
+    _searchSegmentIndexContains(milliseconds) {
+        let segments = this._mediaDataSource.segments;
+        let idx = segments.length - 1;
+
+        for (let i = 0; i < segments.length; i++) {
+            if (milliseconds < segments[i].timestampBase) {
+                idx = i - 1;
+                break;
+            }
+        }
+        return idx;
+    }
+
+    _onInitChunkArrival(data, byteStart) {
+        let consumed = 0;
+
+        if (byteStart > 0) {
+            // IOController seeked immediately after opened, byteStart > 0 callback may received
+            this._demuxer.bindDataSource(this._ioctl);
+            this._demuxer.timestampBase = this._mediaDataSource.segments[this._currentSegmentIndex].timestampBase;
+
+            consumed = this._demuxer.parseChunks(data, byteStart);
+        } else {
+            // byteStart == 0, Initial data, probe it first
+            let probeData = null;
+
+            // Try probing input data as FLV first
+            probeData = FLVDemuxer.probe(data);
+            if (probeData.match) {
+                // Hit as FLV
+                this._setupFLVDemuxerRemuxer(probeData);
+                consumed = this._demuxer.parseChunks(data, byteStart);
+            }
+
+            if (!probeData.match && !probeData.needMoreData) {
+                // Non-FLV, try MPEG-TS probe
+                probeData = TSDemuxer.probe(data);
+                if (probeData.match) {
+                    // Hit as MPEG-TS
+                    this._setupTSDemuxerRemuxer(probeData);
+                    consumed = this._demuxer.parseChunks(data, byteStart);
+                }
+            }
+
+            if (!probeData.match && !probeData.needMoreData) {
+                // Both probing as FLV / MPEG-TS failed, report error
+                probeData = null;
+                Log.e(this.TAG, 'Non MPEG-TS/FLV, Unsupported media type!');
+                Promise.resolve().then(() => {
+                    this._internalAbort();
+                });
+                this._emitter.emit(TransmuxingEvents.DEMUX_ERROR, DemuxErrors.FORMAT_UNSUPPORTED, 'Non MPEG-TS/FLV, Unsupported media type!');
+                // Leave consumed as 0
+            }
+        }
+
+        return consumed;
+    }
+
+    _setupFLVDemuxerRemuxer(probeData) {
+        this._demuxer = new FLVDemuxer(probeData, this._config);
+
+        if (!this._remuxer) {
+            this._remuxer = new MP4Remuxer(this._config);
+        }
+
+        let mds = this._mediaDataSource;
+        if (mds.duration != undefined && !isNaN(mds.duration)) {
+            this._demuxer.overridedDuration = mds.duration;
+        }
+        if (typeof mds.hasAudio === 'boolean') {
+            this._demuxer.overridedHasAudio = mds.hasAudio;
+        }
+        if (typeof mds.hasVideo === 'boolean') {
+            this._demuxer.overridedHasVideo = mds.hasVideo;
+        }
+
+        this._demuxer.timestampBase = mds.segments[this._currentSegmentIndex].timestampBase;
+
+        this._demuxer.onError = this._onDemuxException.bind(this);
+        this._demuxer.onMediaInfo = this._onMediaInfo.bind(this);
+        this._demuxer.onMetaDataArrived = this._onMetaDataArrived.bind(this);
+        this._demuxer.onScriptDataArrived = this._onScriptDataArrived.bind(this);
+
+        this._remuxer.bindDataSource(this._demuxer
+                        .bindDataSource(this._ioctl
+        ));
+
+        this._remuxer.onInitSegment = this._onRemuxerInitSegmentArrival.bind(this);
+        this._remuxer.onMediaSegment = this._onRemuxerMediaSegmentArrival.bind(this);
+    }
+
+    _setupTSDemuxerRemuxer(probeData) {
+        let demuxer = this._demuxer = new TSDemuxer(probeData, this._config);
+
+        if (!this._remuxer) {
+            this._remuxer = new MP4Remuxer(this._config);
+        }
+
+        demuxer.onError = this._onDemuxException.bind(this);
+        demuxer.onMediaInfo = this._onMediaInfo.bind(this);
+        demuxer.onMetaDataArrived = this._onMetaDataArrived.bind(this);
+        demuxer.onTimedID3Metadata = this._onTimedID3Metadata.bind(this);
+        demuxer.onSMPTE2038Metadata = this._onSMPTE2038Metadata.bind(this);
+        demuxer.onSCTE35Metadata = this._onSCTE35Metadata.bind(this);
+        demuxer.onPESPrivateDataDescriptor = this._onPESPrivateDataDescriptor.bind(this);
+        demuxer.onPESPrivateData = this._onPESPrivateData.bind(this);
+
+        this._remuxer.bindDataSource(this._demuxer);
+        this._demuxer.bindDataSource(this._ioctl);
+
+        this._remuxer.onInitSegment = this._onRemuxerInitSegmentArrival.bind(this);
+        this._remuxer.onMediaSegment = this._onRemuxerMediaSegmentArrival.bind(this);
+    }
+
+    _onMediaInfo(mediaInfo) {
+        if (this._mediaInfo == null) {
+            // Store first segment's mediainfo as global mediaInfo
+            this._mediaInfo = Object.assign({}, mediaInfo);
+            this._mediaInfo.keyframesIndex = null;
+            this._mediaInfo.segments = [];
+            this._mediaInfo.segmentCount = this._mediaDataSource.segments.length;
+            Object.setPrototypeOf(this._mediaInfo, MediaInfo.prototype);
+        }
+
+        let segmentInfo = Object.assign({}, mediaInfo);
+        Object.setPrototypeOf(segmentInfo, MediaInfo.prototype);
+        this._mediaInfo.segments[this._currentSegmentIndex] = segmentInfo;
+
+        // notify mediaInfo update
+        this._reportSegmentMediaInfo(this._currentSegmentIndex);
+
+        if (this._pendingSeekTime != null) {
+            Promise.resolve().then(() => {
+                let target = this._pendingSeekTime;
+                this._pendingSeekTime = null;
+                this.seek(target);
+            });
+        }
+    }
+
+    _onMetaDataArrived(metadata) {
+        this._emitter.emit(TransmuxingEvents.METADATA_ARRIVED, metadata);
+    }
+
+    _onScriptDataArrived(data) {
+        this._emitter.emit(TransmuxingEvents.SCRIPTDATA_ARRIVED, data);
+    }
+
+    _onTimedID3Metadata(timed_id3_metadata) {
+        let timestamp_base = this._remuxer.getTimestampBase();
+        if (timestamp_base == undefined) { return; }
+
+        if (timed_id3_metadata.pts != undefined) {
+            timed_id3_metadata.pts -= timestamp_base;
+        }
