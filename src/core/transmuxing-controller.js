@@ -377,3 +377,185 @@ class TransmuxingController {
         if (timed_id3_metadata.pts != undefined) {
             timed_id3_metadata.pts -= timestamp_base;
         }
+
+        if (timed_id3_metadata.dts != undefined) {
+            timed_id3_metadata.dts -= timestamp_base;
+        }
+
+        this._emitter.emit(TransmuxingEvents.TIMED_ID3_METADATA_ARRIVED, timed_id3_metadata);
+    }
+
+    _onSMPTE2038Metadata(smpte2038_metadata) {
+        let timestamp_base = this._remuxer.getTimestampBase();
+        if (timestamp_base == undefined) { return; }
+
+        if (smpte2038_metadata.pts != undefined) {
+            smpte2038_metadata.pts -= timestamp_base;
+        }
+
+        if (smpte2038_metadata.dts != undefined) {
+            smpte2038_metadata.dts -= timestamp_base;
+        }
+
+        if (smpte2038_metadata.nearest_pts != undefined) {
+            smpte2038_metadata.nearest_pts -= timestamp_base;
+        }
+
+        this._emitter.emit(TransmuxingEvents.SMPTE2038_METADATA_ARRIVED, smpte2038_metadata);
+    }
+
+    _onSCTE35Metadata(scte35) {
+        let timestamp_base = this._remuxer.getTimestampBase();
+        if (timestamp_base == undefined) { return; }
+
+        if (scte35.pts != undefined) {
+            scte35.pts -= timestamp_base;
+        }
+
+        if (scte35.nearest_pts != undefined) {
+            scte35.nearest_pts -= timestamp_base;
+        }
+
+        this._emitter.emit(TransmuxingEvents.SCTE35_METADATA_ARRIVED, scte35);
+    }
+
+    _onPESPrivateDataDescriptor(descriptor) {
+        this._emitter.emit(TransmuxingEvents.PES_PRIVATE_DATA_DESCRIPTOR, descriptor);
+    }
+
+    _onPESPrivateData(private_data) {
+        let timestamp_base = this._remuxer.getTimestampBase();
+        if (timestamp_base == undefined) { return; }
+
+        if (private_data.pts != undefined) {
+            private_data.pts -= timestamp_base;
+        }
+
+        if (private_data.nearest_pts != undefined) {
+            private_data.nearest_pts -= timestamp_base;
+        }
+
+        if (private_data.dts != undefined) {
+            private_data.dts -= timestamp_base;
+        }
+
+        this._emitter.emit(TransmuxingEvents.PES_PRIVATE_DATA_ARRIVED, private_data);
+    }
+
+    _onIOSeeked() {
+        this._remuxer.insertDiscontinuity();
+    }
+
+    _onIOComplete(extraData) {
+        let segmentIndex = extraData;
+        let nextSegmentIndex = segmentIndex + 1;
+
+        if (nextSegmentIndex < this._mediaDataSource.segments.length) {
+            this._internalAbort();
+            if (this._remuxer) {
+                this._remuxer.flushStashedSamples();
+            }
+            this._loadSegment(nextSegmentIndex);
+        } else {
+            if (this._remuxer) {
+                this._remuxer.flushStashedSamples();
+            }
+            this._emitter.emit(TransmuxingEvents.LOADING_COMPLETE);
+            this._disableStatisticsReporter();
+        }
+    }
+
+    _onIORedirect(redirectedURL) {
+        let segmentIndex = this._ioctl.extraData;
+        this._mediaDataSource.segments[segmentIndex].redirectedURL = redirectedURL;
+    }
+
+    _onIORecoveredEarlyEof() {
+        this._emitter.emit(TransmuxingEvents.RECOVERED_EARLY_EOF);
+    }
+
+    _onIOException(type, info) {
+        Log.e(this.TAG, `IOException: type = ${type}, code = ${info.code}, msg = ${info.msg}`);
+        this._emitter.emit(TransmuxingEvents.IO_ERROR, type, info);
+        this._disableStatisticsReporter();
+    }
+
+    _onDemuxException(type, info) {
+        Log.e(this.TAG, `DemuxException: type = ${type}, info = ${info}`);
+        this._emitter.emit(TransmuxingEvents.DEMUX_ERROR, type, info);
+    }
+
+    _onRemuxerInitSegmentArrival(type, initSegment) {
+        this._emitter.emit(TransmuxingEvents.INIT_SEGMENT, type, initSegment);
+    }
+
+    _onRemuxerMediaSegmentArrival(type, mediaSegment) {
+        if (this._pendingSeekTime != null) {
+            // Media segments after new-segment cross-seeking should be dropped.
+            return;
+        }
+        this._emitter.emit(TransmuxingEvents.MEDIA_SEGMENT, type, mediaSegment);
+
+        // Resolve pending seekPoint
+        if (this._pendingResolveSeekPoint != null && type === 'video') {
+            let syncPoints = mediaSegment.info.syncPoints;
+            let seekpoint = this._pendingResolveSeekPoint;
+            this._pendingResolveSeekPoint = null;
+
+            // Safari: Pass PTS for recommend_seekpoint
+            if (Browser.safari && syncPoints.length > 0 && syncPoints[0].originalDts === seekpoint) {
+                seekpoint = syncPoints[0].pts;
+            }
+            // else: use original DTS (keyframe.milliseconds)
+
+            this._emitter.emit(TransmuxingEvents.RECOMMEND_SEEKPOINT, seekpoint);
+        }
+    }
+
+    _enableStatisticsReporter() {
+        if (this._statisticsReporter == null) {
+            this._statisticsReporter = self.setInterval(
+                this._reportStatisticsInfo.bind(this),
+            this._config.statisticsInfoReportInterval);
+        }
+    }
+
+    _disableStatisticsReporter() {
+        if (this._statisticsReporter) {
+            self.clearInterval(this._statisticsReporter);
+            this._statisticsReporter = null;
+        }
+    }
+
+    _reportSegmentMediaInfo(segmentIndex) {
+        let segmentInfo = this._mediaInfo.segments[segmentIndex];
+        let exportInfo = Object.assign({}, segmentInfo);
+
+        exportInfo.duration = this._mediaInfo.duration;
+        exportInfo.segmentCount = this._mediaInfo.segmentCount;
+        delete exportInfo.segments;
+        delete exportInfo.keyframesIndex;
+
+        this._emitter.emit(TransmuxingEvents.MEDIA_INFO, exportInfo);
+    }
+
+    _reportStatisticsInfo() {
+        let info = {};
+
+        info.url = this._ioctl.currentURL;
+        info.hasRedirect = this._ioctl.hasRedirect;
+        if (info.hasRedirect) {
+            info.redirectedURL = this._ioctl.currentRedirectedURL;
+        }
+
+        info.speed = this._ioctl.currentSpeed;
+        info.loaderType = this._ioctl.loaderType;
+        info.currentSegmentIndex = this._currentSegmentIndex;
+        info.totalSegmentCount = this._mediaDataSource.segments.length;
+
+        this._emitter.emit(TransmuxingEvents.STATISTICS_INFO, info);
+    }
+
+}
+
+export default TransmuxingController;
