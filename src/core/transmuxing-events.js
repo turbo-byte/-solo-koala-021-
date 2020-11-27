@@ -24,4 +24,7 @@ const TransmuxingEvents = {
     LOADING_COMPLETE: 'loading_complete',
     RECOVERED_EARLY_EOF: 'recovered_early_eof',
     MEDIA_INFO: 'media_info',
-    METADATA_ARRIVED: 'metadata_arrived
+    METADATA_ARRIVED: 'metadata_arrived',
+    SCRIPTDATA_ARRIVED: 'scriptdata_arrived',
+    TIMED_ID3_METADATA_ARRIVED: 'timed_id3_metadata_arrived',
+    SMPTE2038_METADATA_ARRIVED: 'smpte2038_metadata_arri
