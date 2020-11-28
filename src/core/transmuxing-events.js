@@ -31,4 +31,8 @@ const TransmuxingEvents = {
     SCTE35_METADATA_ARRIVED: 'scte35_metadata_arrived',
     PES_PRIVATE_DATA_DESCRIPTOR: 'pes_private_data_descriptor',
     PES_PRIVATE_DATA_ARRIVED: 'pes_private_data_arrived',
-    STATISTICS_INFO: 'statisti
+    STATISTICS_INFO: 'statistics_info',
+    RECOMMEND_SEEKPOINT: 'recommend_seekpoint'
+};
+
+export default TransmuxingEvents;
