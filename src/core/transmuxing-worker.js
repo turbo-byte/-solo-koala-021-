@@ -75,3 +75,177 @@ let TransmuxingWorker = function (self) {
             case 'start':
                 controller.start();
                 break;
+            case 'stop':
+                controller.stop();
+                break;
+            case 'seek':
+                controller.seek(e.data.param);
+                break;
+            case 'pause':
+                controller.pause();
+                break;
+            case 'resume':
+                controller.resume();
+                break;
+            case 'logging_config': {
+                let config = e.data.param;
+                LoggingControl.applyConfig(config);
+
+                if (config.enableCallback === true) {
+                    LoggingControl.addLogListener(logcatListener);
+                } else {
+                    LoggingControl.removeLogListener(logcatListener);
+                }
+                break;
+            }
+        }
+    });
+
+    function onInitSegment(type, initSegment) {
+        let obj = {
+            msg: TransmuxingEvents.INIT_SEGMENT,
+            data: {
+                type: type,
+                data: initSegment
+            }
+        };
+        self.postMessage(obj, [initSegment.data]);  // data: ArrayBuffer
+    }
+
+    function onMediaSegment(type, mediaSegment) {
+        let obj = {
+            msg: TransmuxingEvents.MEDIA_SEGMENT,
+            data: {
+                type: type,
+                data: mediaSegment
+            }
+        };
+        self.postMessage(obj, [mediaSegment.data]);  // data: ArrayBuffer
+    }
+
+    function onLoadingComplete() {
+        let obj = {
+            msg: TransmuxingEvents.LOADING_COMPLETE
+        };
+        self.postMessage(obj);
+    }
+
+    function onRecoveredEarlyEof() {
+        let obj = {
+            msg: TransmuxingEvents.RECOVERED_EARLY_EOF
+        };
+        self.postMessage(obj);
+    }
+
+    function onMediaInfo(mediaInfo) {
+        let obj = {
+            msg: TransmuxingEvents.MEDIA_INFO,
+            data: mediaInfo
+        };
+        self.postMessage(obj);
+    }
+
+    function onMetaDataArrived(metadata) {
+        let obj = {
+            msg: TransmuxingEvents.METADATA_ARRIVED,
+            data: metadata
+        };
+        self.postMessage(obj);
+    }
+
+    function onScriptDataArrived(data) {
+        let obj = {
+            msg: TransmuxingEvents.SCRIPTDATA_ARRIVED,
+            data: data
+        };
+        self.postMessage(obj);
+    }
+
+    function onTimedID3MetadataArrived (data) {
+        let obj = {
+            msg: TransmuxingEvents.TIMED_ID3_METADATA_ARRIVED,
+            data: data
+        };
+        self.postMessage(obj);
+    }
+
+    function onSMPTE2038MetadataArrived (data) {
+        let obj = {
+            msg: TransmuxingEvents.SMPTE2038_METADATA_ARRIVED,
+            data: data
+        };
+        self.postMessage(obj);
+    }
+
+    function onSCTE35MetadataArrived (data) {
+        let obj = {
+            msg: TransmuxingEvents.SCTE35_METADATA_ARRIVED,
+            data: data
+        };
+        self.postMessage(obj);
+    }
+
+    function onPESPrivateDataDescriptor(data) {
+        let obj = {
+            msg: TransmuxingEvents.PES_PRIVATE_DATA_DESCRIPTOR,
+            data: data
+        };
+        self.postMessage(obj);
+    }
+
+    function onPESPrivateDataArrived(data) {
+        let obj = {
+            msg: TransmuxingEvents.PES_PRIVATE_DATA_ARRIVED,
+            data: data
+        };
+        self.postMessage(obj);
+    }
+
+    function onStatisticsInfo(statInfo) {
+        let obj = {
+            msg: TransmuxingEvents.STATISTICS_INFO,
+            data: statInfo
+        };
+        self.postMessage(obj);
+    }
+
+    function onIOError(type, info) {
+        self.postMessage({
+            msg: TransmuxingEvents.IO_ERROR,
+            data: {
+                type: type,
+                info: info
+            }
+        });
+    }
+
+    function onDemuxError(type, info) {
+        self.postMessage({
+            msg: TransmuxingEvents.DEMUX_ERROR,
+            data: {
+                type: type,
+                info: info
+            }
+        });
+    }
+
+    function onRecommendSeekpoint(milliseconds) {
+        self.postMessage({
+            msg: TransmuxingEvents.RECOMMEND_SEEKPOINT,
+            data: milliseconds
+        });
+    }
+
+    function onLogcatCallback(type, str) {
+        self.postMessage({
+            msg: 'logcat_callback',
+            data: {
+                type: type,
+                logcat: str
+            }
+        });
+    }
+
+};
+
+export default TransmuxingWorker;
