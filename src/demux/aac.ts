@@ -22,4 +22,10 @@ export class AACADTSParser {
     public constructor(data: Uint8Array) {
         this.data_ = data;
         this.current_syncword_offset_ = this.findNextSyncwordOffset(0);
-        if (this.eof_
+        if (this.eof_flag_) {
+            Log.e(this.TAG, `Could not found ADTS syncword until payload end`);
+        }
+    }
+
+    private findNextSyncwordOffset(syncword_offset: number): number {
+        let i = 
