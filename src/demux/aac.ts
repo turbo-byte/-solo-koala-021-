@@ -16,4 +16,10 @@ export class AACADTSParser {
 
     private data_: Uint8Array;
     private current_syncword_offset_: number;
-    private eof_flag_: boole
+    private eof_flag_: boolean;
+    private has_last_incomplete_data: boolean;
+
+    public constructor(data: Uint8Array) {
+        this.data_ = data;
+        this.current_syncword_offset_ = this.findNextSyncwordOffset(0);
+        if (this.eof_
