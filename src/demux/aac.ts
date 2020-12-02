@@ -10,4 +10,10 @@ export class AACFrame {
     data: Uint8Array;
 }
 
-export clas
+export class AACADTSParser {
+
+    private readonly TAG: string = "AACADTSParser";
+
+    private data_: Uint8Array;
+    private current_syncword_offset_: number;
+    private eof_flag_: boole
