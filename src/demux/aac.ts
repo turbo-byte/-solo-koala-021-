@@ -40,4 +40,13 @@ export class AACADTSParser {
             // search 12-bit 0xFFF syncword
             let syncword = ((data[i + 0] << 8) | data[i + 1]) >>> 4;
             if (syncword === 0xFFF) {
-                retur
+                return i;
+            } else {
+                i++;
+            }
+        }
+    }
+
+    public readNextAACFrame(): AACFrame | null {
+        let data = this.data_;
+        let aac_fram
