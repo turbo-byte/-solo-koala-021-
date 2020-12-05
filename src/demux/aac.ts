@@ -34,4 +34,10 @@ export class AACADTSParser {
         while (true) {
             if (i + 7 >= data.byteLength) {
                 this.eof_flag_ = true;
-                return data.byteLength
+                return data.byteLength;
+            }
+
+            // search 12-bit 0xFFF syncword
+            let syncword = ((data[i + 0] << 8) | data[i + 1]) >>> 4;
+            if (syncword === 0xFFF) {
+                retur
