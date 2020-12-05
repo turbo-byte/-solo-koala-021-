@@ -28,4 +28,10 @@ export class AACADTSParser {
     }
 
     private findNextSyncwordOffset(syncword_offset: number): number {
-        let i = 
+        let i = syncword_offset;
+        let data = this.data_;
+
+        while (true) {
+            if (i + 7 >= data.byteLength) {
+                this.eof_flag_ = true;
+                return data.byteLength
