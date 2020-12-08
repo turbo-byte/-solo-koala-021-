@@ -49,4 +49,11 @@ export class AACADTSParser {
 
     public readNextAACFrame(): AACFrame | null {
         let data = this.data_;
-        let aac_fram
+        let aac_frame: AACFrame = null;
+
+        while (aac_frame == null) {
+            if (this.eof_flag_) {
+                break;
+            }
+
+            let syncword_offset = this.current_syncword_
