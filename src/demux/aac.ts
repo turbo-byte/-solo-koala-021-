@@ -61,4 +61,8 @@ export class AACADTSParser {
 
             // adts_fixed_header()
             // syncword 0xFFF: 12-bit
-            let ID = (data[offset + 1] & 0x08) 
+            let ID = (data[offset + 1] & 0x08) >>> 3;
+            let layer = (data[offset + 1] & 0x06) >>> 1;
+            let protection_absent = data[offset + 1] & 0x01;
+            let profile = (data[offset + 2] & 0xC0) >>> 6;
+            let samp
