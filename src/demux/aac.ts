@@ -65,4 +65,6 @@ export class AACADTSParser {
             let layer = (data[offset + 1] & 0x06) >>> 1;
             let protection_absent = data[offset + 1] & 0x01;
             let profile = (data[offset + 2] & 0xC0) >>> 6;
-            let samp
+            let sampling_frequency_index = (data[offset + 2] & 0x3C) >>> 2;
+            let channel_configuration = ((data[offset + 2] & 0x01) << 2)
+                                        | ((data[offset + 
