@@ -56,4 +56,9 @@ export class AACADTSParser {
                 break;
             }
 
-            let syncword_offset = this.current_syncword_
+            let syncword_offset = this.current_syncword_offset_;
+            let offset = syncword_offset;
+
+            // adts_fixed_header()
+            // syncword 0xFFF: 12-bit
+            let ID = (data[offset + 1] & 0x08) 
