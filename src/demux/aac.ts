@@ -67,4 +67,8 @@ export class AACADTSParser {
             let profile = (data[offset + 2] & 0xC0) >>> 6;
             let sampling_frequency_index = (data[offset + 2] & 0x3C) >>> 2;
             let channel_configuration = ((data[offset + 2] & 0x01) << 2)
-                                        | ((data[offset + 
+                                        | ((data[offset + 3] & 0xC0) >>> 6);
+
+            // adts_variable_header()
+            let aac_frame_length = ((data[offset + 3] & 0x03) << 11)
+                                   
