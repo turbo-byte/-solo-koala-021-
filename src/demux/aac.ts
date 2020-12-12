@@ -71,4 +71,6 @@ export class AACADTSParser {
 
             // adts_variable_header()
             let aac_frame_length = ((data[offset + 3] & 0x03) << 11)
-                                   
+                                    | (data[offset + 4] << 3)
+                                    | ((data[offset + 5] & 0xE0) >>> 5);
+            let number_of_raw_data_blocks_in_frame = data[offset + 6] & 0x
