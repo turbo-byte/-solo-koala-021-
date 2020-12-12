@@ -73,4 +73,9 @@ export class AACADTSParser {
             let aac_frame_length = ((data[offset + 3] & 0x03) << 11)
                                     | (data[offset + 4] << 3)
                                     | ((data[offset + 5] & 0xE0) >>> 5);
-            let number_of_raw_data_blocks_in_frame = data[offset + 6] & 0x
+            let number_of_raw_data_blocks_in_frame = data[offset + 6] & 0x03;
+
+            if (offset + aac_frame_length > this.data_.byteLength) {
+                // data not enough for extracting last sample
+                this.eof_flag_ = true;
+                
