@@ -83,4 +83,9 @@ export class AACADTSParser {
             }
 
             let adts_header_length = (protection_absent === 1) ? 7 : 9;
-            let adts_frame_payload_length = aac_frame_length - adts
+            let adts_frame_payload_length = aac_frame_length - adts_header_length;
+
+            offset += adts_header_length;
+
+            let next_syncword_offset = this.findNextSyncwordOffset(offset + adts_frame_payload_length);
+     
