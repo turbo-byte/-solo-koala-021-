@@ -78,4 +78,9 @@ export class AACADTSParser {
             if (offset + aac_frame_length > this.data_.byteLength) {
                 // data not enough for extracting last sample
                 this.eof_flag_ = true;
-                
+                this.has_last_incomplete_data = true;
+                break;
+            }
+
+            let adts_header_length = (protection_absent === 1) ? 7 : 9;
+            let adts_frame_payload_length = aac_frame_length - adts
