@@ -93,4 +93,9 @@ export class AACADTSParser {
             if ((ID !== 0 && ID !== 1) || layer !== 0) {
                 // invalid adts frame ?
                 continue;
-     
+            }
+
+            let frame_data = data.subarray(offset, offset + adts_frame_payload_length);
+
+            aac_frame = new AACFrame();
+            aac_frame.audio_object_type = (profile + 1)
