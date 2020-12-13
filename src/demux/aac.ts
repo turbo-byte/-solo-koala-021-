@@ -88,4 +88,9 @@ export class AACADTSParser {
             offset += adts_header_length;
 
             let next_syncword_offset = this.findNextSyncwordOffset(offset + adts_frame_payload_length);
+            this.current_syncword_offset_ = next_syncword_offset;
+
+            if ((ID !== 0 && ID !== 1) || layer !== 0) {
+                // invalid adts frame ?
+                continue;
      
