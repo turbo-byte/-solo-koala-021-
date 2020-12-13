@@ -98,4 +98,6 @@ export class AACADTSParser {
             let frame_data = data.subarray(offset, offset + adts_frame_payload_length);
 
             aac_frame = new AACFrame();
-            aac_frame.audio_object_type = (profile + 1)
+            aac_frame.audio_object_type = (profile + 1) as MPEG4AudioObjectTypes;
+            aac_frame.sampling_freq_index = sampling_frequency_index as MPEG4SamplingFrequencyIndex;
+            aac_frame.sampling_frequency = MPEG4SamplingFrequencies[
