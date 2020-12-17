@@ -100,4 +100,12 @@ export class AACADTSParser {
             aac_frame = new AACFrame();
             aac_frame.audio_object_type = (profile + 1) as MPEG4AudioObjectTypes;
             aac_frame.sampling_freq_index = sampling_frequency_index as MPEG4SamplingFrequencyIndex;
-            aac_frame.sampling_frequency = MPEG4SamplingFrequencies[
+            aac_frame.sampling_frequency = MPEG4SamplingFrequencies[sampling_frequency_index];
+            aac_frame.channel_config = channel_configuration;
+            aac_frame.data = frame_data;
+        }
+
+        return aac_frame;
+    }
+
+    
