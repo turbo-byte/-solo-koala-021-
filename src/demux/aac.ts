@@ -114,3 +114,13 @@ export class AACADTSParser {
 
     public getIncompleteData(): Uint8Array {
         if (!this.has_last_incomplete_data) {
+            return null;
+        }
+
+        return this.data_.subarray(this.current_syncword_offset_);
+    }
+}
+
+export class AudioSpecificConfig {
+
+    public config: Array<number>
