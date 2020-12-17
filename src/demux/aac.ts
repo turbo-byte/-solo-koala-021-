@@ -108,4 +108,9 @@ export class AACADTSParser {
         return aac_frame;
     }
 
-    
+    public hasIncompleteData(): boolean {
+        return this.has_last_incomplete_data;
+    }
+
+    public getIncompleteData(): Uint8Array {
+        if (!this.has_last_incomplete_data) {
