@@ -123,4 +123,10 @@ export class AACADTSParser {
 
 export class AudioSpecificConfig {
 
-    public config: Array<number>
+    public config: Array<number>;
+    public sampling_rate: number;
+    public channel_count: number;
+    public codec_mimetype: string;
+    public original_codec_mimetype: string;
+
+    public constructor(frame: AA
