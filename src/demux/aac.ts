@@ -129,4 +129,9 @@ export class AudioSpecificConfig {
     public codec_mimetype: string;
     public original_codec_mimetype: string;
 
-    public constructor(frame: AA
+    public constructor(frame: AACFrame) {
+        let config: Array<number> = null;
+
+        let original_audio_object_type = frame.audio_object_type;
+        let audio_object_type = frame.audio_object_type;
+        l
