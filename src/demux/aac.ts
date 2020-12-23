@@ -134,4 +134,10 @@ export class AudioSpecificConfig {
 
         let original_audio_object_type = frame.audio_object_type;
         let audio_object_type = frame.audio_object_type;
-        l
+        let sampling_index = frame.sampling_freq_index;
+        let channel_config = frame.channel_config;
+        let extension_sampling_index = 0;
+
+        let userAgent = navigator.userAgent.toLowerCase();
+
+       
