@@ -140,4 +140,7 @@ export class AudioSpecificConfig {
 
         let userAgent = navigator.userAgent.toLowerCase();
 
-       
+        if (userAgent.indexOf('firefox') !== -1) {
+            // firefox: use SBR (HE-AAC) if freq less than 24kHz
+            if (sampling_index >= 6) {
+                audio_o
