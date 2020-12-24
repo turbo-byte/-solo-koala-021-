@@ -143,4 +143,8 @@ export class AudioSpecificConfig {
         if (userAgent.indexOf('firefox') !== -1) {
             // firefox: use SBR (HE-AAC) if freq less than 24kHz
             if (sampling_index >= 6) {
-                audio_o
+                audio_object_type = 5;
+                config = new Array(4);
+                extension_sampling_index = sampling_index - 3;
+            } else {  // use LC-AAC
+                audio_object_type = 2
