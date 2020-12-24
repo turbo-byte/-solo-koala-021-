@@ -147,4 +147,9 @@ export class AudioSpecificConfig {
                 config = new Array(4);
                 extension_sampling_index = sampling_index - 3;
             } else {  // use LC-AAC
-                audio_object_type = 2
+                audio_object_type = 2;
+                config = new Array(2);
+                extension_sampling_index = sampling_index;
+            }
+        } else if (userAgent.indexOf('android') !== -1) {
+            // android: always use LC-AAC
