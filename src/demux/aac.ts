@@ -160,4 +160,9 @@ export class AudioSpecificConfig {
             // for other browsers, e.g. chrome...
             // Always use HE-AAC to make it easier to switch aac codec profile
             audio_object_type = 5;
-            extension_sampling_
+            extension_sampling_index = sampling_index;
+            config = new Array(4);
+
+            if (sampling_index >= 6) {
+                extension_sampling_index = sampling_index - 3;
+            
