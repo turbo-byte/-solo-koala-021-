@@ -174,4 +174,8 @@ export class AudioSpecificConfig {
 
         config[0]  = audio_object_type << 3;
         config[0] |= (sampling_index & 0x0F) >>> 1;
-        config[1]  = (sampling_index & 0x0
+        config[1]  = (sampling_index & 0x0F) << 7;
+        config[1] |= (channel_config & 0x0F) << 3;
+        if (audio_object_type === 5) {
+            config[1] |= ((extension_sampling_index & 0x0F) >>> 1);
+            
