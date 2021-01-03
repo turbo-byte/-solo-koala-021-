@@ -165,4 +165,7 @@ export class AudioSpecificConfig {
 
             if (sampling_index >= 6) {
                 extension_sampling_index = sampling_index - 3;
-            
+            } else if (channel_config === 1) {  // Mono channel
+                audio_object_type = 2;
+                config = new Array(2);
+                extension_sampling_index = sampl
