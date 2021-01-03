@@ -168,4 +168,10 @@ export class AudioSpecificConfig {
             } else if (channel_config === 1) {  // Mono channel
                 audio_object_type = 2;
                 config = new Array(2);
-                extension_sampling_index = sampl
+                extension_sampling_index = sampling_index;
+            }
+        }
+
+        config[0]  = audio_object_type << 3;
+        config[0] |= (sampling_index & 0x0F) >>> 1;
+        config[1]  = (sampling_index & 0x0
