@@ -178,4 +178,10 @@ export class AudioSpecificConfig {
         config[1] |= (channel_config & 0x0F) << 3;
         if (audio_object_type === 5) {
             config[1] |= ((extension_sampling_index & 0x0F) >>> 1);
-            
+            config[2]  = (extension_sampling_index & 0x01) << 7;
+            // extended audio object type: force to 2 (LC-AAC)
+            config[2] |= (2 << 2);
+            config[3]  = 0;
+        }
+
+  
