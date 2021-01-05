@@ -184,4 +184,7 @@ export class AudioSpecificConfig {
             config[3]  = 0;
         }
 
-  
+        this.config = config;
+        this.sampling_rate = MPEG4SamplingFrequencies[sampling_index];
+        this.channel_count = channel_config;
+        this.codec_mimet
