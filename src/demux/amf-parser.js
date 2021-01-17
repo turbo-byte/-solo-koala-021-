@@ -13,4 +13,11 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under
+ * limitations under the License.
+ */
+
+import Log from '../utils/logger.js';
+import decodeUTF8 from '../utils/utf8-conv.js';
+import {IllegalStateException} from '../utils/exception.js';
+
+let le = (function () {
