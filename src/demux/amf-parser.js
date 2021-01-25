@@ -25,3 +25,11 @@ let le = (function () {
     (new DataView(buf)).setInt16(0, 256, true);  // little-endian write
     return (new Int16Array(buf))[0] === 256;  // platform-spec read, if equal then LE
 })();
+
+class AMF {
+
+    static parseScriptData(arrayBuffer, dataOffset, dataSize) {
+        let data = {};
+
+        try {
+            let name = AMF.parseValue(arra
