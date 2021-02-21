@@ -32,4 +32,7 @@ class AMF {
         let data = {};
 
         try {
-            let name = AMF.parseValue(arra
+            let name = AMF.parseValue(arrayBuffer, dataOffset, dataSize);
+            let value = AMF.parseValue(arrayBuffer, dataOffset + name.size, dataSize - name.size);
+
+            data[name.data] = value.da
