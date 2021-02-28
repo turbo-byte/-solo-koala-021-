@@ -35,4 +35,13 @@ class AMF {
             let name = AMF.parseValue(arrayBuffer, dataOffset, dataSize);
             let value = AMF.parseValue(arrayBuffer, dataOffset + name.size, dataSize - name.size);
 
-            data[name.data] = value.da
+            data[name.data] = value.data;
+        } catch (e) {
+            Log.e('AMF', e.toString());
+        }
+
+        return data;
+    }
+
+    static parseObject(arrayBuffer, dataOffset, dataSize) {
+        if (dataSize < 3)
