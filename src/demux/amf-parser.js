@@ -44,4 +44,7 @@ class AMF {
     }
 
     static parseObject(arrayBuffer, dataOffset, dataSize) {
-        if (dataSize < 3)
+        if (dataSize < 3) {
+            throw new IllegalStateException('Data not enough when parse ScriptDataObject');
+        }
+        let name = AMF.parseString(arrayBuffer, dataOffset, dataSize)
