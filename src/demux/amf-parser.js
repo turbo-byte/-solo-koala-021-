@@ -52,4 +52,10 @@ class AMF {
         let isObjectEnd = value.objectEnd;
 
         return {
-         
+            data: {
+                name: name.data,
+                value: value.data
+            },
+            size: name.size + value.size,
+            objectEnd: isObjectEnd
+    
