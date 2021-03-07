@@ -58,4 +58,11 @@ class AMF {
             },
             size: name.size + value.size,
             objectEnd: isObjectEnd
-    
+        };
+    }
+
+    static parseVariable(arrayBuffer, dataOffset, dataSize) {
+        return AMF.parseObject(arrayBuffer, dataOffset, dataSize);
+    }
+
+    static parseString(arrayBuffer, dataO
