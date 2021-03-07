@@ -65,4 +65,8 @@ class AMF {
         return AMF.parseObject(arrayBuffer, dataOffset, dataSize);
     }
 
-    static parseString(arrayBuffer, dataO
+    static parseString(arrayBuffer, dataOffset, dataSize) {
+        if (dataSize < 2) {
+            throw new IllegalStateException('Data not enough when parse String');
+        }
+        let v = new DataView(arrayBuffer,
