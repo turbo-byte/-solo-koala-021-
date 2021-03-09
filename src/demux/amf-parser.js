@@ -74,4 +74,15 @@ class AMF {
 
         let str;
         if (length > 0) {
-            str = decodeUTF8(new Uint8Array(arrayBuffer, dataOffset + 2, length))
+            str = decodeUTF8(new Uint8Array(arrayBuffer, dataOffset + 2, length));
+        } else {
+            str = '';
+        }
+
+        return {
+            data: str,
+            size: 2 + length
+        };
+    }
+
+    static parseLongSt
