@@ -85,4 +85,8 @@ class AMF {
         };
     }
 
-    static parseLongSt
+    static parseLongString(arrayBuffer, dataOffset, dataSize) {
+        if (dataSize < 4) {
+            throw new IllegalStateException('Data not enough when parse LongString');
+        }
+        let v = new DataView
