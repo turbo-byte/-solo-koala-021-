@@ -94,4 +94,15 @@ class AMF {
 
         let str;
         if (length > 0) {
-            str = decodeUTF8(new Uint8Array(arrayBuffer, dataOffset + 4
+            str = decodeUTF8(new Uint8Array(arrayBuffer, dataOffset + 4, length));
+        } else {
+            str = '';
+        }
+
+        return {
+            data: str,
+            size: 4 + length
+        };
+    }
+
+    static parseDate(arrayBuffer, dat
