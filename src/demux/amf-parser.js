@@ -89,4 +89,9 @@ class AMF {
         if (dataSize < 4) {
             throw new IllegalStateException('Data not enough when parse LongString');
         }
-        let v = new DataView
+        let v = new DataView(arrayBuffer, dataOffset, dataSize);
+        let length = v.getUint32(0, !le);
+
+        let str;
+        if (length > 0) {
+            str = decodeUTF8(new Uint8Array(arrayBuffer, dataOffset + 4
