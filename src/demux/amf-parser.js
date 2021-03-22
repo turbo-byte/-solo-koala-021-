@@ -105,4 +105,8 @@ class AMF {
         };
     }
 
-    static parseDate(arrayBuffer, dat
+    static parseDate(arrayBuffer, dataOffset, dataSize) {
+        if (dataSize < 10) {
+            throw new IllegalStateException('Data size invalid when parse Date');
+        }
+        let v = new DataView(arrayBu
