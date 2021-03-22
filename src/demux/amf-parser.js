@@ -109,4 +109,9 @@ class AMF {
         if (dataSize < 10) {
             throw new IllegalStateException('Data size invalid when parse Date');
         }
-        let v = new DataView(arrayBu
+        let v = new DataView(arrayBuffer, dataOffset, dataSize);
+        let timestamp = v.getFloat64(0, !le);
+        let localTimeOffset = v.getInt16(8, !le);
+        timestamp += localTimeOffset * 60 * 1000;  // get UTC time
+
+        re
