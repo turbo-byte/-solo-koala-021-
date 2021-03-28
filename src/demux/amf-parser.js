@@ -128,4 +128,11 @@ class AMF {
         let v = new DataView(arrayBuffer, dataOffset, dataSize);
 
         let offset = 1;
-        let type = v.
+        let type = v.getUint8(0);
+        let value;
+        let objectEnd = false;
+
+        try {
+            switch (type) {
+                case 0:  // Number(Double) type
+                    value
