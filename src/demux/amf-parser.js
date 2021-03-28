@@ -114,4 +114,12 @@ class AMF {
         let localTimeOffset = v.getInt16(8, !le);
         timestamp += localTimeOffset * 60 * 1000;  // get UTC time
 
-        re
+        return {
+            data: new Date(timestamp),
+            size: 8 + 2
+        };
+    }
+
+    static parseValue(arrayBuffer, dataOffset, dataSize) {
+        if (dataSize < 1) {
+      
