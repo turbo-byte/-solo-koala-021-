@@ -122,4 +122,10 @@ class AMF {
 
     static parseValue(arrayBuffer, dataOffset, dataSize) {
         if (dataSize < 1) {
-      
+            throw new IllegalStateException('Data not enough when parse Value');
+        }
+
+        let v = new DataView(arrayBuffer, dataOffset, dataSize);
+
+        let offset = 1;
+        let type = v.
