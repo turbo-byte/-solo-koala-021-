@@ -150,4 +150,7 @@ class AMF {
                     offset += amfstr.size;
                     break;
                 }
-                ca
+                case 3: { // Object(s) type
+                    value = {};
+                    let terminal = 0;  // workaround for malformed Objects which has missing ScriptDataObjectEnd
+   
