@@ -135,4 +135,9 @@ class AMF {
         try {
             switch (type) {
                 case 0:  // Number(Double) type
-                    value
+                    value = v.getFloat64(1, !le);
+                    offset += 8;
+                    break;
+                case 1: {  // Boolean type
+                    let b = v.getUint8(1);
+                    val
