@@ -145,4 +145,9 @@ class AMF {
                     break;
                 }
                 case 2: {  // String type
-                    let amfstr = AMF.parseString(ar
+                    let amfstr = AMF.parseString(arrayBuffer, dataOffset + 1, dataSize - 1);
+                    value = amfstr.data;
+                    offset += amfstr.size;
+                    break;
+                }
+                ca
