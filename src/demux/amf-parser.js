@@ -140,4 +140,9 @@ class AMF {
                     break;
                 case 1: {  // Boolean type
                     let b = v.getUint8(1);
-                    val
+                    value = b ? true : false;
+                    offset += 1;
+                    break;
+                }
+                case 2: {  // String type
+                    let amfstr = AMF.parseString(ar
