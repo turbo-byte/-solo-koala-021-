@@ -153,4 +153,7 @@ class AMF {
                 case 3: { // Object(s) type
                     value = {};
                     let terminal = 0;  // workaround for malformed Objects which has missing ScriptDataObjectEnd
-   
+                    if ((v.getUint32(dataSize - 4, !le) & 0x00FFFFFF) === 9) {
+                        terminal = 3;
+                    }
+                    while (offset < dataSi
