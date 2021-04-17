@@ -158,3 +158,8 @@ class AMF {
                     }
                     while (offset < dataSize - 4) {  // 4 === type(UI8) + ScriptDataObjectEnd(UI24)
                         let amfobj = AMF.parseObject(arrayBuffer, dataOffset + offset, dataSize - offset - terminal);
+                        if (amfobj.objectEnd)
+                            break;
+                        value[amfobj.data.name] = amfobj.data.value;
+                        offset += amfobj.size;
+              
