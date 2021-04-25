@@ -162,4 +162,7 @@ class AMF {
                             break;
                         value[amfobj.data.name] = amfobj.data.value;
                         offset += amfobj.size;
-              
+                    }
+                    if (offset <= dataSize - 3) {
+                        let marker = v.getUint32(offset - 1, !le) & 0x00FFFFFF;
+                        
