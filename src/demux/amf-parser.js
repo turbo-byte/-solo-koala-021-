@@ -171,4 +171,7 @@ class AMF {
                     }
                     break;
                 }
-                case 8: { // ECMA ar
+                case 8: { // ECMA array type (Mixed array)
+                    value = {};
+                    offset += 4;  // ECMAArrayLength(UI32)
+                    let terminal = 0;  // workaround for malformed MixedArrays which h
