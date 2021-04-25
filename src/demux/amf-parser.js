@@ -165,4 +165,10 @@ class AMF {
                     }
                     if (offset <= dataSize - 3) {
                         let marker = v.getUint32(offset - 1, !le) & 0x00FFFFFF;
-                        
+                        if (marker === 9) {
+                            offset += 3;
+                        }
+                    }
+                    break;
+                }
+                case 8: { // ECMA ar
