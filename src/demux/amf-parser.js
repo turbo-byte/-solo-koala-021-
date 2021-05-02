@@ -182,4 +182,8 @@ class AMF {
                         let amfvar = AMF.parseVariable(arrayBuffer, dataOffset + offset, dataSize - offset - terminal);
                         if (amfvar.objectEnd)
                             break;
-                        value[amfvar.data.name] = amfvar.data.val
+                        value[amfvar.data.name] = amfvar.data.value;
+                        offset += amfvar.size;
+                    }
+                    if (offset <= dataSize - 3) {
+                        let marker = v.getUint32(offset - 1, !
