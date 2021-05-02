@@ -179,4 +179,7 @@ class AMF {
                         terminal = 3;
                     }
                     while (offset < dataSize - 8) {  // 8 === type(UI8) + ECMAArrayLength(UI32) + ScriptDataVariableEnd(UI24)
-                        let amfvar = AMF.parseVariable(arrayBuffer, dataOf
+                        let amfvar = AMF.parseVariable(arrayBuffer, dataOffset + offset, dataSize - offset - terminal);
+                        if (amfvar.objectEnd)
+                            break;
+                        value[amfvar.data.name] = amfvar.data.val
