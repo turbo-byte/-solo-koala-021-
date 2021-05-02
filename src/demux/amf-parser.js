@@ -174,4 +174,8 @@ class AMF {
                 case 8: { // ECMA array type (Mixed array)
                     value = {};
                     offset += 4;  // ECMAArrayLength(UI32)
-                    let terminal = 0;  // workaround for malformed MixedArrays which h
+                    let terminal = 0;  // workaround for malformed MixedArrays which has missing ScriptDataObjectEnd
+                    if ((v.getUint32(dataSize - 4, !le) & 0x00FFFFFF) === 9) {
+                        terminal = 3;
+                    }
+                    while (of
