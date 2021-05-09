@@ -186,4 +186,10 @@ class AMF {
                         offset += amfvar.size;
                     }
                     if (offset <= dataSize - 3) {
-                        let marker = v.getUint32(offset - 1, !
+                        let marker = v.getUint32(offset - 1, !le) & 0x00FFFFFF;
+                        if (marker === 9) {
+                            offset += 3;
+                        }
+                    }
+                    break;
+            
