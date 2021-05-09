@@ -192,4 +192,9 @@ class AMF {
                         }
                     }
                     break;
-            
+                }
+                case 9:  // ScriptDataObjectEnd
+                    value = undefined;
+                    offset = 1;
+                    objectEnd = true;
+                   
