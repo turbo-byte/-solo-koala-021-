@@ -200,4 +200,8 @@ class AMF {
                     break;
                 case 10: {  // Strict array type
                     // ScriptDataValue[n]. NOTE: according to video_file_format_spec_v10_1.pdf
-                    valu
+                    value = [];
+                    let strictArrayLength = v.getUint32(1, !le);
+                    offset += 4;
+                    for (let i = 0; i < strictArrayLength; i++) {
+  
