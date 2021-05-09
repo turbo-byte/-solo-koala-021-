@@ -197,4 +197,7 @@ class AMF {
                     value = undefined;
                     offset = 1;
                     objectEnd = true;
-                   
+                    break;
+                case 10: {  // Strict array type
+                    // ScriptDataValue[n]. NOTE: according to video_file_format_spec_v10_1.pdf
+                    valu
