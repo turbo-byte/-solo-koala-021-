@@ -207,4 +207,8 @@ class AMF {
                         let val = AMF.parseValue(arrayBuffer, dataOffset + offset, dataSize - offset);
                         value.push(val.data);
                         offset += val.size;
-   
+                    }
+                    break;
+                }
+                case 11: {  // Date type
+                    let date = AMF.parseDate(arrayBuffe
