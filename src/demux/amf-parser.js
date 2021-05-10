@@ -204,4 +204,7 @@ class AMF {
                     let strictArrayLength = v.getUint32(1, !le);
                     offset += 4;
                     for (let i = 0; i < strictArrayLength; i++) {
-  
+                        let val = AMF.parseValue(arrayBuffer, dataOffset + offset, dataSize - offset);
+                        value.push(val.data);
+                        offset += val.size;
+   
