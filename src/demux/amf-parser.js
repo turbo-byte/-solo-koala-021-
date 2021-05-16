@@ -211,4 +211,9 @@ class AMF {
                     break;
                 }
                 case 11: {  // Date type
-                    let date = AMF.parseDate(arrayBuffe
+                    let date = AMF.parseDate(arrayBuffer, dataOffset + 1, dataSize - 1);
+                    value = date.data;
+                    offset += date.size;
+                    break;
+                }
+                case 12:
