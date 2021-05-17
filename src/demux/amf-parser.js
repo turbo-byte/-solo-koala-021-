@@ -224,4 +224,11 @@ class AMF {
                 }
                 default:
                     // ignore and skip
-                    offs
+                    offset = dataSize;
+                    Log.w('AMF', 'Unsupported AMF value type ' + type);
+            }
+        } catch (e) {
+            Log.e('AMF', e.toString());
+        }
+
+        retur
