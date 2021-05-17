@@ -219,3 +219,9 @@ class AMF {
                 case 12: {  // Long string type
                     let amfLongStr = AMF.parseString(arrayBuffer, dataOffset + 1, dataSize - 1);
                     value = amfLongStr.data;
+                    offset += amfLongStr.size;
+                    break;
+                }
+                default:
+                    // ignore and skip
+                    offs
