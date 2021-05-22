@@ -231,4 +231,13 @@ class AMF {
             Log.e('AMF', e.toString());
         }
 
-        retur
+        return {
+            data: value,
+            size: offset,
+            objectEnd: objectEnd
+        };
+    }
+
+}
+
+export default AMF;
