@@ -6,4 +6,7 @@ import { SCTE35Data } from './scte35';
 type OnErrorCallback = (type: string, info: string) => void;
 type OnMediaInfoCallback = (mediaInfo: MediaInfo) => void;
 type OnMetaDataArrivedCallback = (metadata: any) => void;
-type OnTrackMetadataCallback = (type: string, metadata: any) => vo
+type OnTrackMetadataCallback = (type: string, metadata: any) => void;
+type OnDataAvailableCallback = (videoTrack: any, audioTrack: any) => void;
+type OnTimedID3MetadataCallback = (timed_id3_data: PESPrivateData) => void;
+type OnSMPTE2038MetadataCallback = (smpt
