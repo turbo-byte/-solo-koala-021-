@@ -11,4 +11,9 @@ type OnDataAvailableCallback = (videoTrack: any, audioTrack: any) => void;
 type OnTimedID3MetadataCallback = (timed_id3_data: PESPrivateData) => void;
 type OnSMPTE2038MetadataCallback = (smpte2038_data: SMPTE2038Data) => void;
 type OnSCTE35MetadataCallback = (scte35_data: SCTE35Data) => void;
-type OnPESPrivateDataCallback = (private_data: 
+type OnPESPrivateDataCallback = (private_data: PESPrivateData) => void;
+type OnPESPrivateDataDescriptorCallback = (private_data_descriptor: PESPrivateDataDescriptor) => void;
+
+export default abstract class BaseDemuxer {
+
+    pu
