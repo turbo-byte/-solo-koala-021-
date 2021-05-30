@@ -16,4 +16,7 @@ type OnPESPrivateDataDescriptorCallback = (private_data_descriptor: PESPrivateDa
 
 export default abstract class BaseDemuxer {
 
-    pu
+    public onError: OnErrorCallback;
+    public onMediaInfo: OnMediaInfoCallback;
+    public onMetaDataArrived: OnMetaDataArrivedCallback;
+    public onTrackMetadata: OnTrackMetada
