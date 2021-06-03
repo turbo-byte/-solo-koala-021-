@@ -27,3 +27,11 @@ export default abstract class BaseDemuxer {
     public onPESPrivateData: OnPESPrivateDataCallback;
     public onPESPrivateDataDescriptor: OnPESPrivateDataDescriptorCallback;
 
+    public constructor() {}
+
+    public destroy(): void {
+        this.onError = null;
+        this.onMediaInfo = null;
+        this.onMetaDataArrived = null;
+        this.onTrackMetadata = null;
+   
