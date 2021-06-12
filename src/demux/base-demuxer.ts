@@ -39,4 +39,9 @@ export default abstract class BaseDemuxer {
         this.onSMPTE2038Metadata = null;
         this.onSCTE35Metadata = null;
         this.onPESPrivateData = null;
-        this.onPE
+        this.onPESPrivateDataDescriptor = null;
+    }
+
+    abstract parseChunks(chunk: ArrayBuffer, byteStart: number): number;
+
+}
