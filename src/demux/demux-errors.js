@@ -23,4 +23,4 @@ const DemuxErrors = {
     CODEC_UNSUPPORTED: 'CodecUnsupported'
 };
 
-expo
+export default DemuxErrors;
