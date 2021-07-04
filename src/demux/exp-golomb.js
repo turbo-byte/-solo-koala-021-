@@ -25,4 +25,8 @@ class ExpGolomb {
         this.TAG = 'ExpGolomb';
 
         this._buffer = uint8array;
-       
+        this._buffer_index = 0;
+        this._total_bytes = uint8array.byteLength;
+        this._total_bits = uint8array.byteLength * 8;
+        this._current_word = 0;
+        this._
