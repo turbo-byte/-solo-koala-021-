@@ -29,4 +29,13 @@ class ExpGolomb {
         this._total_bytes = uint8array.byteLength;
         this._total_bits = uint8array.byteLength * 8;
         this._current_word = 0;
-        this._
+        this._current_word_bits_left = 0;
+    }
+
+    destroy() {
+        this._buffer = null;
+    }
+
+    _fillCurrentWord() {
+        let buffer_bytes_left = this._total_bytes - this._buffer_index;
+       
