@@ -38,4 +38,7 @@ class ExpGolomb {
 
     _fillCurrentWord() {
         let buffer_bytes_left = this._total_bytes - this._buffer_index;
-       
+        if (buffer_bytes_left <= 0)
+            throw new IllegalStateException('ExpGolomb: _fillCurrentWord() but no bytes available');
+
+        let bytes_read = Math.min(4, buffer_bytes_le
