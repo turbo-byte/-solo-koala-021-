@@ -41,4 +41,7 @@ class ExpGolomb {
         if (buffer_bytes_left <= 0)
             throw new IllegalStateException('ExpGolomb: _fillCurrentWord() but no bytes available');
 
-        let bytes_read = Math.min(4, buffer_bytes_le
+        let bytes_read = Math.min(4, buffer_bytes_left);
+        let word = new Uint8Array(4);
+        word.set(this._buffer.subarray(this._buffer_index, this._buffer_index + bytes_read));
+        this._current_word = new DataView(wor
