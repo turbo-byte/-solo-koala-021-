@@ -55,4 +55,10 @@ class ExpGolomb {
             throw new InvalidArgumentException('ExpGolomb: readBits() bits exceeded max 32bits!');
 
         if (bits <= this._current_word_bits_left) {
-            let res
+            let result = this._current_word >>> (32 - bits);
+            this._current_word <<= bits;
+            this._current_word_bits_left -= bits;
+            return result;
+        }
+
+        let result = this._cu
