@@ -44,4 +44,12 @@ class ExpGolomb {
         let bytes_read = Math.min(4, buffer_bytes_left);
         let word = new Uint8Array(4);
         word.set(this._buffer.subarray(this._buffer_index, this._buffer_index + bytes_read));
-        this._current_word = new DataView(wor
+        this._current_word = new DataView(word.buffer).getUint32(0, false);
+
+        this._buffer_index += bytes_read;
+        this._current_word_bits_left = bytes_read * 8;
+    }
+
+    readBits(bits) {
+        if (bits > 32)
+           
