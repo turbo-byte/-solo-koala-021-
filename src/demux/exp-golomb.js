@@ -61,4 +61,6 @@ class ExpGolomb {
             return result;
         }
 
-        let result = this._cu
+        let result = this._current_word_bits_left ? this._current_word : 0;
+        result = result >>> (32 - this._current_word_bits_left);
+        let bits_need_left = bits - this._current_word_bits_
