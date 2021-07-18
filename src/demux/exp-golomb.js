@@ -76,4 +76,14 @@ class ExpGolomb {
         return result;
     }
 
-    rea
+    readBool() {
+        return this.readBits(1) === 1;
+    }
+
+    readByte() {
+        return this.readBits(8);
+    }
+
+    _skipLeadingZero() {
+        let zero_count;
+ 
