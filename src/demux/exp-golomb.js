@@ -68,4 +68,12 @@ class ExpGolomb {
         this._fillCurrentWord();
         let bits_read_next = Math.min(bits_need_left, this._current_word_bits_left);
 
-        let result2 = this._current_word >>> (32 - bits_
+        let result2 = this._current_word >>> (32 - bits_read_next);
+        this._current_word <<= bits_read_next;
+        this._current_word_bits_left -= bits_read_next;
+
+        result = (result << bits_read_next) | result2;
+        return result;
+    }
+
+    rea
