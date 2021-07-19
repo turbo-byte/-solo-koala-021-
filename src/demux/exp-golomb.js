@@ -86,4 +86,6 @@ class ExpGolomb {
 
     _skipLeadingZero() {
         let zero_count;
- 
+        for (zero_count = 0; zero_count < this._current_word_bits_left; zero_count++) {
+            if (0 !== (this._current_word & (0x80000000 >>> zero_count))) {
+  
