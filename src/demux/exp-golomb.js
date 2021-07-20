@@ -92,4 +92,10 @@ class ExpGolomb {
                 this._current_word_bits_left -= zero_count;
                 return zero_count;
             }
-       
+        }
+        this._fillCurrentWord();
+        return zero_count + this._skipLeadingZero();
+    }
+
+    readUEG() {  // unsigned exponential golomb
+        let leading_zeros = this._skipLeadingZer
