@@ -98,4 +98,10 @@ class ExpGolomb {
     }
 
     readUEG() {  // unsigned exponential golomb
-        let leading_zeros = this._skipLeadingZer
+        let leading_zeros = this._skipLeadingZero();
+        return this.readBits(leading_zeros + 1) - 1;
+    }
+
+    readSEG() {  // signed exponential golomb
+        let value = this.readUEG();
+        if (value & 0x
