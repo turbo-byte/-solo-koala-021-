@@ -104,4 +104,13 @@ class ExpGolomb {
 
     readSEG() {  // signed exponential golomb
         let value = this.readUEG();
-        if (value & 0x
+        if (value & 0x01) {
+            return (value + 1) >>> 1;
+        } else {
+            return -1 * (value >>> 1);
+        }
+    }
+
+}
+
+export default ExpGolomb;
