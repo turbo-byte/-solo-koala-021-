@@ -817,3 +817,180 @@ class FLVDemuxer {
                     }
                     break;
             }
+
+            result = {
+                bitRate: bit_rate,
+                samplingRate: sample_rate,
+                channelCount: channel_count,
+                codec: codec,
+                originalCodec: codec
+            };
+        } else {
+            result = array;
+        }
+
+        return result;
+    }
+
+    _parseVideoData(arrayBuffer, dataOffset, dataSize, tagTimestamp, tagPosition) {
+        if (dataSize <= 1) {
+            Log.w(this.TAG, 'Flv: Invalid video packet, missing VideoData payload!');
+            return;
+        }
+
+        if (this._hasVideoFlagOverrided === true && this._hasVideo === false) {
+            // If hasVideo: false indicated explicitly in MediaDataSource,
+            // Ignore all the video packets
+            return;
+        }
+
+        let spec = (new Uint8Array(arrayBuffer, dataOffset, dataSize))[0];
+
+        let frameType = (spec & 240) >>> 4;
+        let codecId = spec & 15;
+
+        if (codecId === 7) { // AVC
+            this._parseAVCVideoPacket(arrayBuffer, dataOffset + 1, dataSize - 1, tagTimestamp, tagPosition, frameType);
+        } else if (codecId === 12) { // HEVC
+            this._parseHEVCVideoPacket(arrayBuffer, dataOffset + 1, dataSize - 1, tagTimestamp, tagPosition, frameType);
+        } else {
+            this._onError(DemuxErrors.CODEC_UNSUPPORTED, `Flv: Unsupported codec in video frame: ${codecId}`);
+            return;
+        }
+    }
+
+    _parseAVCVideoPacket(arrayBuffer, dataOffset, dataSize, tagTimestamp, tagPosition, frameType) {
+        if (dataSize < 4) {
+            Log.w(this.TAG, 'Flv: Invalid AVC packet, missing AVCPacketType or/and CompositionTime');
+            return;
+        }
+
+        let le = this._littleEndian;
+        let v = new DataView(arrayBuffer, dataOffset, dataSize);
+
+        let packetType = v.getUint8(0);
+        let cts_unsigned = v.getUint32(0, !le) & 0x00FFFFFF;
+        let cts = (cts_unsigned << 8) >> 8;  // convert to 24-bit signed int
+
+        if (packetType === 0) {  // AVCDecoderConfigurationRecord
+            this._parseAVCDecoderConfigurationRecord(arrayBuffer, dataOffset + 4, dataSize - 4);
+        } else if (packetType === 1) {  // One or more Nalus
+            this._parseAVCVideoData(arrayBuffer, dataOffset + 4, dataSize - 4, tagTimestamp, tagPosition, frameType, cts);
+        } else if (packetType === 2) {
+            // empty, AVC end of sequence
+        } else {
+            this._onError(DemuxErrors.FORMAT_ERROR, `Flv: Invalid video packet type ${packetType}`);
+            return;
+        }
+    }
+
+    _parseHEVCVideoPacket(arrayBuffer, dataOffset, dataSize, tagTimestamp, tagPosition, frameType) {
+        if (dataSize < 4) {
+            Log.w(this.TAG, 'Flv: Invalid HEVC packet, missing HEVCPacketType or/and CompositionTime');
+            return;
+        }
+
+        let le = this._littleEndian;
+        let v = new DataView(arrayBuffer, dataOffset, dataSize);
+
+        let packetType = v.getUint8(0);
+        let cts_unsigned = v.getUint32(0, !le) & 0x00FFFFFF;
+        let cts = (cts_unsigned << 8) >> 8;  // convert to 24-bit signed int
+
+        if (packetType === 0) {  // HEVCDecoderConfigurationRecord
+            this._parseHEVCDecoderConfigurationRecord(arrayBuffer, dataOffset + 4, dataSize - 4);
+        } else if (packetType === 1) {  // One or more Nalus
+            this._parseHEVCVideoData(arrayBuffer, dataOffset + 4, dataSize - 4, tagTimestamp, tagPosition, frameType, cts);
+        } else if (packetType === 2) {
+            // empty, HEVC end of sequence
+        } else {
+            this._onError(DemuxErrors.FORMAT_ERROR, `Flv: Invalid video packet type ${packetType}`);
+            return;
+        }
+    }
+
+    _parseAVCDecoderConfigurationRecord(arrayBuffer, dataOffset, dataSize) {
+        if (dataSize < 7) {
+            Log.w(this.TAG, 'Flv: Invalid AVCDecoderConfigurationRecord, lack of data!');
+            return;
+        }
+
+        let meta = this._videoMetadata;
+        let track = this._videoTrack;
+        let le = this._littleEndian;
+        let v = new DataView(arrayBuffer, dataOffset, dataSize);
+
+        if (!meta) {
+            if (this._hasVideo === false && this._hasVideoFlagOverrided === false) {
+                this._hasVideo = true;
+                this._mediaInfo.hasVideo = true;
+            }
+
+            meta = this._videoMetadata = {};
+            meta.type = 'video';
+            meta.id = track.id;
+            meta.timescale = this._timescale;
+            meta.duration = this._duration;
+        } else {
+            if (typeof meta.avcc !== 'undefined') {
+                let new_avcc = new Uint8Array(arrayBuffer, dataOffset, dataSize);
+                if (buffersAreEqual(new_avcc, meta.avcc)) {
+                    // AVCDecoderConfigurationRecord is not changed, ignore it to avoid initializaiton segment re-generating
+                    return;
+                } else {
+                    Log.w(this.TAG, 'AVCDecoderConfigurationRecord has been changed, re-generate initialization segment');
+                }
+            }
+        }
+
+        let version = v.getUint8(0);  // configurationVersion
+        let avcProfile = v.getUint8(1);  // avcProfileIndication
+        let profileCompatibility = v.getUint8(2);  // profile_compatibility
+        let avcLevel = v.getUint8(3);  // AVCLevelIndication
+
+        if (version !== 1 || avcProfile === 0) {
+            this._onError(DemuxErrors.FORMAT_ERROR, 'Flv: Invalid AVCDecoderConfigurationRecord');
+            return;
+        }
+
+        this._naluLengthSize = (v.getUint8(4) & 3) + 1;  // lengthSizeMinusOne
+        if (this._naluLengthSize !== 3 && this._naluLengthSize !== 4) {  // holy shit!!!
+            this._onError(DemuxErrors.FORMAT_ERROR, `Flv: Strange NaluLengthSizeMinusOne: ${this._naluLengthSize - 1}`);
+            return;
+        }
+
+        let spsCount = v.getUint8(5) & 31;  // numOfSequenceParameterSets
+        if (spsCount === 0) {
+            this._onError(DemuxErrors.FORMAT_ERROR, 'Flv: Invalid AVCDecoderConfigurationRecord: No SPS');
+            return;
+        } else if (spsCount > 1) {
+            Log.w(this.TAG, `Flv: Strange AVCDecoderConfigurationRecord: SPS Count = ${spsCount}`);
+        }
+
+        let offset = 6;
+
+        for (let i = 0; i < spsCount; i++) {
+            let len = v.getUint16(offset, !le);  // sequenceParameterSetLength
+            offset += 2;
+
+            if (len === 0) {
+                continue;
+            }
+
+            // Notice: Nalu without startcode header (00 00 00 01)
+            let sps = new Uint8Array(arrayBuffer, dataOffset + offset, len);
+            offset += len;
+
+            let config = SPSParser.parseSPS(sps);
+            if (i !== 0) {
+                // ignore other sps's config
+                continue;
+            }
+
+            meta.codecWidth = config.codec_size.width;
+            meta.codecHeight = config.codec_size.height;
+            meta.presentWidth = config.present_size.width;
+            meta.presentHeight = config.present_size.height;
+
+            meta.profile = config.profile_string;
+            meta.level = config.level_string;
