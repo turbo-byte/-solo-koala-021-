@@ -633,3 +633,187 @@ class FLVDemuxer {
             track.samples.push(mp3Sample);
             track.length += data.length;
         }
+    }
+
+    _parseAACAudioData(arrayBuffer, dataOffset, dataSize) {
+        if (dataSize <= 1) {
+            Log.w(this.TAG, 'Flv: Invalid AAC packet, missing AACPacketType or/and Data!');
+            return;
+        }
+
+        let result = {};
+        let array = new Uint8Array(arrayBuffer, dataOffset, dataSize);
+
+        result.packetType = array[0];
+
+        if (array[0] === 0) {
+            result.data = this._parseAACAudioSpecificConfig(arrayBuffer, dataOffset + 1, dataSize - 1);
+        } else {
+            result.data = array.subarray(1);
+        }
+
+        return result;
+    }
+
+    _parseAACAudioSpecificConfig(arrayBuffer, dataOffset, dataSize) {
+        let array = new Uint8Array(arrayBuffer, dataOffset, dataSize);
+        let config = null;
+
+        /* Audio Object Type:
+           0: Null
+           1: AAC Main
+           2: AAC LC
+           3: AAC SSR (Scalable Sample Rate)
+           4: AAC LTP (Long Term Prediction)
+           5: HE-AAC / SBR (Spectral Band Replication)
+           6: AAC Scalable
+        */
+
+        let audioObjectType = 0;
+        let originalAudioObjectType = 0;
+        let audioExtensionObjectType = null;
+        let samplingIndex = 0;
+        let extensionSamplingIndex = null;
+
+        // 5 bits
+        audioObjectType = originalAudioObjectType = array[0] >>> 3;
+        // 4 bits
+        samplingIndex = ((array[0] & 0x07) << 1) | (array[1] >>> 7);
+        if (samplingIndex < 0 || samplingIndex >= this._mpegSamplingRates.length) {
+            this._onError(DemuxErrors.FORMAT_ERROR, 'Flv: AAC invalid sampling frequency index!');
+            return;
+        }
+
+        let samplingFrequence = this._mpegSamplingRates[samplingIndex];
+
+        // 4 bits
+        let channelConfig = (array[1] & 0x78) >>> 3;
+        if (channelConfig < 0 || channelConfig >= 8) {
+            this._onError(DemuxErrors.FORMAT_ERROR, 'Flv: AAC invalid channel configuration');
+            return;
+        }
+
+        if (audioObjectType === 5) {  // HE-AAC?
+            // 4 bits
+            extensionSamplingIndex = ((array[1] & 0x07) << 1) | (array[2] >>> 7);
+            // 5 bits
+            audioExtensionObjectType = (array[2] & 0x7C) >>> 2;
+        }
+
+        // workarounds for various browsers
+        let userAgent = self.navigator.userAgent.toLowerCase();
+
+        if (userAgent.indexOf('firefox') !== -1) {
+            // firefox: use SBR (HE-AAC) if freq less than 24kHz
+            if (samplingIndex >= 6) {
+                audioObjectType = 5;
+                config = new Array(4);
+                extensionSamplingIndex = samplingIndex - 3;
+            } else {  // use LC-AAC
+                audioObjectType = 2;
+                config = new Array(2);
+                extensionSamplingIndex = samplingIndex;
+            }
+        } else if (userAgent.indexOf('android') !== -1) {
+            // android: always use LC-AAC
+            audioObjectType = 2;
+            config = new Array(2);
+            extensionSamplingIndex = samplingIndex;
+        } else {
+            // for other browsers, e.g. chrome...
+            // Always use HE-AAC to make it easier to switch aac codec profile
+            audioObjectType = 5;
+            extensionSamplingIndex = samplingIndex;
+            config = new Array(4);
+
+            if (samplingIndex >= 6) {
+                extensionSamplingIndex = samplingIndex - 3;
+            } else if (channelConfig === 1) {  // Mono channel
+                audioObjectType = 2;
+                config = new Array(2);
+                extensionSamplingIndex = samplingIndex;
+            }
+        }
+
+        config[0]  = audioObjectType << 3;
+        config[0] |= (samplingIndex & 0x0F) >>> 1;
+        config[1]  = (samplingIndex & 0x0F) << 7;
+        config[1] |= (channelConfig & 0x0F) << 3;
+        if (audioObjectType === 5) {
+            config[1] |= ((extensionSamplingIndex & 0x0F) >>> 1);
+            config[2]  = (extensionSamplingIndex & 0x01) << 7;
+            // extended audio object type: force to 2 (LC-AAC)
+            config[2] |= (2 << 2);
+            config[3]  = 0;
+        }
+
+        return {
+            config: config,
+            samplingRate: samplingFrequence,
+            channelCount: channelConfig,
+            codec: 'mp4a.40.' + audioObjectType,
+            originalCodec: 'mp4a.40.' + originalAudioObjectType
+        };
+    }
+
+    _parseMP3AudioData(arrayBuffer, dataOffset, dataSize, requestHeader) {
+        if (dataSize < 4) {
+            Log.w(this.TAG, 'Flv: Invalid MP3 packet, header missing!');
+            return;
+        }
+
+        let le = this._littleEndian;
+        let array = new Uint8Array(arrayBuffer, dataOffset, dataSize);
+        let result = null;
+
+        if (requestHeader) {
+            if (array[0] !== 0xFF) {
+                return;
+            }
+            let ver = (array[1] >>> 3) & 0x03;
+            let layer = (array[1] & 0x06) >> 1;
+
+            let bitrate_index = (array[2] & 0xF0) >>> 4;
+            let sampling_freq_index = (array[2] & 0x0C) >>> 2;
+
+            let channel_mode = (array[3] >>> 6) & 0x03;
+            let channel_count = channel_mode !== 3 ? 2 : 1;
+
+            let sample_rate = 0;
+            let bit_rate = 0;
+            let object_type = 34;  // Layer-3, listed in MPEG-4 Audio Object Types
+
+            let codec = 'mp3';
+
+            switch (ver) {
+                case 0:  // MPEG 2.5
+                    sample_rate = this._mpegAudioV25SampleRateTable[sampling_freq_index];
+                    break;
+                case 2:  // MPEG 2
+                    sample_rate = this._mpegAudioV20SampleRateTable[sampling_freq_index];
+                    break;
+                case 3:  // MPEG 1
+                    sample_rate = this._mpegAudioV10SampleRateTable[sampling_freq_index];
+                    break;
+            }
+
+            switch (layer) {
+                case 1:  // Layer 3
+                    object_type = 34;
+                    if (bitrate_index < this._mpegAudioL3BitRateTable.length) {
+                        bit_rate = this._mpegAudioL3BitRateTable[bitrate_index];
+                    }
+                    break;
+                case 2:  // Layer 2
+                    object_type = 33;
+                    if (bitrate_index < this._mpegAudioL2BitRateTable.length) {
+                        bit_rate = this._mpegAudioL2BitRateTable[bitrate_index];
+                    }
+                    break;
+                case 3:  // Layer 1
+                    object_type = 32;
+                    if (bitrate_index < this._mpegAudioL1BitRateTable.length) {
+                        bit_rate = this._mpegAudioL1BitRateTable[bitrate_index];
+                    }
+                    break;
+            }
