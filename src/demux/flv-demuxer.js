@@ -1192,3 +1192,149 @@ class FLVDemuxer {
                         mi.mimeType = 'video/x-flv; codecs="' + mi.videoCodec + '"';
                     }
                     if (mi.isComplete()) {
+                        this._onMediaInfo(mi);
+                    }
+
+                    offset += len;
+                } else {
+                    offset += 2 + len;
+                }
+            }
+        }
+
+        meta.hvcc = new Uint8Array(dataSize);
+        meta.hvcc.set(new Uint8Array(arrayBuffer, dataOffset, dataSize), 0);
+        Log.v(this.TAG, 'Parsed HEVCDecoderConfigurationRecord');
+
+        if (this._isInitialMetadataDispatched()) {
+            // flush parsed frames
+            if (this._dispatch && (this._audioTrack.length || this._videoTrack.length)) {
+                this._onDataAvailable(this._audioTrack, this._videoTrack);
+            }
+        } else {
+            this._videoInitialMetadataDispatched = true;
+        }
+        // notify new metadata
+        this._dispatch = false;
+        this._onTrackMetadata('video', meta);
+    }
+
+    _parseAVCVideoData(arrayBuffer, dataOffset, dataSize, tagTimestamp, tagPosition, frameType, cts) {
+        let le = this._littleEndian;
+        let v = new DataView(arrayBuffer, dataOffset, dataSize);
+
+        let units = [], length = 0;
+
+        let offset = 0;
+        const lengthSize = this._naluLengthSize;
+        let dts = this._timestampBase + tagTimestamp;
+        let keyframe = (frameType === 1);  // from FLV Frame Type constants
+
+        while (offset < dataSize) {
+            if (offset + 4 >= dataSize) {
+                Log.w(this.TAG, `Malformed Nalu near timestamp ${dts}, offset = ${offset}, dataSize = ${dataSize}`);
+                break;  // data not enough for next Nalu
+            }
+            // Nalu with length-header (AVC1)
+            let naluSize = v.getUint32(offset, !le);  // Big-Endian read
+            if (lengthSize === 3) {
+                naluSize >>>= 8;
+            }
+            if (naluSize > dataSize - lengthSize) {
+                Log.w(this.TAG, `Malformed Nalus near timestamp ${dts}, NaluSize > DataSize!`);
+                return;
+            }
+
+            let unitType = v.getUint8(offset + lengthSize) & 0x1F;
+
+            if (unitType === 5) {  // IDR
+                keyframe = true;
+            }
+
+            let data = new Uint8Array(arrayBuffer, dataOffset + offset, lengthSize + naluSize);
+            let unit = {type: unitType, data: data};
+            units.push(unit);
+            length += data.byteLength;
+
+            offset += lengthSize + naluSize;
+        }
+
+        if (units.length) {
+            let track = this._videoTrack;
+            let avcSample = {
+                units: units,
+                length: length,
+                isKeyframe: keyframe,
+                dts: dts,
+                cts: cts,
+                pts: (dts + cts)
+            };
+            if (keyframe) {
+                avcSample.fileposition = tagPosition;
+            }
+            track.samples.push(avcSample);
+            track.length += length;
+        }
+    }
+
+    _parseHEVCVideoData(arrayBuffer, dataOffset, dataSize, tagTimestamp, tagPosition, frameType, cts) {
+        let le = this._littleEndian;
+        let v = new DataView(arrayBuffer, dataOffset, dataSize);
+
+        let units = [], length = 0;
+
+        let offset = 0;
+        const lengthSize = this._naluLengthSize;
+        let dts = this._timestampBase + tagTimestamp;
+        let keyframe = (frameType === 1);  // from FLV Frame Type constants
+
+        while (offset < dataSize) {
+            if (offset + 4 >= dataSize) {
+                Log.w(this.TAG, `Malformed Nalu near timestamp ${dts}, offset = ${offset}, dataSize = ${dataSize}`);
+                break;  // data not enough for next Nalu
+            }
+            // Nalu with length-header (HVC1)
+            let naluSize = v.getUint32(offset, !le);  // Big-Endian read
+            if (lengthSize === 3) {
+                naluSize >>>= 8;
+            }
+            if (naluSize > dataSize - lengthSize) {
+                Log.w(this.TAG, `Malformed Nalus near timestamp ${dts}, NaluSize > DataSize!`);
+                return;
+            }
+
+            let unitType = v.getUint8(offset + lengthSize) & 0x1F;
+
+            if (unitType === 19 || unitType === 20) {  // IDR
+                keyframe = true;
+            }
+
+            let data = new Uint8Array(arrayBuffer, dataOffset + offset, lengthSize + naluSize);
+            let unit = {type: unitType, data: data};
+            units.push(unit);
+            length += data.byteLength;
+
+            offset += lengthSize + naluSize;
+        }
+
+        if (units.length) {
+            let track = this._videoTrack;
+            let hevcSample = {
+                units: units,
+                length: length,
+                isKeyframe: keyframe,
+                dts: dts,
+                cts: cts,
+                pts: (dts + cts)
+            };
+            if (keyframe) {
+                hevcSample.fileposition = tagPosition;
+            }
+            track.samples.push(hevcSample);
+            track.length += length;
+        }
+    }
+
+}
+
+export default FLVDemuxer;
