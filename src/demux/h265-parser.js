@@ -18,4 +18,12 @@
 
 import ExpGolomb from './exp-golomb.js';
 
-class H265Nalu
+class H265NaluParser {
+
+    static _ebsp2rbsp(uint8array) {
+        let src = uint8array;
+        let src_length = src.byteLength;
+        let dst = new Uint8Array(src_length);
+        let dst_idx = 0;
+
+        for (let i 
