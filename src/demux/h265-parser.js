@@ -40,4 +40,9 @@ class H265NaluParser {
         return new Uint8Array(dst.buffer, 0, dst_idx);
     }
 
-   
+    static parseVPS(uint8array) {
+        let rbsp = H265NaluParser._ebsp2rbsp(uint8array);
+        let gb = new ExpGolomb(rbsp);
+
+        /* remove NALu Header */
+        gb.readByte();
