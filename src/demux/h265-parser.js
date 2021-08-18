@@ -46,3 +46,10 @@ class H265NaluParser {
 
         /* remove NALu Header */
         gb.readByte();
+        gb.readByte();
+
+        // VPS
+        let video_parameter_set_id = gb.readBits(4);
+        gb.readBits(2);
+        let max_layers_minus1 = gb.readBits(6);
+      
