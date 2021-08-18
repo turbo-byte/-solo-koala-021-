@@ -73,4 +73,8 @@ class H265NaluParser {
         let left_offset = 0, right_offset = 0, top_offset = 0, bottom_offset = 0;
 
         // SPS
-        
+        let video_paramter_set_id = gb.readBits(4);
+        let max_sub_layers_minus1 = gb.readBits(3);
+        let temporal_id_nesting_flag = gb.readBool();
+
+        // profile_tier_leve
