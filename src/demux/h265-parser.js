@@ -52,4 +52,9 @@ class H265NaluParser {
         let video_parameter_set_id = gb.readBits(4);
         gb.readBits(2);
         let max_layers_minus1 = gb.readBits(6);
-      
+        let max_sub_layers_minus1 = gb.readBits(3);
+        let temporal_id_nesting_flag = gb.readBool();
+        // and more ...
+
+        return {
+            num_tempora
