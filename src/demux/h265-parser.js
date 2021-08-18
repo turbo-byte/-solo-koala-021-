@@ -57,4 +57,11 @@ class H265NaluParser {
         // and more ...
 
         return {
-            num_tempora
+            num_temporal_layers: max_sub_layers_minus1 + 1,
+            temporal_id_nested: temporal_id_nesting_flag
+        }
+    }
+
+    static parseSPS(uint8array) {
+        let rbsp = H265NaluParser._ebsp2rbsp(uint8array);
+        let gb 
