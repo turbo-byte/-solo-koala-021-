@@ -88,4 +88,7 @@ class H265NaluParser {
         let general_constraint_indicator_flags_1 = gb.readByte();
         let general_constraint_indicator_flags_2 = gb.readByte();
         let general_constraint_indicator_flags_3 = gb.readByte();
-        let general_constraint_indicator_flags_4 =
+        let general_constraint_indicator_flags_4 = gb.readByte();
+        let general_constraint_indicator_flags_5 = gb.readByte();
+        let general_constraint_indicator_flags_6 = gb.readByte();
+        let general_level_idc = gb
