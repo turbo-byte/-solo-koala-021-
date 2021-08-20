@@ -104,4 +104,7 @@ class H265NaluParser {
         for (let i = 0; i < max_sub_layers_minus1; i++) {
             if (sub_layer_profile_present_flag[i]) {
                 gb.readByte(); // sub_layer_profile_space, sub_layer_tier_flag, sub_layer_profile_idc
-                gb.readByte(); gb.readByte(); gb.readByte(); gb
+                gb.readByte(); gb.readByte(); gb.readByte(); gb.readByte(); // sub_layer_profile_compatibility_flag
+                gb.readByte(); gb.readByte(); gb.readByte(); gb.readByte(); gb.readByte(); gb.readByte();
+            }
+            if (sub
