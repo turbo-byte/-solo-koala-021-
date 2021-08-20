@@ -84,4 +84,6 @@ class H265NaluParser {
         let general_profile_compatibility_flags_1 = gb.readByte();
         let general_profile_compatibility_flags_2 = gb.readByte();
         let general_profile_compatibility_flags_3 = gb.readByte();
- 
+        let general_profile_compatibility_flags_4 = gb.readByte();
+        let general_constraint_indicator_flags_1 = gb.readByte();
+        let general_constrai
