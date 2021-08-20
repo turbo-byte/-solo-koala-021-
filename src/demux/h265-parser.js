@@ -95,4 +95,8 @@ class H265NaluParser {
         let sub_layer_profile_present_flag = [];
         let sub_layer_level_present_flag = [];
         for (let i = 0; i < max_sub_layers_minus1; i++) {
-            sub_layer_profile_pr
+            sub_layer_profile_present_flag.push(gb.readBool());
+            sub_layer_level_present_flag.push(gb.readBool());
+        }
+        if (max_sub_layers_minus1 > 0) {
+            for (let i = max_s
