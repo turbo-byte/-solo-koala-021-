@@ -132,4 +132,8 @@ class H265NaluParser {
         let log2_max_pic_order_cnt_lsb_minus4 = gb.readUEG();
         let sub_layer_ordering_info_present_flag = gb.readBool();
         for (let i = sub_layer_ordering_info_present_flag ? 0 : max_sub_layers_minus1; i <= max_sub_layers_minus1; i++) {
-            gb.readUEG(); // max_dec_pic_b
+            gb.readUEG(); // max_dec_pic_buffering_minus1[i]
+            gb.readUEG(); // max_num_reorder_pics[i]
+            gb.readUEG(); // max_latency_increase_plus1[i]
+        }
+        let log2_min_luma_coding_block_size_min
