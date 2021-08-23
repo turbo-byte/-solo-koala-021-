@@ -136,4 +136,7 @@ class H265NaluParser {
             gb.readUEG(); // max_num_reorder_pics[i]
             gb.readUEG(); // max_latency_increase_plus1[i]
         }
-        let log2_min_luma_coding_block_size_min
+        let log2_min_luma_coding_block_size_minus3 = gb.readUEG();
+        let log2_diff_max_min_luma_coding_block_size = gb.readUEG();
+        let log2_min_transform_block_size_minus2 = gb.readUEG();
+        let log2_diff_max
