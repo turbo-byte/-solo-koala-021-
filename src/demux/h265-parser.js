@@ -114,4 +114,8 @@ class H265NaluParser {
         // profile_tier_level end
 
         let seq_parameter_set_id = gb.readUEG();
-       
+        let chroma_format_idc = gb.readUEG();
+        if (chroma_format_idc == 3) {
+            gb.readBits(1);  // separate_colour_plane_flag
+        }
+        let pic_width_i
