@@ -127,4 +127,7 @@ class H265NaluParser {
             top_offset += gb.readUEG();
             bottom_offset += gb.readUEG();
         }
-        let bit_depth_luma_m
+        let bit_depth_luma_minus8 = gb.readUEG();
+        let bit_depth_chroma_minus8 = gb.readUEG();
+        let log2_max_pic_order_cnt_lsb_minus4 = gb.readUEG();
+        let sub_layer_ordering_info
