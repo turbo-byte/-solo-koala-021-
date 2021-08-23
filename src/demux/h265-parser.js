@@ -122,4 +122,9 @@ class H265NaluParser {
         let pic_height_in_luma_samples = gb.readUEG();
         let conformance_window_flag = gb.readBool();
         if (conformance_window_flag) {
-            left_
+            left_offset += gb.readUEG();
+            right_offset += gb.readUEG();
+            top_offset += gb.readUEG();
+            bottom_offset += gb.readUEG();
+        }
+        let bit_depth_luma_m
