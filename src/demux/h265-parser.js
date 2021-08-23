@@ -118,4 +118,8 @@ class H265NaluParser {
         if (chroma_format_idc == 3) {
             gb.readBits(1);  // separate_colour_plane_flag
         }
-        let pic_width_i
+        let pic_width_in_luma_samples = gb.readUEG();
+        let pic_height_in_luma_samples = gb.readUEG();
+        let conformance_window_flag = gb.readBool();
+        if (conformance_window_flag) {
+            left_
