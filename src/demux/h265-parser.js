@@ -139,4 +139,7 @@ class H265NaluParser {
         let log2_min_luma_coding_block_size_minus3 = gb.readUEG();
         let log2_diff_max_min_luma_coding_block_size = gb.readUEG();
         let log2_min_transform_block_size_minus2 = gb.readUEG();
-        let log2_diff_max
+        let log2_diff_max_min_transform_block_size = gb.readUEG();
+        let max_transform_hierarchy_depth_inter = gb.readUEG();
+        let max_transform_hierarchy_depth_intra = gb.readUEG();
+      
