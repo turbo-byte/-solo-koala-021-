@@ -150,4 +150,7 @@ class H265NaluParser {
                     for(let matrixId = 0; matrixId < ((sizeId === 3) ? 2 : 6); matrixId++){
                         let scaling_list_pred_mode_flag = gb.readBool();
                         if (!scaling_list_pred_mode_flag) {
-                            gb.readUEG(); // scaling_lis
+                            gb.readUEG(); // scaling_list_pred_matrix_id_delta
+                        } else {
+                            let coefNum = Math.min(64, (1 << (4 + (sizeId << 1))));
+                            if (si
