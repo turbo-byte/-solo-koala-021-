@@ -148,4 +148,6 @@ class H265NaluParser {
             if (sps_scaling_list_data_present_flag) {
                 for (let sizeId = 0; sizeId < 4; sizeId++) {
                     for(let matrixId = 0; matrixId < ((sizeId === 3) ? 2 : 6); matrixId++){
-                 
+                        let scaling_list_pred_mode_flag = gb.readBool();
+                        if (!scaling_list_pred_mode_flag) {
+                            gb.readUEG(); // scaling_lis
