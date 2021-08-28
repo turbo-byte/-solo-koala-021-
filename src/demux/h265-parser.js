@@ -153,4 +153,10 @@ class H265NaluParser {
                             gb.readUEG(); // scaling_list_pred_matrix_id_delta
                         } else {
                             let coefNum = Math.min(64, (1 << (4 + (sizeId << 1))));
-                            if (si
+                            if (sizeId > 1) { gb.readSEG() }
+                            for (let i = 0; i < coefNum; i++) { gb.readSEG(); }
+                        }
+                    }
+                }
+            }
+   
