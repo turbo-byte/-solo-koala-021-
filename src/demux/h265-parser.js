@@ -169,4 +169,8 @@ class H265NaluParser {
             gb.readUEG();
             gb.readBool();
         }
-        let num_short_term_ref_pic_sets = gb.rea
+        let num_short_term_ref_pic_sets = gb.readUEG();
+        let num_delta_pocs = 0;
+        for (let i = 0; i < num_short_term_ref_pic_sets; i++) {
+            let inter_ref_pic_set_prediction_flag = false;
+            if (i !== 0) { inter_r
