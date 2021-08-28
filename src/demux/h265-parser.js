@@ -159,4 +159,7 @@ class H265NaluParser {
                     }
                 }
             }
-   
+        }
+        let amp_enabled_flag = gb.readBool();
+        let sample_adaptive_offset_enabled_flag = gb.readBool();
+        let pcm_enabled_flag = gb.readBool();
