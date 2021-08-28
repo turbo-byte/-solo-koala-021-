@@ -173,4 +173,7 @@ class H265NaluParser {
         let num_delta_pocs = 0;
         for (let i = 0; i < num_short_term_ref_pic_sets; i++) {
             let inter_ref_pic_set_prediction_flag = false;
-            if (i !== 0) { inter_r
+            if (i !== 0) { inter_ref_pic_set_prediction_flag = gb.readBool(); }
+            if (inter_ref_pic_set_prediction_flag) {
+                if (i === num_short_term_ref_pic_sets) { gb.readUEG(); }
+  
