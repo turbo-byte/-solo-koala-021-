@@ -163,3 +163,10 @@ class H265NaluParser {
         let amp_enabled_flag = gb.readBool();
         let sample_adaptive_offset_enabled_flag = gb.readBool();
         let pcm_enabled_flag = gb.readBool();
+        if (pcm_enabled_flag) {
+            gb.readByte();
+            gb.readUEG();
+            gb.readUEG();
+            gb.readBool();
+        }
+        let num_short_term_ref_pic_sets = gb.rea
