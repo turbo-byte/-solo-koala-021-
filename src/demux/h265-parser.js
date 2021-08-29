@@ -176,4 +176,8 @@ class H265NaluParser {
             if (i !== 0) { inter_ref_pic_set_prediction_flag = gb.readBool(); }
             if (inter_ref_pic_set_prediction_flag) {
                 if (i === num_short_term_ref_pic_sets) { gb.readUEG(); }
-  
+                gb.readBool();
+                gb.readUEG();
+                let next_num_delta_pocs = 0;
+                for (let j = 0; j <= num_delta_pocs; j++) {
+                    let used_by_curr_pic_fl
