@@ -180,4 +180,8 @@ class H265NaluParser {
                 gb.readUEG();
                 let next_num_delta_pocs = 0;
                 for (let j = 0; j <= num_delta_pocs; j++) {
-                    let used_by_curr_pic_fl
+                    let used_by_curr_pic_flag = gb.readBool();
+                    let use_delta_flag = false;
+                    if (!used_by_curr_pic_flag) {
+                        use_delta_flag = gb.readBool();
+                  
