@@ -194,4 +194,8 @@ class H265NaluParser {
                 let num_negative_pics = gb.readUEG();
                 let num_positive_pics = gb.readUEG();
                 num_delta_pocs = num_negative_pics + num_positive_pics;
-   
+                for (let j = 0; j < num_negative_pics; j++) {
+                    gb.readUEG();
+                    gb.readBool();
+                }
+                for (let j = 0; j < num_pos
