@@ -208,4 +208,9 @@ class H265NaluParser {
         if (long_term_ref_pics_present_flag) {
             let num_long_term_ref_pics_sps = gb.readUEG();
             for (let i = 0; i < num_long_term_ref_pics_sps; i++) {
-   
+                for (let j = 0; j < (log2_max_pic_order_cnt_lsb_minus4 + 4); j++) { gb.readBits(1); }
+                gb.readBits(1);
+            }
+        }
+        //*
+        let defa
