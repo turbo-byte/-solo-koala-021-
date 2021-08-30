@@ -205,3 +205,7 @@ class H265NaluParser {
             }
         }
         let long_term_ref_pics_present_flag = gb.readBool();
+        if (long_term_ref_pics_present_flag) {
+            let num_long_term_ref_pics_sps = gb.readUEG();
+            for (let i = 0; i < num_long_term_ref_pics_sps; i++) {
+   
