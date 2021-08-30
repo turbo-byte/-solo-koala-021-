@@ -190,4 +190,8 @@ class H265NaluParser {
                     }
                 }
                 num_delta_pocs = next_num_delta_pocs;
-     
+            } else {
+                let num_negative_pics = gb.readUEG();
+                let num_positive_pics = gb.readUEG();
+                num_delta_pocs = num_negative_pics + num_positive_pics;
+   
