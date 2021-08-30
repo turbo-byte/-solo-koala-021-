@@ -184,4 +184,10 @@ class H265NaluParser {
                     let use_delta_flag = false;
                     if (!used_by_curr_pic_flag) {
                         use_delta_flag = gb.readBool();
-                  
+                    }
+                    if (used_by_curr_pic_flag || use_delta_flag) {
+                        next_num_delta_pocs++;
+                    }
+                }
+                num_delta_pocs = next_num_delta_pocs;
+     
