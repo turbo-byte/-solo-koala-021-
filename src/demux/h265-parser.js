@@ -213,4 +213,7 @@ class H265NaluParser {
             }
         }
         //*
-        let defa
+        let default_display_window_flag = false; // for calc offset
+        let min_spatial_segmentation_idc = 0; // for hvcC
+        let sar_width = 1, sar_height = 1;
+        let fps_fixed = false, fps
