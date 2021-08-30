@@ -198,4 +198,10 @@ class H265NaluParser {
                     gb.readUEG();
                     gb.readBool();
                 }
-                for (let j = 0; j < num_pos
+                for (let j = 0; j < num_positive_pics; j++) {
+                    gb.readUEG();
+                    gb.readBool();
+                }
+            }
+        }
+        let long_term_ref_pics_present_flag = gb.readBool();
