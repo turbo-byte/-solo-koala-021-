@@ -216,4 +216,8 @@ class H265NaluParser {
         let default_display_window_flag = false; // for calc offset
         let min_spatial_segmentation_idc = 0; // for hvcC
         let sar_width = 1, sar_height = 1;
-        let fps_fixed = false, fps
+        let fps_fixed = false, fps_den = 1, fps_num = 1;
+        //*/
+        let sps_temporal_mvp_enabled_flag = gb.readBool();
+        let strong_intra_smoothing_enabled_flag = gb.readBool();
+        let vui_parameters_present_flag
