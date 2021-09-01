@@ -220,4 +220,8 @@ class H265NaluParser {
         //*/
         let sps_temporal_mvp_enabled_flag = gb.readBool();
         let strong_intra_smoothing_enabled_flag = gb.readBool();
-        let vui_parameters_present_flag
+        let vui_parameters_present_flag = gb.readBool();
+        if (vui_parameters_present_flag) {
+            let aspect_ratio_info_present_flag = gb.readBool();
+            if (aspect_ratio_info_present_flag) {
+                le
