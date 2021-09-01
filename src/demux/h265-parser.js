@@ -230,4 +230,8 @@ class H265NaluParser {
                 let sar_h_table = [1, 11, 11, 11, 33, 11, 11, 11, 33, 11, 11, 33,  99, 3, 2, 1];
 
                 if (aspect_ratio_idc > 0 && aspect_ratio_idc < 16) {
-                    sar_width = sar_w_table[aspect_ratio_idc - 
+                    sar_width = sar_w_table[aspect_ratio_idc - 1];
+                    sar_height = sar_h_table[aspect_ratio_idc - 1];
+                } else if (aspect_ratio_idc === 255) {
+                    sar_width = gb.readBits(16);
+      
