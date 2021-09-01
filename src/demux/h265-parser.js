@@ -224,4 +224,7 @@ class H265NaluParser {
         if (vui_parameters_present_flag) {
             let aspect_ratio_info_present_flag = gb.readBool();
             if (aspect_ratio_info_present_flag) {
-                le
+                let aspect_ratio_idc = gb.readByte();
+
+                let sar_w_table = [1, 12, 10, 16, 40, 24, 20, 32, 80, 18, 15, 64, 160, 4, 3, 2];
+                let sar_h_table = [1
