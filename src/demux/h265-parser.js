@@ -243,4 +243,9 @@ class H265NaluParser {
             }
             let video_signal_type_present_flag = gb.readBool();
             if (video_signal_type_present_flag) {
-                
+                gb.readBits(3);
+                gb.readBool();
+                let colour_description_present_flag = gb.readBool();
+                if (colour_description_present_flag) {
+                    gb.readByte();
+ 
