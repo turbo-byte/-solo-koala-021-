@@ -234,4 +234,9 @@ class H265NaluParser {
                     sar_height = sar_h_table[aspect_ratio_idc - 1];
                 } else if (aspect_ratio_idc === 255) {
                     sar_width = gb.readBits(16);
-      
+                    sar_height = gb.readBits(16);
+                }
+            }
+            let overscan_info_present_flag = gb.readBool();
+            if (overscan_info_present_flag) {
+ 
