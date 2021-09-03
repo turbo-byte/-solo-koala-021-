@@ -239,4 +239,8 @@ class H265NaluParser {
             }
             let overscan_info_present_flag = gb.readBool();
             if (overscan_info_present_flag) {
- 
+                gb.readBool();
+            }
+            let video_signal_type_present_flag = gb.readBool();
+            if (video_signal_type_present_flag) {
+                
