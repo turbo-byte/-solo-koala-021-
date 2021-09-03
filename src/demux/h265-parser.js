@@ -248,4 +248,10 @@ class H265NaluParser {
                 let colour_description_present_flag = gb.readBool();
                 if (colour_description_present_flag) {
                     gb.readByte();
- 
+                    gb.readByte();
+                    gb.readByte();
+                }
+            }
+            let chroma_loc_info_present_flag = gb.readBool();
+            if (chroma_loc_info_present_flag) {
+      
