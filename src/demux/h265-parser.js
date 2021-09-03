@@ -254,4 +254,9 @@ class H265NaluParser {
             }
             let chroma_loc_info_present_flag = gb.readBool();
             if (chroma_loc_info_present_flag) {
-      
+                gb.readUEG();
+                gb.readUEG();
+            }
+            let neutral_chroma_indication_flag = gb.readBool();
+            let field_seq_flag = gb.readBool();
+       
