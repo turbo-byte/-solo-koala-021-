@@ -267,4 +267,7 @@ class H265NaluParser {
                 top_offset += gb.readUEG();
                 bottom_offset += gb.readUEG();
             }
-            le
+            let vui_timing_info_present_flag = gb.readBool();
+            if (vui_timing_info_present_flag) {
+                fps_den = gb.readBits(32);
+                fps_num = gb.readBits
