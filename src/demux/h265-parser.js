@@ -262,4 +262,9 @@ class H265NaluParser {
             let frame_field_info_present_flag = gb.readBool();
             default_display_window_flag = gb.readBool();
             if (default_display_window_flag) {
-                left_o
+                left_offset += gb.readUEG();
+                right_offset += gb.readUEG();
+                top_offset += gb.readUEG();
+                bottom_offset += gb.readUEG();
+            }
+            le
