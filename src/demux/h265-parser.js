@@ -277,4 +277,7 @@ class H265NaluParser {
                     let vui_hrd_parameters_present_flag = gb.readBool();
                     if (vui_hrd_parameters_present_flag) {
                         let commonInfPresentFlag = 1;
-        
+                        let nal_hrd_parameters_present_flag = false;
+                        let vcl_hrd_parameters_present_flag = false;
+                        let sub_pic_hrd_params_present_flag = false;
+           
