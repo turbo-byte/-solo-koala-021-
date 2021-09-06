@@ -294,4 +294,9 @@ class H265NaluParser {
                                 let bit_rate_scale = gb.readBits(4);
                                 let cpb_size_scale = gb.readBits(4);
                                 if (sub_pic_hrd_params_present_flag) {
-                                    gb.r
+                                    gb.readBits(4);
+                                }
+                                gb.readBits(5);
+                                gb.readBits(5);
+                                gb.readBits(5);
+  
