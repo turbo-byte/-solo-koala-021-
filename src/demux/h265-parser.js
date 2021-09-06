@@ -274,4 +274,7 @@ class H265NaluParser {
                 let vui_poc_proportional_to_timing_flag = gb.readBool();
                 if (vui_poc_proportional_to_timing_flag) {
                     gb.readUEG();
-          
+                    let vui_hrd_parameters_present_flag = gb.readBool();
+                    if (vui_hrd_parameters_present_flag) {
+                        let commonInfPresentFlag = 1;
+        
