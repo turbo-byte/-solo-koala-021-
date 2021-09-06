@@ -284,4 +284,8 @@ class H265NaluParser {
                             nal_hrd_parameters_present_flag = gb.readBool();
                             vcl_hrd_parameters_present_flag = gb.readBool();
                             if( nal_hrd_parameters_present_flag || vcl_hrd_parameters_present_flag ){
-                                sub_pic_hrd_params_present_flag = gb
+                                sub_pic_hrd_params_present_flag = gb.readBool();
+                                if (sub_pic_hrd_params_present_flag) {
+                                    gb.readByte();
+                                    gb.readBits(5);
+                 
