@@ -299,4 +299,7 @@ class H265NaluParser {
                                 gb.readBits(5);
                                 gb.readBits(5);
                                 gb.readBits(5);
-  
+                            }
+                        }
+                        for (let i = 0; i <= max_sub_layers_minus1; i++) {
+                            let fixed_pic_rate_general_flag = gb.
