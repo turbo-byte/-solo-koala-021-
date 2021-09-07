@@ -312,4 +312,7 @@ class H265NaluParser {
                             let low_delay_hrd_flag = false;
                             if (fixed_pic_rate_within_cvs_flag) {
                                 gb.readSEG();
-               
+                            } else {
+                                low_delay_hrd_flag = gb.readBool();
+                            }
+                            if (!low_delay_hrd_flag) 
