@@ -325,4 +325,7 @@ class H265NaluParser {
                                         gb.readUEG(); gb.readUEG();
                                     }
                                 }
-                   
+                            }
+                            if (vcl_hrd_parameters_present_flag) {
+                                for (let j = 0; j < cpbCnt; j++) {
+                                    gb.readUEG(); 
