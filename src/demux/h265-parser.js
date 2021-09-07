@@ -321,4 +321,8 @@ class H265NaluParser {
                             if (nal_hrd_parameters_present_flag) {
                                 for (let j = 0; j < cpbCnt; j++) {
                                     gb.readUEG(); gb.readUEG();
-                                    if (sub_pic_hrd_p
+                                    if (sub_pic_hrd_params_present_flag) {
+                                        gb.readUEG(); gb.readUEG();
+                                    }
+                                }
+                   
