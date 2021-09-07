@@ -306,3 +306,6 @@ class H265NaluParser {
                             fps_fixed = fixed_pic_rate_general_flag;
                             let fixed_pic_rate_within_cvs_flag = false;
                             let cpbCnt = 1;
+                            if (!fixed_pic_rate_general_flag) {
+                                fixed_pic_rate_within_cvs_flag = gb.readBool();
+                      
