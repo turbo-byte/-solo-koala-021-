@@ -341,4 +341,7 @@ class H265NaluParser {
             let bitstream_restriction_flag = gb.readBool();
             if (bitstream_restriction_flag) {
                 let tiles_fixed_structure_flag = gb.readBool()
-                let motion_vectors_over_pic_boundaries_flag = gb.read
+                let motion_vectors_over_pic_boundaries_flag = gb.readBool()
+                let restricted_ref_pic_lists_flag = gb.readBool();
+                min_spatial_segmentation_idc = gb.readUEG();
+                let max_byte
