@@ -338,4 +338,7 @@ class H265NaluParser {
                     }
                 }
             }
-            let bitstream_restriction_flag = g
+            let bitstream_restriction_flag = gb.readBool();
+            if (bitstream_restriction_flag) {
+                let tiles_fixed_structure_flag = gb.readBool()
+                let motion_vectors_over_pic_boundaries_flag = gb.read
