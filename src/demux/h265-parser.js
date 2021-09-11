@@ -331,4 +331,11 @@ class H265NaluParser {
                                     gb.readUEG(); gb.readUEG();
                                     if (sub_pic_hrd_params_present_flag) {
                                         gb.readUEG(); gb.readUEG();
-        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            let bitstream_restriction_flag = g
