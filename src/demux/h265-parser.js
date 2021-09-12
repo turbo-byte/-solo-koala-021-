@@ -353,4 +353,7 @@ class H265NaluParser {
         let sps_extension_flag = gb.readBool(); // ignore...
 
         // for meta data
-        let codec_mimetype = `hvc1.${gener
+        let codec_mimetype = `hvc1.${general_profile_idc}.1.L${general_level_idc}.B0`;
+        let codec_width = pic_width_in_luma_samples;
+        let codec_height = pic_height_in_luma_samples;
+        let
