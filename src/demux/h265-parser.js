@@ -344,4 +344,7 @@ class H265NaluParser {
                 let motion_vectors_over_pic_boundaries_flag = gb.readBool()
                 let restricted_ref_pic_lists_flag = gb.readBool();
                 min_spatial_segmentation_idc = gb.readUEG();
-                let max_byte
+                let max_bytes_per_pic_denom = gb.readUEG();
+                let max_bits_per_min_cu_denom = gb.readUEG();
+                let log2_max_mv_length_horizontal = gb.readUEG();
+                let log2_max_mv_length_ver
