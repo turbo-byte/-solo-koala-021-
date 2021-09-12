@@ -347,4 +347,10 @@ class H265NaluParser {
                 let max_bytes_per_pic_denom = gb.readUEG();
                 let max_bits_per_min_cu_denom = gb.readUEG();
                 let log2_max_mv_length_horizontal = gb.readUEG();
-                let log2_max_mv_length_ver
+                let log2_max_mv_length_vertical = gb.readUEG();
+            }
+        }
+        let sps_extension_flag = gb.readBool(); // ignore...
+
+        // for meta data
+        let codec_mimetype = `hvc1.${gener
