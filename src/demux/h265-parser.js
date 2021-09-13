@@ -356,4 +356,13 @@ class H265NaluParser {
         let codec_mimetype = `hvc1.${general_profile_idc}.1.L${general_level_idc}.B0`;
         let codec_width = pic_width_in_luma_samples;
         let codec_height = pic_height_in_luma_samples;
-        let
+        let sar_scale = 1;
+        if (sar_width !== 1 && sar_height !== 1) {
+            sar_scale = sar_width / sar_height;
+        }
+
+        gb.destroy();
+        gb = null;
+
+        return {
+            c
