@@ -369,4 +369,8 @@ class H265NaluParser {
             level_string: H265NaluParser.getLevelString(general_level_idc),
             profile_idc: general_profile_idc,
             bit_depth: bit_depth_luma_minus8 + 8,
-        
+            ref_frames: 1, // FIXME!!!
+            chroma_format: chroma_format_idc,
+            chroma_format_string: H265NaluParser.getChromaFormatString(chroma_format_idc),
+
+            general_level_id
