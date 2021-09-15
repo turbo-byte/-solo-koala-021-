@@ -386,4 +386,8 @@ class H265NaluParser {
             general_constraint_indicator_flags_3,
             general_constraint_indicator_flags_4,
             general_constraint_indicator_flags_5,
-            general
+            general_constraint_indicator_flags_6,
+            min_spatial_segmentation_idc,
+            constant_frame_rate: 0 /* FIXME!! fps_fixed ? 1 : 0? */,
+            chroma_format_idc,
+   
