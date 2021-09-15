@@ -390,4 +390,10 @@ class H265NaluParser {
             min_spatial_segmentation_idc,
             constant_frame_rate: 0 /* FIXME!! fps_fixed ? 1 : 0? */,
             chroma_format_idc,
-   
+            bit_depth_luma_minus8,
+            bit_depth_chroma_minus8,
+
+            frame_rate: {
+                fixed: fps_fixed,
+                fps: fps_num / fps_den,
+          
