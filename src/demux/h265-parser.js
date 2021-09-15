@@ -373,4 +373,10 @@ class H265NaluParser {
             chroma_format: chroma_format_idc,
             chroma_format_string: H265NaluParser.getChromaFormatString(chroma_format_idc),
 
-            general_level_id
+            general_level_idc,
+            general_profile_space,
+            general_tier_flag,
+            general_profile_idc,
+            general_profile_compatibility_flags_1,
+            general_profile_compatibility_flags_2,
+            ge
