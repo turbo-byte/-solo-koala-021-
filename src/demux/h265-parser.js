@@ -382,4 +382,8 @@ class H265NaluParser {
             general_profile_compatibility_flags_3,
             general_profile_compatibility_flags_4,
             general_constraint_indicator_flags_1,
-            general_constraint_indicator_fl
+            general_constraint_indicator_flags_2,
+            general_constraint_indicator_flags_3,
+            general_constraint_indicator_flags_4,
+            general_constraint_indicator_flags_5,
+            general
