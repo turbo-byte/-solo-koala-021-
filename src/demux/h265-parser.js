@@ -396,4 +396,10 @@ class H265NaluParser {
             frame_rate: {
                 fixed: fps_fixed,
                 fps: fps_num / fps_den,
-          
+                fps_den: fps_den,
+                fps_num: fps_num,
+            },
+
+            sar_ratio: {
+                width: sar_width,
+                hei
