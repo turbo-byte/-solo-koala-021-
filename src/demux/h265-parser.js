@@ -402,4 +402,13 @@ class H265NaluParser {
 
             sar_ratio: {
                 width: sar_width,
-                hei
+                height: sar_height
+            },
+
+            codec_size: {
+                width: codec_width,
+                height: codec_height
+            },
+
+            present_size: {
+                width
