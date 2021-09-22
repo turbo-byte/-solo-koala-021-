@@ -411,4 +411,11 @@ class H265NaluParser {
             },
 
             present_size: {
-                width
+                width: codec_width * sar_scale,
+                height: codec_height
+            }
+        };
+    }
+
+    static parsePPS(uint8array) {
+        let rbsp = H265NaluParser._ebsp2rbsp(u
