@@ -418,4 +418,12 @@ class H265NaluParser {
     }
 
     static parsePPS(uint8array) {
-        let rbsp = H265NaluParser._ebsp2rbsp(u
+        let rbsp = H265NaluParser._ebsp2rbsp(uint8array);
+        let gb = new ExpGolomb(rbsp);
+
+        /* remove NALu Header */
+        gb.readByte();
+        gb.readByte();
+
+        let pic_parameter_set_id = gb.readUEG();
+        let seq_pa
