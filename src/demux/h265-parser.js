@@ -426,4 +426,7 @@ class H265NaluParser {
         gb.readByte();
 
         let pic_parameter_set_id = gb.readUEG();
-        let seq_pa
+        let seq_parameter_set_id = gb.readUEG();
+        let dependent_slice_segments_enabled_flag = gb.readBool();
+        let output_flag_present_flag = gb.readBool();
+        let num_extra_slice_header_bits = gb.r
