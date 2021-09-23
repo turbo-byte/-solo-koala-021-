@@ -443,4 +443,7 @@ class H265NaluParser {
         }
         let cb_qp_offset = gb.readSEG();
         let cr_qp_offset = gb.readSEG();
-        let pps_slice_chroma_qp_offsets_present_flag = g
+        let pps_slice_chroma_qp_offsets_present_flag = gb.readBool();
+        let weighted_pred_flag = gb.readBool();
+        let weighted_bipred_flag = gb.readBool();
+        let transquant_bypass_enabled_flag = gb.readBool()
