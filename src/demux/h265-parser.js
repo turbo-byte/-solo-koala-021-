@@ -439,4 +439,8 @@ class H265NaluParser {
         let transform_skip_enabled_flag = gb.readBool();
         let cu_qp_delta_enabled_flag = gb.readBool();
         if (cu_qp_delta_enabled_flag) {
-            let diff_cu_qp_delta_depth = gb.re
+            let diff_cu_qp_delta_depth = gb.readUEG();
+        }
+        let cb_qp_offset = gb.readSEG();
+        let cr_qp_offset = gb.readSEG();
+        let pps_slice_chroma_qp_offsets_present_flag = g
