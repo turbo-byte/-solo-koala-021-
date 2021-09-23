@@ -432,4 +432,7 @@ class H265NaluParser {
         let num_extra_slice_header_bits = gb.readBits(3);
         let sign_data_hiding_enabled_flag = gb.readBool();
         let cabac_init_present_flag = gb.readBool();
-        let num_ref_idx_l0_default_active_m
+        let num_ref_idx_l0_default_active_minus1 = gb.readUEG();
+        let num_ref_idx_l1_default_active_minus1 = gb.readUEG();
+        let init_qp_minus26 = gb.readSEG();
+        let constrained_intra_pred_flag = 
