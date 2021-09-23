@@ -435,4 +435,8 @@ class H265NaluParser {
         let num_ref_idx_l0_default_active_minus1 = gb.readUEG();
         let num_ref_idx_l1_default_active_minus1 = gb.readUEG();
         let init_qp_minus26 = gb.readSEG();
-        let constrained_intra_pred_flag = 
+        let constrained_intra_pred_flag = gb.readBool();
+        let transform_skip_enabled_flag = gb.readBool();
+        let cu_qp_delta_enabled_flag = gb.readBool();
+        if (cu_qp_delta_enabled_flag) {
+            let diff_cu_qp_delta_depth = gb.re
