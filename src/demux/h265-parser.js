@@ -446,4 +446,9 @@ class H265NaluParser {
         let pps_slice_chroma_qp_offsets_present_flag = gb.readBool();
         let weighted_pred_flag = gb.readBool();
         let weighted_bipred_flag = gb.readBool();
-        let transquant_bypass_enabled_flag = gb.readBool()
+        let transquant_bypass_enabled_flag = gb.readBool();
+        let tiles_enabled_flag = gb.readBool();
+        let entropy_coding_sync_enabled_flag = gb.readBool();
+        // and more ...
+
+        // needs hvcC
