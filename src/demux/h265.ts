@@ -23,4 +23,9 @@ export class H265NaluHVC1 {
         let nalu_size = nalu.data.byteLength;
 
         this.type = nalu.type;
-        this.data = new Uint8Arr
+        this.data = new Uint8Array(4 + nalu_size);  // 4 byte length-header + nalu payload
+
+        let v = new DataView(this.data.buffer);
+        // Fill 4 byte length-header
+        v.setUint32(0, nalu_size);
+        // Copy pa
