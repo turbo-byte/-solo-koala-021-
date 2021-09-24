@@ -481,3 +481,11 @@ class H265NaluParser {
             case 1: return 'Main';
             case 2: return 'Main10';
             case 3: return 'MainSP';
+            case 4: return 'Rext';
+            case 9: return 'SCC';
+            default: return 'Unknown';
+        }
+    }
+
+    static getLevelString(level_idc) {
+        return (level_idc / 30).to
