@@ -458,4 +458,13 @@ class H265NaluParser {
         } else if (entropy_coding_sync_enabled_flag) {
             parallelismType = 3; // wavefront-based parallel decoding
         } else if (tiles_enabled_flag) {
-            paralleli
+            parallelismType = 2; // tile-based parallel decoding
+        }
+
+        return {
+            parallelismType
+        }
+    }
+
+    static getChromaFormatString(chroma_idc) {
+        switch (c
