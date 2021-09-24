@@ -488,4 +488,8 @@ class H265NaluParser {
     }
 
     static getLevelString(level_idc) {
-        return (level_idc / 30).to
+        return (level_idc / 30).toFixed(1);
+    }
+}
+
+export default H265NaluParser;
