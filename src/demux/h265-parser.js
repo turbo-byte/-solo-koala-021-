@@ -473,4 +473,11 @@ class H265NaluParser {
             case 2: return '4:2:2';
             case 3: return '4:4:4';
             default: return 'Unknown';
-        
+        }
+    }
+
+    static getProfileString(profile_idc) {
+        switch (profile_idc) {
+            case 1: return 'Main';
+            case 2: return 'Main10';
+            case 3: return 'MainSP';
