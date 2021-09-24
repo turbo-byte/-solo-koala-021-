@@ -467,4 +467,10 @@ class H265NaluParser {
     }
 
     static getChromaFormatString(chroma_idc) {
-        switch (c
+        switch (chroma_idc) {
+            case 0: return '4:0:0';
+            case 1: return '4:2:0';
+            case 2: return '4:2:2';
+            case 3: return '4:4:4';
+            default: return 'Unknown';
+        
