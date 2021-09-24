@@ -454,4 +454,8 @@ class H265NaluParser {
         // needs hvcC
         let parallelismType = 1; // slice-based parallel decoding
         if (entropy_coding_sync_enabled_flag && tiles_enabled_flag) {
-            parallelismType = 0; // mixed-type parallel decodi
+            parallelismType = 0; // mixed-type parallel decoding
+        } else if (entropy_coding_sync_enabled_flag) {
+            parallelismType = 3; // wavefront-based parallel decoding
+        } else if (tiles_enabled_flag) {
+            paralleli
