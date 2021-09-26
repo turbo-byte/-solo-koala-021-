@@ -49,4 +49,10 @@ export class H265AnnexBParser {
         }
     }
 
-    private findNextStartCodeOffset(start_offset: nu
+    private findNextStartCodeOffset(start_offset: number) {
+        let i = start_offset;
+        let data = this.data_;
+
+        while (true) {
+            if (i + 3 >= data.byteLength) {
+                thi
