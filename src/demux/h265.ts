@@ -43,4 +43,10 @@ export class H265AnnexBParser {
 
     public constructor(data: Uint8Array) {
         this.data_ = data;
-        this.current_startcode_offset_ = this.findNextStartC
+        this.current_startcode_offset_ = this.findNextStartCodeOffset(0);
+        if (this.eof_flag_) {
+            Log.e(this.TAG, "Could not find H265 startcode until payload end!");
+        }
+    }
+
+    private findNextStartCodeOffset(start_offset: nu
