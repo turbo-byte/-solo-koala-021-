@@ -55,4 +55,9 @@ export class H265AnnexBParser {
 
         while (true) {
             if (i + 3 >= data.byteLength) {
-                thi
+                this.eof_flag_ = true;
+                return data.byteLength;
+            }
+
+            // search 00 00 00 01 or 00 00 01
+            let uint32 = (data[i + 0] << 
