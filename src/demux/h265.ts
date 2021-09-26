@@ -28,4 +28,14 @@ export class H265NaluHVC1 {
         let v = new DataView(this.data.buffer);
         // Fill 4 byte length-header
         v.setUint32(0, nalu_size);
-        // Copy pa
+        // Copy payload
+        this.data.set(nalu.data, 4);
+    }
+}
+
+export class H265AnnexBParser {
+
+    private readonly TAG: string = "H265AnnexBParser";
+
+    private data_: Uint8Array;
+    privat
