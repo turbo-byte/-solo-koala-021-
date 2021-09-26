@@ -38,4 +38,9 @@ export class H265AnnexBParser {
     private readonly TAG: string = "H265AnnexBParser";
 
     private data_: Uint8Array;
-    privat
+    private current_startcode_offset_: number = 0;
+    private eof_flag_: boolean = false;
+
+    public constructor(data: Uint8Array) {
+        this.data_ = data;
+        this.current_startcode_offset_ = this.findNextStartC
