@@ -60,4 +60,9 @@ export class H265AnnexBParser {
             }
 
             // search 00 00 00 01 or 00 00 01
-            let uint32 = (data[i + 0] << 
+            let uint32 = (data[i + 0] << 24)
+                        | (data[i + 1] << 16)
+                        | (data[i + 2] << 8)
+                        | (data[i + 3]);
+            let uint24 = (data[i + 0] << 16)
+ 
