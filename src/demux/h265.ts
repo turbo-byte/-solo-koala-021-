@@ -88,4 +88,6 @@ export class H265AnnexBParser {
 
             // nalu payload start offset
             let offset = startcode_offset;
-         
+            let u32 = (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | (data[offset + 3]);
+            if (u32 === 0x00000001) {
+                offset += 
