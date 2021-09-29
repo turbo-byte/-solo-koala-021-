@@ -96,4 +96,10 @@ export class H265AnnexBParser {
             }
 
             let nalu_type: H265NaluType = (data[offset] >> 1) & 0x3F;
-            let forbidden_bit = (data[offset] & 0x80) 
+            let forbidden_bit = (data[offset] & 0x80) >>> 7;
+
+            let next_startcode_offset = this.findNextStartCodeOffset(offset);
+            this.current_startcode_offset_ = next_startcode_offset;
+
+            if (forbidden_bit !== 0) {
+ 
