@@ -90,4 +90,10 @@ export class H265AnnexBParser {
             let offset = startcode_offset;
             let u32 = (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | (data[offset + 3]);
             if (u32 === 0x00000001) {
-                offset += 
+                offset += 4;
+            } else {
+                offset += 3;
+            }
+
+            let nalu_type: H265NaluType = (data[offset] >> 1) & 0x3F;
+            let forbidden_bit = (data[offset] & 0x80) 
