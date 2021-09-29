@@ -83,4 +83,9 @@ export class H265AnnexBParser {
             if (this.eof_flag_) {
                 break;
             }
-            // offset poin
+            // offset pointed to start code
+            let startcode_offset = this.current_startcode_offset_;
+
+            // nalu payload start offset
+            let offset = startcode_offset;
+         
