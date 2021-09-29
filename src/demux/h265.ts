@@ -77,4 +77,10 @@ export class H265AnnexBParser {
 
     public readNextNaluPayload(): H265NaluPayload | null {
         let data = this.data_;
-        let 
+        let nalu_payload: H265NaluPayload = null;
+
+        while (nalu_payload == null) {
+            if (this.eof_flag_) {
+                break;
+            }
+            // offset poin
