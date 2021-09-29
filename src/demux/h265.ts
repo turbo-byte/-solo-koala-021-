@@ -102,4 +102,8 @@ export class H265AnnexBParser {
             this.current_startcode_offset_ = next_startcode_offset;
 
             if (forbidden_bit !== 0) {
- 
+                // Log.e(this.TAG, `forbidden_bit near offset ${offset} should be 0 but has value ${forbidden_bit}`);
+                continue;
+            }
+
+            let payload_data = data.s
