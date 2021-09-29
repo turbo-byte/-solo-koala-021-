@@ -65,4 +65,7 @@ export class H265AnnexBParser {
                         | (data[i + 2] << 8)
                         | (data[i + 3]);
             let uint24 = (data[i + 0] << 16)
- 
+                        | (data[i + 1] << 8)
+                        | (data[i + 2]);
+            if (uint32 === 0x00000001 || uint24 === 0x000001) {
+                
