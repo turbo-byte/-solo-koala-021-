@@ -68,4 +68,13 @@ export class H265AnnexBParser {
                         | (data[i + 1] << 8)
                         | (data[i + 2]);
             if (uint32 === 0x00000001 || uint24 === 0x000001) {
-                
+                return i;
+            } else {
+                i++;
+            }
+        }
+    }
+
+    public readNextNaluPayload(): H265NaluPayload | null {
+        let data = this.data_;
+        let 
