@@ -110,4 +110,14 @@ export class H265AnnexBParser {
 
             nalu_payload = new H265NaluPayload();
             nalu_payload.type = nalu_type;
-            nalu_payload.data = payload_data
+            nalu_payload.data = payload_data;
+        }
+
+        return nalu_payload;
+    }
+
+}
+
+export type HEVCDecoderConfigurationRecordType = {
+    configurationVersion: 1;
+} & VPSHEVCDecoderConfigurationRecordT
