@@ -106,4 +106,8 @@ export class H265AnnexBParser {
                 continue;
             }
 
-            let payload_data = data.s
+            let payload_data = data.subarray(offset, next_startcode_offset);
+
+            nalu_payload = new H265NaluPayload();
+            nalu_payload.type = nalu_type;
+            nalu_payload.data = payload_data
