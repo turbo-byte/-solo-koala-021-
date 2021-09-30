@@ -124,4 +124,10 @@ export type HEVCDecoderConfigurationRecordType = {
 
 export type VPSHEVCDecoderConfigurationRecordType = {
     num_temporal_layers: number;
- 
+    temporal_id_nested: boolean;
+}
+
+export type SPSHEVCDecoderConfigurationRecordType = {
+    general_profile_space: number;
+    general_tier_flag: number;
+  
