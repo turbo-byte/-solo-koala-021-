@@ -120,4 +120,8 @@ export class H265AnnexBParser {
 
 export type HEVCDecoderConfigurationRecordType = {
     configurationVersion: 1;
-} & VPSHEVCDecoderConfigurationRecordT
+} & VPSHEVCDecoderConfigurationRecordType & SPSHEVCDecoderConfigurationRecordType & PPSHEVCDecoderConfigurationRecordType;
+
+export type VPSHEVCDecoderConfigurationRecordType = {
+    num_temporal_layers: number;
+ 
