@@ -166,4 +166,7 @@ export class HEVCDecoderConfigurationRecord {
         data[2] = detail.general_profile_compatibility_flags_1;
         data[3] = detail.general_profile_compatibility_flags_2;
         data[4] = detail.general_profile_compatibility_flags_3;
-        data[5] = detail.general_profile_compatibility_flags
+        data[5] = detail.general_profile_compatibility_flags_4;
+        data[6] = detail.general_constraint_indicator_flags_1;
+        data[7] = detail.general_constraint_indicator_flags_2;
+        data[8] = detail.general_constraint_indicator_flags_
