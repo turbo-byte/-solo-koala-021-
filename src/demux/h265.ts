@@ -156,4 +156,6 @@ export class HEVCDecoderConfigurationRecord {
 
     private data: Uint8Array;
 
-    // sps, pps: require Nalu without 4 byte length-
+    // sps, pps: require Nalu without 4 byte length-header
+    public constructor(vps: Uint8Array, sps: Uint8Array, pps: Uint8Array, detail: HEVCDecoderConfigurationRecordType) {
+        let length = 23 + (3 + 2 + vps.byteLength) + (3 + 2 +
