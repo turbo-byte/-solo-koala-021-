@@ -142,4 +142,10 @@ export type SPSHEVCDecoderConfigurationRecordType = {
     general_constraint_indicator_flags_5: number;
     general_constraint_indicator_flags_6: number;
     constant_frame_rate: number;
- 
+    min_spatial_segmentation_idc: number;
+    chroma_format_idc: number,
+    bit_depth_luma_minus8: number,
+    bit_depth_chroma_minus8: number,
+}
+
+export type PPSHEVCDe
