@@ -148,4 +148,12 @@ export type SPSHEVCDecoderConfigurationRecordType = {
     bit_depth_chroma_minus8: number,
 }
 
-export type PPSHEVCDe
+export type PPSHEVCDecoderConfigurationRecordType = {
+    parallelismType: number;
+}
+
+export class HEVCDecoderConfigurationRecord {
+
+    private data: Uint8Array;
+
+    // sps, pps: require Nalu without 4 byte length-
