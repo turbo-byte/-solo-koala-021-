@@ -164,4 +164,6 @@ export class HEVCDecoderConfigurationRecord {
         data[0] = 0x01; // configurationVersion
         data[1] = ((detail.general_profile_space & 0x03) << 6) | ((detail.general_tier_flag ? 1 : 0) << 5) | ((detail.general_profile_idc & 0x1F));
         data[2] = detail.general_profile_compatibility_flags_1;
- 
+        data[3] = detail.general_profile_compatibility_flags_2;
+        data[4] = detail.general_profile_compatibility_flags_3;
+        data[5] = detail.general_profile_compatibility_flags
