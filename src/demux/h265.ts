@@ -162,4 +162,6 @@ export class HEVCDecoderConfigurationRecord {
         let data = this.data = new Uint8Array(length);
 
         data[0] = 0x01; // configurationVersion
-        data[1] = ((detail.gene
+        data[1] = ((detail.general_profile_space & 0x03) << 6) | ((detail.general_tier_flag ? 1 : 0) << 5) | ((detail.general_profile_idc & 0x1F));
+        data[2] = detail.general_profile_compatibility_flags_1;
+ 
