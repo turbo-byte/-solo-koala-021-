@@ -172,4 +172,7 @@ export class HEVCDecoderConfigurationRecord {
         data[8] = detail.general_constraint_indicator_flags_3;
         data[9] = detail.general_constraint_indicator_flags_4;
         data[10] = detail.general_constraint_indicator_flags_5;
-        data[11] = detail.general_constraint_indic
+        data[11] = detail.general_constraint_indicator_flags_6;
+        data[12] = 0x3C;
+        data[13] = 0xF0 | ((detail.min_spatial_segmentation_idc & 0x0F00) >> 8)
+        data[14] = (detail.min_spatial_segmentation_idc & 0xF
