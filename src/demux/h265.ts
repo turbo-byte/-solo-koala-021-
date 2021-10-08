@@ -178,4 +178,8 @@ export class HEVCDecoderConfigurationRecord {
         data[14] = (detail.min_spatial_segmentation_idc & 0xFF);
         data[15] = 0xFC | (detail.parallelismType & 0x03);
         data[16] = 0xFC | (detail.chroma_format_idc & 0x03);
-        data[17] = 0xF8 | (detail.bit_depth_luma_minus8
+        data[17] = 0xF8 | (detail.bit_depth_luma_minus8 & 0x07);
+        data[18] = 0xF8 | (detail.bit_depth_chroma_minus8 & 0x07);
+        data[19] = 0;
+        data[20] = 0;
+        data[21] = ((detail.constant_frame_rate & 0x03) << 6) | ((detail.num
