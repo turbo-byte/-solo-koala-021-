@@ -201,4 +201,11 @@ export class HEVCDecoderConfigurationRecord {
         data[23 + (5 + vps.byteLength + 5 + sps.byteLength) + 2] = 1;
         data[23 + (5 + vps.byteLength + 5 + sps.byteLength) + 3] = (pps.byteLength & 0xFF00) >> 8;
         data[23 + (5 + vps.byteLength + 5 + sps.byteLength) + 4] = (pps.byteLength & 0x00FF) >> 0;
-        data.set(pps, 23 + (5 + vps.byteLength +
+        data.set(pps, 23 + (5 + vps.byteLength + 5 + sps.byteLength) + 5);
+    }
+
+    public getData() {
+        return this.data;
+    }
+
+}
