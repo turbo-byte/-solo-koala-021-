@@ -189,4 +189,7 @@ export class HEVCDecoderConfigurationRecord {
         data[23 + 0 + 2] = 1;
         data[23 + 0 + 3] = (vps.byteLength & 0xFF00) >> 8;
         data[23 + 0 + 4] = (vps.byteLength & 0x00FF) >> 0;
-        data.set(vp
+        data.set(vps, 23 + 0 + 5);
+        data[23 + (5 + vps.byteLength) + 0] = 0x80 | H265NaluType.kSliceSPS;
+        data[23 + (5 + vps.byteLength) + 1] = 0;
+        data[23 + (5 + vps.byteLength) + 2] = 
