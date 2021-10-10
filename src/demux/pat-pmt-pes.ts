@@ -75,3 +75,19 @@ export class PESData {
 
 export class SectionData {
     pid: number;
+    data: Uint8Array;
+    file_position: number;
+    random_access_indicator: number;
+}
+
+export class SliceQueue {
+    slices: Uint8Array[] = [];
+    total_length: number = 0;
+    expected_length: number = 0;
+    file_position: number = 0;
+    random_access_indicator: 0;
+}
+
+export interface PIDToSliceQueues {
+    [pid: number]: SliceQueue;
+}
