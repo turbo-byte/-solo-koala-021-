@@ -509,3 +509,190 @@ const parseSegmentationDescriptor = (descriptor_tag: number, descriptor_length: 
 
     return segmentationDescriptor;
 }
+type TimeDescriptor = Descriptor & {
+    TAI_seconds: number,
+    TAI_ns: number,
+    UTC_offset: number
+}
+const parseTimeDescriptor = (descriptor_tag: number, descriptor_length: number, identifier: string, reader: ExpGolomb): TimeDescriptor => {
+    const TAI_seconds = reader.readBits(48);
+    const TAI_ns = reader.readBits(32);
+    const UTC_offset = reader.readBits(16);
+
+    return {
+        descriptor_tag,
+        descriptor_length,
+        identifier,
+        TAI_seconds,
+        TAI_ns,
+        UTC_offset
+    };
+}
+type AudioDescriptorComponent = {
+    component_tag: number,
+    ISO_code: string
+    Bit_Stream_Mode: number
+    Num_Channels: number,
+    Full_Srvc_Audio: boolean
+}
+const parseAudioDescriptorComponent = (reader: ExpGolomb): AudioDescriptorComponent => {
+    const component_tag = reader.readBits(8)
+    const ISO_code = String.fromCharCode(reader.readBits(8), reader.readBits(8), reader.readBits(8));
+    const Bit_Stream_Mode = reader.readBits(3);
+    const Num_Channels = reader.readBits(4);
+    const Full_Srvc_Audio = reader.readBool();
+
+    return {
+        component_tag,
+        ISO_code,
+        Bit_Stream_Mode,
+        Num_Channels,
+        Full_Srvc_Audio
+    };
+}
+type AudioDescriptor = Descriptor & {
+    audio_count: number,
+    components: AudioDescriptorComponent[]
+}
+const parseAudioDescriptor = (descriptor_tag: number, descriptor_length: number, identifier: string, reader: ExpGolomb): AudioDescriptor => {
+    const audio_count = reader.readBits(4);
+    const components: AudioDescriptorComponent[] = [];
+    for (let i = 0; i < audio_count; i++) {
+        components.push(parseAudioDescriptorComponent(reader));
+    }
+
+    return {
+        descriptor_tag,
+        descriptor_length,
+        identifier,
+        audio_count,
+        components
+    };
+}
+
+type SpliceDescriptor = AvailDescriptor | DTMFDescriptor | SegmentationDescriptor | TimeDescriptor | AudioDescriptor;
+
+export const readSCTE35 = (data: Uint8Array): SCTE35Data => {
+    const reader = new ExpGolomb(data);
+
+    const table_id = reader.readBits(8);
+    const section_syntax_indicator = reader.readBool();
+    const private_indicator = reader.readBool();
+    reader.readBits(2);
+    const section_length = reader.readBits(12);
+    const protocol_version = reader.readBits(8);
+    const encrypted_packet = reader.readBool();
+    const encryption_algorithm = reader.readBits(6);
+    const pts_adjustment = reader.readBits(31) * 4 + reader.readBits(2);
+    const cw_index = reader.readBits(8);
+    const tier = reader.readBits(12);
+    const splice_command_length = reader.readBits(12)
+    const splice_command_type = reader.readBits(8)
+
+    let splice_command: SpliceCommand | null = null;
+    if (splice_command_type === SCTE35CommandType.kSpliceNull) {
+        splice_command = parseSpliceNull();
+    } else if (splice_command_type === SCTE35CommandType.kSpliceSchedule) {
+        splice_command = parseSpliceSchedule(reader);
+    } else if (splice_command_type === SCTE35CommandType.kSpliceInsert) {
+        splice_command = parseSpliceInsert(reader);
+    } else if (splice_command_type === SCTE35CommandType.kTimeSignal) {
+        splice_command = parseTimeSignal(reader);
+    } else if (splice_command_type === SCTE35CommandType.kBandwidthReservation) {
+        splice_command = parseBandwidthReservation();
+    } else if (splice_command_type === SCTE35CommandType.kPrivateCommand) {
+        splice_command = parsePrivateCommand(splice_command_length, reader)
+    } else {
+        reader.readBits(splice_command_length * 8);
+    }
+
+    const splice_descriptors: SpliceDescriptor[] = [];
+
+    const descriptor_loop_length = reader.readBits(16);
+    for (let length = 0; length < descriptor_loop_length;) {
+        const descriptor_tag = reader.readBits(8);
+        const descriptor_length = reader.readBits(8);
+        const identifier = String.fromCharCode(reader.readBits(8), reader.readBits(8), reader.readBits(8), reader.readBits(8));
+
+        if (descriptor_tag === 0x00) {
+            splice_descriptors.push(parseAvailDescriptor(descriptor_tag, descriptor_length, identifier, reader));
+        } else if (descriptor_tag === 0x01) {
+            splice_descriptors.push(parseDTMFDescriptor(descriptor_tag, descriptor_length, identifier, reader));
+        } else if (descriptor_tag === 0x02) {
+            splice_descriptors.push(parseSegmentationDescriptor(descriptor_tag, descriptor_length, identifier, reader));
+        } else if (descriptor_tag === 0x03) {
+            splice_descriptors.push(parseTimeDescriptor(descriptor_tag, descriptor_length, identifier, reader));
+        } else if (descriptor_tag === 0x04) {
+            splice_descriptors.push(parseAudioDescriptor(descriptor_tag, descriptor_length, identifier, reader));
+        } else {
+            reader.readBits((descriptor_length - 4) * 8);
+        }
+
+        length += 2 + descriptor_length;
+    }
+
+    const E_CRC32 = encrypted_packet ? reader.readBits(32) : undefined;
+    const CRC32 = reader.readBits(32);
+
+    const detail = {
+        table_id,
+        section_syntax_indicator,
+        private_indicator,
+        section_length,
+        protocol_version,
+        encrypted_packet,
+        encryption_algorithm,
+        pts_adjustment,
+        cw_index,
+        tier,
+        splice_command_length,
+        splice_command_type,
+        splice_command,
+        descriptor_loop_length,
+        splice_descriptors,
+        E_CRC32,
+        CRC32
+    };
+
+    if (splice_command_type === SCTE35CommandType.kSpliceInsert) {
+        const spliceInsert = splice_command as SpliceInsert;
+
+        if (spliceInsert.splice_event_cancel_indicator) {
+            return {
+                splice_command_type,
+                detail,
+                data
+            }
+        } else if (spliceInsert.program_splice_flag && !spliceInsert.splice_immediate_flag) {
+            const auto_return = spliceInsert.duration_flag ? spliceInsert.break_duration.auto_return : undefined;
+            const duraiton = spliceInsert.duration_flag ? spliceInsert.break_duration.duration / 90 : undefined;
+
+            if (spliceInsert.splice_time.time_specified_flag) {
+                return {
+                    splice_command_type,
+                    pts: (pts_adjustment + spliceInsert.splice_time.pts_time) % (2 ** 33),
+                    auto_return,
+                    duraiton,
+                    detail,
+                    data
+                }
+            } else {
+                return {
+                    splice_command_type,
+                    auto_return,
+                    duraiton,
+                    detail,
+                    data
+                }                       
+            }
+        } else {
+            const auto_return = spliceInsert.duration_flag ? spliceInsert.break_duration.auto_return : undefined;
+            const duraiton = spliceInsert.duration_flag ? spliceInsert.break_duration.duration / 90 : undefined;
+
+            return {
+                splice_command_type,
+                auto_return,
+                duraiton,
+                detail,
+                data
+            }
