@@ -335,3 +335,177 @@ const parseSpliceInsert = (reader: ExpGolomb): SpliceInsert => {
             spliceInsert.components.push(parseSpliceInsertComponent(spliceInsert.splice_immediate_flag, reader));
         }
     }
+
+    if (spliceInsert.duration_flag) {
+        spliceInsert.break_duration = parseBreakDuration(reader);
+    }
+
+    spliceInsert.unique_program_id = reader.readBits(16);
+    spliceInsert.avail_num = reader.readBits(8);
+    spliceInsert.avails_expected = reader.readBits(8);
+
+    return spliceInsert;
+}
+const parseTimeSignal = (reader: ExpGolomb): TimeSignal => {
+    return {
+        splice_time: parseSpliceTime(reader)
+    };
+}
+const parseBandwidthReservation = (): BandwidthReservation => {
+    return {};
+}
+const parsePrivateCommand = (splice_command_length: number, reader: ExpGolomb): PrivateCommand => {
+    const identifier = String.fromCharCode(reader.readBits(8), reader.readBits(8), reader.readBits(8), reader.readBits(8))
+    const data = new Uint8Array(splice_command_length - 4);
+    for (let i = 0; i < splice_command_length - 4; i++) {
+        data[i] = reader.readBits(8);
+    }
+
+    return {
+        identifier,
+        private_data: data.buffer
+    }
+}
+
+type Descriptor = {
+    descriptor_tag: number,
+    descriptor_length: number,
+    identifier: string
+}
+type AvailDescriptor = Descriptor & {
+    provider_avail_id: number
+}
+const parseAvailDescriptor = (descriptor_tag: number, descriptor_length: number, identifier: string, reader: ExpGolomb): AvailDescriptor => {
+    const provider_avail_id = reader.readBits(32);
+
+    return {
+        descriptor_tag,
+        descriptor_length,
+        identifier,
+        provider_avail_id
+    }
+}
+type DTMFDescriptor = Descriptor & {
+    preroll: number,
+    dtmf_count: number,
+    DTMF_char: string
+}
+const parseDTMFDescriptor = (descriptor_tag: number, descriptor_length: number, identifier: string, reader: ExpGolomb): DTMFDescriptor => {
+    const preroll = reader.readBits(8);
+    const dtmf_count = reader.readBits(3);
+    reader.readBits(5);
+    let DTMF_char = '';
+    for (let i = 0; i < dtmf_count; i++) {
+        DTMF_char += String.fromCharCode(reader.readBits(8));
+    }
+
+    return {
+        descriptor_tag,
+        descriptor_length,
+        identifier,
+        preroll,
+        dtmf_count,
+        DTMF_char
+    };
+}
+type SegmentationDescriptorComponent = {
+    component_tag: number,
+    pts_offset: number
+}
+const parseSegmentationDescriptorComponent = (reader: ExpGolomb): SegmentationDescriptorComponent => {
+    const component_tag = reader.readBits(8);
+    reader.readBits(7)
+    const pts_offset = reader.readBits(31) * 4 + reader.readBits(2);
+    return {
+        component_tag,
+        pts_offset
+    };
+}
+type SegmentationDescriptor = Descriptor & {
+    segmentation_event_id: number,
+    segmentation_event_cancel_indicator: boolean,
+    program_segmentation_flag?: boolean,
+    segmentation_duration_flag?: boolean
+    delivery_not_restricted_flag?: boolean
+    web_delivery_allowed_flag?: boolean
+    no_regional_blackout_flag?: boolean,
+    archive_allowed_flag?: boolean,
+    device_restrictions?: number
+    component_count?: number,
+    components?: any[]
+    segmentation_duration?: number
+    segmentation_upid_type?: number,
+    segmentation_upid_length?: number,
+    segmentation_upid?: ArrayBuffer,
+    segmentation_type_id?: number,
+    segment_num?: number,
+    segments_expected?: number,
+    sub_segment_num?: number,
+    sub_segments_expected?: number
+}
+const parseSegmentationDescriptor = (descriptor_tag: number, descriptor_length: number, identifier: string, reader: ExpGolomb): SegmentationDescriptor => {
+    const segmentation_event_id = reader.readBits(32);
+    const segmentation_event_cancel_indicator = reader.readBool();
+    reader.readBits(7);
+
+    const segmentationDescriptor: SegmentationDescriptor = {
+        descriptor_tag,
+        descriptor_length,
+        identifier,
+        segmentation_event_id,
+        segmentation_event_cancel_indicator
+    }
+
+    if (segmentation_event_cancel_indicator) {
+        return segmentationDescriptor;
+    }
+
+    segmentationDescriptor.program_segmentation_flag = reader.readBool();
+    segmentationDescriptor.segmentation_duration_flag = reader.readBool();
+    segmentationDescriptor.delivery_not_restricted_flag = reader.readBool();
+
+    if (!segmentationDescriptor.delivery_not_restricted_flag) {
+        segmentationDescriptor.web_delivery_allowed_flag = reader.readBool();
+        segmentationDescriptor.no_regional_blackout_flag = reader.readBool();
+        segmentationDescriptor.archive_allowed_flag = reader.readBool();
+        segmentationDescriptor.device_restrictions = reader.readBits(2);
+    } else {
+        reader.readBits(5);
+    }
+
+    if (!segmentationDescriptor.program_segmentation_flag) {
+        segmentationDescriptor.component_count = reader.readBits(8);
+        segmentationDescriptor.components = [];
+        for (let i = 0; i < segmentationDescriptor.component_count; i++) {
+            segmentationDescriptor.components.push(parseSegmentationDescriptorComponent(reader));
+        }
+    }
+
+    if (segmentationDescriptor.segmentation_duration_flag) {
+        segmentationDescriptor.segmentation_duration = reader.readBits(40);
+    }
+
+    segmentationDescriptor.segmentation_upid_type = reader.readBits(8);
+    segmentationDescriptor.segmentation_upid_length = reader.readBits(8);
+    {
+        const upid = new Uint8Array(segmentationDescriptor.segmentation_upid_length)
+        for (let i = 0; i < segmentationDescriptor.segmentation_upid_length; i++) {
+            upid[i] = reader.readBits(8);
+        }
+        segmentationDescriptor.segmentation_upid = upid.buffer;
+    }
+    segmentationDescriptor.segmentation_type_id = reader.readBits(8);
+    segmentationDescriptor.segment_num = reader.readBits(8);
+    segmentationDescriptor.segments_expected = reader.readBits(8);
+    if (
+        segmentationDescriptor.segmentation_type_id === 0x34 ||
+        segmentationDescriptor.segmentation_type_id === 0x36 ||
+        segmentationDescriptor.segmentation_type_id === 0x38 ||
+        segmentationDescriptor.segmentation_type_id === 0x3A
+    ) {
+        segmentationDescriptor.sub_segment_num = reader.readBits(8);
+        segmentationDescriptor.sub_segments_expected = reader.readBits(8);
+    }
+
+    return segmentationDescriptor;
+}
