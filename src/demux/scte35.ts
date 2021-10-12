@@ -696,3 +696,29 @@ export const readSCTE35 = (data: Uint8Array): SCTE35Data => {
                 detail,
                 data
             }
+        }
+    } else if (splice_command_type === SCTE35CommandType.kTimeSignal) {
+        const timeSignal = splice_command as TimeSignal;
+
+        if (timeSignal.splice_time.time_specified_flag) {
+            return {
+                splice_command_type,
+                pts: (pts_adjustment + timeSignal.splice_time.pts_time) % (2 ** 33),
+                detail,
+                data
+            }
+        } else {
+            return {
+                splice_command_type,
+                detail,
+                data
+            }
+        }
+    } else {
+        return {
+            splice_command_type,
+            detail,
+            data
+        }
+    }
+}
