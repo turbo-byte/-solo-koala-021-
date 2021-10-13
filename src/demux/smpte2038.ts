@@ -14,4 +14,14 @@ export class SMPTE2038Data {
 type AncillaryData = {
     yc_indicator: boolean;
     line_number: number;
-    horizontal_offset: n
+    horizontal_offset: number;
+    did: number;
+    sdid: number;
+    user_data: Uint8Array;
+    description: string;
+    information: any;
+}
+
+
+export const smpte2038parse = (data: Uint8Array) => {
+    let gb = new ExpGolomb(data);
