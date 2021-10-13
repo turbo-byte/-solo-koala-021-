@@ -5,4 +5,13 @@ export class SMPTE2038Data {
     stream_id: number;
     pts?: number;
     dts?: number;
-    nearest_pt
+    nearest_pts?: number;
+    ancillaries: AncillaryData[];
+    data: Uint8Array;
+    len: number;
+}
+
+type AncillaryData = {
+    yc_indicator: boolean;
+    line_number: number;
+    horizontal_offset: n
