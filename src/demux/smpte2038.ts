@@ -31,4 +31,7 @@ export const smpte2038parse = (data: Uint8Array) => {
     while (true) {
         let zero = gb.readBits(6); readBits += 6;
         if (zero !== 0) { break; }
-  
+        let YC_indicator = gb.readBool(); readBits += 1;
+        let line_number = gb.readBits(11); readBits += 11;
+        let horizontal_offset = gb.readBits(12); readBits += 12;
+       
