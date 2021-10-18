@@ -36,4 +36,8 @@ export const smpte2038parse = (data: Uint8Array) => {
         let horizontal_offset = gb.readBits(12); readBits += 12;
         let data_ID = gb.readBits(10) & 0xFF; readBits += 10;
         let data_SDID = gb.readBits(10) & 0xFF; readBits += 10;
-        let data_count = gb.readBits(10) & 0xFF; readBits +
+        let data_count = gb.readBits(10) & 0xFF; readBits += 10;
+        let user_data = new Uint8Array(data_count);
+        for (let i = 0; i < data_count; i++) {
+            let user_data_word = gb.readBits(10) & 0xFF; readBits += 10;
+            use
