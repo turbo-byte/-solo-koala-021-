@@ -40,4 +40,9 @@ export const smpte2038parse = (data: Uint8Array) => {
         let user_data = new Uint8Array(data_count);
         for (let i = 0; i < data_count; i++) {
             let user_data_word = gb.readBits(10) & 0xFF; readBits += 10;
-            use
+            user_data[i] = user_data_word;
+        }
+        let checksum_word = gb.readBits(10); readBits += 10;
+
+        let description = 'User Defined';
+        let information: any = {
