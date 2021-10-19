@@ -45,4 +45,10 @@ export const smpte2038parse = (data: Uint8Array) => {
         let checksum_word = gb.readBits(10); readBits += 10;
 
         let description = 'User Defined';
-        let information: any = {
+        let information: any = {};
+        if (data_ID === 0x41) {
+            if (data_SDID === 0x07) {
+                description = 'SCTE-104'
+            }
+        } else if (data_ID === 0x5F) {
+            if (data_SD
