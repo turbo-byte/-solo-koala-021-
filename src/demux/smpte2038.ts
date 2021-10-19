@@ -51,4 +51,8 @@ export const smpte2038parse = (data: Uint8Array) => {
                 description = 'SCTE-104'
             }
         } else if (data_ID === 0x5F) {
-            if (data_SD
+            if (data_SDID === 0xDC) {
+                description = 'ARIB STD-B37 (1SEG)';
+            } else if (data_SDID === 0xDD) {
+                description = 'ARIB STD-B37 (ANALOG)';
+            } else if (data_SDID === 0xDE) {
