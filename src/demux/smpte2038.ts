@@ -64,4 +64,12 @@ export const smpte2038parse = (data: Uint8Array) => {
             if (data_SDID === 0x01) {
                 description = 'EIA-708';
             } else if (data_SDID === 0x02) {
-                description = 'EIA-6
+                description = 'EIA-608';
+            }
+        }
+
+        ancillaries.push({
+            yc_indicator: YC_indicator,
+            line_number,
+            horizontal_offset,
+            
