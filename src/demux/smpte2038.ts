@@ -72,4 +72,10 @@ export const smpte2038parse = (data: Uint8Array) => {
             yc_indicator: YC_indicator,
             line_number,
             horizontal_offset,
-            
+            did: data_ID,
+            sdid: data_SDID,
+            user_data,
+            description,
+            information
+        });
+        gb.readBits(8 - (readBits - Math.floor(readBi
