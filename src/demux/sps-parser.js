@@ -238,3 +238,62 @@ class SPSParser {
             },
 
             present_size: {
+                width: present_width,
+                height: codec_height
+            }
+        };
+    }
+
+    static _skipScalingList(gb, count) {
+        let last_scale = 8, next_scale = 8;
+        let delta_scale = 0;
+        for (let i = 0; i < count; i++) {
+            if (next_scale !== 0) {
+                delta_scale = gb.readSEG();
+                next_scale = (last_scale + delta_scale + 256) % 256;
+            }
+            last_scale = (next_scale === 0) ? last_scale : next_scale;
+        }
+    }
+
+    static getProfileString(profile_idc) {
+        switch (profile_idc) {
+            case 66:
+                return 'Baseline';
+            case 77:
+                return 'Main';
+            case 88:
+                return 'Extended';
+            case 100:
+                return 'High';
+            case 110:
+                return 'High10';
+            case 122:
+                return 'High422';
+            case 244:
+                return 'High444';
+            default:
+                return 'Unknown';
+        }
+    }
+
+    static getLevelString(level_idc) {
+        return (level_idc / 10).toFixed(1);
+    }
+
+    static getChromaFormatString(chroma) {
+        switch (chroma) {
+            case 420:
+                return '4:2:0';
+            case 422:
+                return '4:2:2';
+            case 444:
+                return '4:4:4';
+            default:
+                return 'Unknown';
+        }
+    }
+
+}
+
+export default SPSParser;
