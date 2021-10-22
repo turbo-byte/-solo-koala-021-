@@ -288,3 +288,188 @@ class TSDemuxer extends BaseDemuxer {
 
                     // process PES only for known common_pids
                     if (pid === this.pmt_.common_pids.h264
+                            || pid === this.pmt_.common_pids.h265
+                            || pid === this.pmt_.common_pids.adts_aac
+                            || pid === this.pmt_.common_pids.mp3
+                            || this.pmt_.pes_private_data_pids[pid] === true
+                            || this.pmt_.timed_id3_pids[pid] === true) {
+                        this.handlePESSlice(chunk,
+                                            offset + ts_payload_start_index,
+                                            ts_payload_length,
+                                            {
+                                                pid,
+                                                stream_type,
+                                                file_position,
+                                                payload_unit_start_indicator,
+                                                continuity_conunter,
+                                                random_access_indicator: adaptation_field_info.random_access_indicator
+                                            });
+                    }
+                }
+            }
+
+            offset += 188;
+
+            if (this.ts_packet_size_ === 204) {
+                // skip parity word (16 bytes) for RS encoded TS
+                offset += 16;
+            }
+        }
+
+        // dispatch parsed frames to the remuxer (consumer)
+        this.dispatchAudioVideoMediaSegment();
+
+        return offset;  // consumed bytes
+    }
+
+    private parseAdaptationField(buffer: ArrayBuffer, offset: number, length: number): {
+        discontinuity_indicator?: number,
+        random_access_indicator?: number,
+        elementary_stream_priority_indicator?: number
+    } {
+        let data = new Uint8Array(buffer, offset, length);
+
+        let adaptation_field_length = data[0];
+        if (adaptation_field_length > 0) {
+            if (adaptation_field_length > 183) {
+                Log.w(this.TAG, `Illegal adaptation_field_length: ${adaptation_field_length}`);
+                return {};
+            }
+
+            let discontinuity_indicator: number = (data[1] & 0x80) >>> 7;
+            let random_access_indicator: number = (data[1] & 0x40) >>> 6;
+            let elementary_stream_priority_indicator: number = (data[1] & 0x20) >>> 5;
+
+            return {
+                discontinuity_indicator,
+                random_access_indicator,
+                elementary_stream_priority_indicator
+            };
+        }
+
+        return {};
+    }
+
+    private handleSectionSlice(buffer: ArrayBuffer, offset: number, length: number, misc: any): void {
+        let data = new Uint8Array(buffer, offset, length);
+        let slice_queue = this.section_slice_queues_[misc.pid];
+
+        if (misc.payload_unit_start_indicator) {
+            let pointer_field = data[0];
+
+            if (slice_queue != undefined && slice_queue.total_length !== 0) {
+                let remain_section = new Uint8Array(buffer, offset + 1, Math.min(length, pointer_field));
+                slice_queue.slices.push(remain_section);
+                slice_queue.total_length += remain_section.byteLength;
+
+                if (slice_queue.total_length === slice_queue.expected_length) {
+                    this.emitSectionSlices(slice_queue, misc);
+                } else {
+                    this.clearSlices(slice_queue, misc);
+                }
+            }
+
+            for (let i = 1 + pointer_field; i < data.byteLength; ){
+                let table_id = data[i + 0];
+                if (table_id === 0xFF) { break; }
+
+                let section_length = ((data[i + 1] & 0x0F) << 8) | data[i + 2];
+
+                this.section_slice_queues_[misc.pid] = new SliceQueue();
+                slice_queue = this.section_slice_queues_[misc.pid];
+
+                slice_queue.expected_length = section_length + 3;
+                slice_queue.file_position = misc.file_position;
+                slice_queue.random_access_indicator = misc.random_access_indicator;
+
+                let remain_section = new Uint8Array(buffer, offset + i, Math.min(length - i, slice_queue.expected_length - slice_queue.total_length));
+                slice_queue.slices.push(remain_section);
+                slice_queue.total_length += remain_section.byteLength;
+
+                if (slice_queue.total_length === slice_queue.expected_length) {
+                    this.emitSectionSlices(slice_queue, misc);
+                } else if (slice_queue.total_length >= slice_queue.expected_length) {
+                    this.clearSlices(slice_queue, misc);
+                }
+
+                i += remain_section.byteLength;
+            }
+        } else if (slice_queue != undefined && slice_queue.total_length !== 0) {
+            let remain_section = new Uint8Array(buffer, offset, Math.min(length, slice_queue.expected_length - slice_queue.total_length));
+            slice_queue.slices.push(remain_section);
+            slice_queue.total_length += remain_section.byteLength;
+
+            if (slice_queue.total_length === slice_queue.expected_length) {
+                this.emitSectionSlices(slice_queue, misc);
+            } else if (slice_queue.total_length >= slice_queue.expected_length) {
+                this.clearSlices(slice_queue, misc);
+            }
+        }
+    }
+
+    private handlePESSlice(buffer: ArrayBuffer, offset: number, length: number, misc: any): void {
+        let data = new Uint8Array(buffer, offset, length);
+
+        let packet_start_code_prefix = (data[0] << 16) | (data[1] << 8) | (data[2]);
+        let stream_id = data[3];
+        let PES_packet_length = (data[4] << 8) | data[5];
+
+        if (misc.payload_unit_start_indicator) {
+            if (packet_start_code_prefix !== 1) {
+                Log.e(this.TAG, `handlePESSlice: packet_start_code_prefix should be 1 but with value ${packet_start_code_prefix}`);
+                return;
+            }
+
+            // handle queued PES slices:
+            // Merge into a big Uint8Array then call parsePES()
+            let slice_queue = this.pes_slice_queues_[misc.pid];
+            if (slice_queue) {
+                if (slice_queue.expected_length === 0 || slice_queue.expected_length === slice_queue.total_length) {
+                    this.emitPESSlices(slice_queue, misc);
+                } else {
+                    this.clearSlices(slice_queue, misc);
+                }
+            }
+
+            // Make a new PES queue for new PES slices
+            this.pes_slice_queues_[misc.pid] = new SliceQueue();
+            this.pes_slice_queues_[misc.pid].file_position = misc.file_position;
+            this.pes_slice_queues_[misc.pid].random_access_indicator = misc.random_access_indicator;
+        }
+
+        if (this.pes_slice_queues_[misc.pid] == undefined) {
+            // ignore PES slices without [PES slice that has payload_unit_start_indicator]
+            return;
+        }
+
+        // push subsequent PES slices into pes_queue
+        let slice_queue = this.pes_slice_queues_[misc.pid];
+        slice_queue.slices.push(data);
+        if (misc.payload_unit_start_indicator) {
+            slice_queue.expected_length = PES_packet_length === 0 ? 0 : PES_packet_length + 6;
+        }
+        slice_queue.total_length += data.byteLength;
+
+        if (slice_queue.expected_length > 0 && slice_queue.expected_length === slice_queue.total_length) {
+            this.emitPESSlices(slice_queue, misc);
+        } else if (slice_queue.expected_length > 0 && slice_queue.expected_length < slice_queue.total_length) {
+            this.clearSlices(slice_queue, misc);
+        }
+    }
+
+    private emitSectionSlices(slice_queue: SliceQueue, misc: any): void {
+        let data = new Uint8Array(slice_queue.total_length);
+        for (let i = 0, offset = 0; i < slice_queue.slices.length; i++) {
+            let slice = slice_queue.slices[i];
+            data.set(slice, offset);
+            offset += slice.byteLength;
+        }
+        slice_queue.slices = [];
+        slice_queue.expected_length = -1;
+        slice_queue.total_length = 0;
+
+        let section_data = new SectionData();
+        section_data.pid = misc.pid;
+        section_data.data = data;
+        section_data.file_position = slice_queue.file_position;
+        section_data.random_access_indicator = slice_queue.random_access_indicator;
