@@ -78,4 +78,12 @@ export const smpte2038parse = (data: Uint8Array) => {
             description,
             information
         });
-        gb.readBits(8 - (readBits - Math.floor(readBi
+        gb.readBits(8 - (readBits - Math.floor(readBits / 8)) % 8);
+        readBits += (8 - (readBits - Math.floor(readBits / 8))) % 8;
+    }
+
+    gb.destroy();
+    gb = null;
+
+    return ancillaries;
+}
