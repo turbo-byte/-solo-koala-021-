@@ -110,3 +110,181 @@ class TSDemuxer extends BaseDemuxer {
 
     private video_track_ = {type: 'video', id: 1, sequenceNumber: 0, samples: [], length: 0};
     private audio_track_ = {type: 'audio', id: 2, sequenceNumber: 0, samples: [], length: 0};
+
+    public constructor(probe_data: any, config: any) {
+        super();
+
+        this.ts_packet_size_ = probe_data.ts_packet_size;
+        this.sync_offset_ = probe_data.sync_offset;
+        this.config_ = config;
+    }
+
+    public destroy() {
+        this.media_info_ = null;
+        this.pes_slice_queues_ = null;
+        this.section_slice_queues_ = null;
+
+        this.video_metadata_ = null;
+        this.audio_metadata_ = null;
+        this.aac_last_incomplete_data_ = null;
+
+        this.video_track_ = null;
+        this.audio_track_ = null;
+
+        super.destroy();
+    }
+
+    public static probe(buffer: ArrayBuffer) {
+        let data = new Uint8Array(buffer);
+        let sync_offset = -1;
+        let ts_packet_size = 188;
+
+        if (data.byteLength <= 3 * ts_packet_size) {
+            return {needMoreData: true};
+        }
+
+        while (sync_offset === -1) {
+            let scan_window = Math.min(1000, data.byteLength - 3 * ts_packet_size);
+
+            for (let i = 0; i < scan_window; ) {
+                // sync_byte should all be 0x47
+                if (data[i] === 0x47
+                        && data[i + ts_packet_size] === 0x47
+                        && data[i + 2 * ts_packet_size] === 0x47) {
+                    sync_offset = i;
+                    break;
+                } else {
+                    i++;
+                }
+            }
+
+            // find sync_offset failed in previous ts_packet_size
+            if (sync_offset === -1) {
+                if (ts_packet_size === 188) {
+                    // try 192 packet size (BDAV, etc.)
+                    ts_packet_size = 192;
+                } else if (ts_packet_size === 192) {
+                    // try 204 packet size (European DVB, etc.)
+                    ts_packet_size = 204;
+                } else {
+                    // 192, 204 also failed, exit
+                    break;
+                }
+            }
+        }
+
+        if (sync_offset === -1) {
+            // both 188, 192, 204 failed, Non MPEG-TS
+            return {match: false};
+        }
+
+        if (ts_packet_size === 192 && sync_offset >= 4) {
+            Log.v('TSDemuxer', `ts_packet_size = 192, m2ts mode`);
+            sync_offset -= 4;
+        } else if (ts_packet_size === 204) {
+            Log.v('TSDemuxer', `ts_packet_size = 204, RS encoded MPEG2-TS stream`);
+        }
+
+        return {
+            match: true,
+            consumed: 0,
+            ts_packet_size,
+            sync_offset
+        };
+    }
+
+    public bindDataSource(loader) {
+        loader.onDataArrival = this.parseChunks.bind(this);
+        return this;
+    }
+
+    public resetMediaInfo() {
+        this.media_info_ = new MediaInfo();
+    }
+
+    public parseChunks(chunk: ArrayBuffer, byte_start: number): number {
+        if (!this.onError
+                || !this.onMediaInfo
+                || !this.onTrackMetadata
+                || !this.onDataAvailable) {
+            throw new IllegalStateException('onError & onMediaInfo & onTrackMetadata & onDataAvailable callback must be specified');
+        }
+
+        let offset = 0;
+
+        if (this.first_parse_) {
+            this.first_parse_ = false;
+            offset = this.sync_offset_;
+        }
+
+        while (offset + this.ts_packet_size_ <= chunk.byteLength) {
+            let file_position = byte_start + offset;
+
+            if (this.ts_packet_size_ === 192) {
+                // skip ATS field (2-bits copy-control + 30-bits timestamp) for m2ts
+                offset += 4;
+            }
+
+            let data = new Uint8Array(chunk, offset, 188);
+
+            let sync_byte = data[0];
+            if (sync_byte !== 0x47) {
+                Log.e(this.TAG, `sync_byte = ${sync_byte}, not 0x47`);
+                break;
+            }
+
+            let payload_unit_start_indicator = (data[1] & 0x40) >>> 6;
+            let transport_priority = (data[1] & 0x20) >>> 5;
+            let pid = ((data[1] & 0x1F) << 8) | data[2];
+            let adaptation_field_control = (data[3] & 0x30) >>> 4;
+            let continuity_conunter = (data[3] & 0x0F);
+
+            let adaptation_field_info: {
+                discontinuity_indicator?: number,
+                random_access_indicator?: number,
+                elementary_stream_priority_indicator?: number
+            } = {};
+            let ts_payload_start_index = 4;
+
+            if (adaptation_field_control == 0x02 || adaptation_field_control == 0x03) {
+                let adaptation_field_length = data[4];
+                if (5 + adaptation_field_length === 188) {
+                    // TS packet only has adaption field, jump to next
+                    offset += 188;
+                    if (this.ts_packet_size_ === 204) {
+                        // skip parity word (16 bytes) for RS encoded TS
+                        offset += 16;
+                    }
+                    continue;
+                } else {
+                    // parse leading adaptation_field if has payload
+                    if (adaptation_field_length > 0) {
+                        adaptation_field_info = this.parseAdaptationField(chunk,
+                                                                          offset + 4,
+                                                                          1 + adaptation_field_length);
+                    }
+                    ts_payload_start_index = 4 + 1 + adaptation_field_length;
+                }
+            }
+
+            if (adaptation_field_control == 0x01 || adaptation_field_control == 0x03) {
+                if (pid === 0 || pid === this.current_pmt_pid_ || (this.pmt_ != undefined && this.pmt_.pid_stream_type[pid] === StreamType.kSCTE35)) {  // PAT(pid === 0) or PMT or SCTE35
+                    let ts_payload_length = 188 - ts_payload_start_index;
+
+                    this.handleSectionSlice(chunk,
+                                            offset + ts_payload_start_index,
+                                            ts_payload_length,
+                                            {
+                                                pid,
+                                                file_position,
+                                                payload_unit_start_indicator,
+                                                continuity_conunter,
+                                                random_access_indicator: adaptation_field_info.random_access_indicator
+                                            });
+                } else if (this.pmt_ != undefined && this.pmt_.pid_stream_type[pid] != undefined) {
+                    // PES
+                    let ts_payload_length = 188 - ts_payload_start_index;
+                    let stream_type = this.pmt_.pid_stream_type[pid];
+
+                    // process PES only for known common_pids
+                    if (pid === this.pmt_.common_pids.h264
