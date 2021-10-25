@@ -1171,3 +1171,182 @@ class TSDemuxer extends BaseDemuxer {
         if (last_sample_pts_ms) {
             this.aac_last_sample_pts_ = last_sample_pts_ms;
         }
+    }
+
+    private parseMP3Payload(data: Uint8Array, pts: number) {
+        if (this.has_video_ && !this.video_init_segment_dispatched_) {
+            // If first video IDR frame hasn't been detected,
+            // Wait for first IDR frame and video init segment being dispatched
+            return;
+        }
+
+        let _mpegAudioV10SampleRateTable = [44100, 48000, 32000, 0];
+        let _mpegAudioV20SampleRateTable = [22050, 24000, 16000, 0];
+        let _mpegAudioV25SampleRateTable = [11025, 12000, 8000,  0];
+        let _mpegAudioL1BitRateTable = [0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, -1];
+        let _mpegAudioL2BitRateTable = [0, 32, 48, 56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, 384, -1];
+        let _mpegAudioL3BitRateTable = [0, 32, 40, 48,  56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, -1];
+
+        let ver = (data[1] >>> 3) & 0x03;
+        let layer = (data[1] & 0x06) >> 1;
+        let bitrate_index = (data[2] & 0xF0) >>> 4;
+        let sampling_freq_index = (data[2] & 0x0C) >>> 2;
+        let channel_mode = (data[3] >>> 6) & 0x03;
+        let channel_count = channel_mode !== 3 ? 2 : 1;
+
+        let sample_rate = 0;
+        let bit_rate = 0;
+        let object_type = 34;  // Layer-3, listed in MPEG-4 Audio Object Types
+
+        let codec = 'mp3';
+        switch (ver) {
+            case 0:  // MPEG 2.5
+                sample_rate = _mpegAudioV25SampleRateTable[sampling_freq_index];
+                break;
+            case 2:  // MPEG 2
+                sample_rate = _mpegAudioV20SampleRateTable[sampling_freq_index];
+                break;
+            case 3:  // MPEG 1
+                sample_rate = _mpegAudioV10SampleRateTable[sampling_freq_index];
+                break;
+        }
+
+        switch (layer) {
+            case 1:  // Layer 3
+                object_type = 34;
+                if (bitrate_index < _mpegAudioL3BitRateTable.length) {
+                    bit_rate = _mpegAudioL3BitRateTable[bitrate_index];
+                }
+                break;
+            case 2:  // Layer 2
+                object_type = 33;
+                if (bitrate_index < _mpegAudioL2BitRateTable.length) {
+                    bit_rate = _mpegAudioL2BitRateTable[bitrate_index];
+                }
+                break;
+            case 3:  // Layer 1
+                object_type = 32;
+                if (bitrate_index < _mpegAudioL1BitRateTable.length) {
+                    bit_rate = _mpegAudioL1BitRateTable[bitrate_index];
+                }
+                break;
+        }
+
+        const sample = new MP3Data();
+        sample.object_type = object_type;
+        sample.sample_rate = sample_rate;
+        sample.channel_count = channel_count;
+        sample.data = data;
+        const audio_sample = {
+            codec: 'mp3',
+            data: sample
+        } as const;
+
+
+        if (this.audio_init_segment_dispatched_ == false) {
+            this.audio_metadata_ = {
+                codec: 'mp3',
+                object_type,
+                sample_rate,
+                channel_count
+            }
+            this.dispatchAudioInitSegment(audio_sample);
+        } else if (this.detectAudioMetadataChange(audio_sample)) {
+            // flush stashed frames before notify new AudioSpecificConfig
+            this.dispatchAudioMediaSegment();
+            // notify new AAC AudioSpecificConfig
+            this.dispatchAudioInitSegment(audio_sample);
+        }
+
+        let mp3_sample = {
+            unit: data,
+            length: data.byteLength,
+            pts: pts / this.timescale_,
+            dts: pts / this.timescale_
+        };
+        this.audio_track_.samples.push(mp3_sample);
+        this.audio_track_.length += data.byteLength;
+    }
+
+    private detectAudioMetadataChange(sample: AudioData): boolean {
+        if (sample.codec !== this.audio_metadata_.codec) {
+            Log.v(this.TAG, `Audio: Audio Codecs changed from ` +
+                                `${this.audio_metadata_.codec} to ${sample.codec}`);
+            return true;
+        }
+
+        if (sample.codec === 'aac' && this.audio_metadata_.codec === 'aac') {
+            const frame = sample.data;
+            if (frame.audio_object_type !== this.audio_metadata_.audio_object_type) {
+                Log.v(this.TAG, `AAC: AudioObjectType changed from ` +
+                                `${this.audio_metadata_.audio_object_type} to ${frame.audio_object_type}`);
+                return true;
+            }
+
+            if (frame.sampling_freq_index !== this.audio_metadata_.sampling_freq_index) {
+                Log.v(this.TAG, `AAC: SamplingFrequencyIndex changed from ` +
+                                `${this.audio_metadata_.sampling_freq_index} to ${frame.sampling_freq_index}`);
+                return true;
+            }
+
+            if (frame.channel_config !== this.audio_metadata_.channel_config) {
+                Log.v(this.TAG, `AAC: Channel configuration changed from ` +
+                                `${this.audio_metadata_.channel_config} to ${frame.channel_config}`);
+                return true;
+            }
+        } else if (sample.codec === 'mp3' && this.audio_metadata_.codec === 'mp3') {
+            const data = sample.data;
+            if (data.object_type !== this.audio_metadata_.object_type) {
+                Log.v(this.TAG, `MP3: AudioObjectType changed from ` +
+                                `${this.audio_metadata_.object_type} to ${data.object_type}`);
+                return true;
+            }
+
+            if (data.sample_rate !== this.audio_metadata_.sample_rate) {
+                Log.v(this.TAG, `MP3: SamplingFrequencyIndex changed from ` +
+                                `${this.audio_metadata_.sample_rate} to ${data.sample_rate}`);
+                return true;
+            }
+
+            if (data.channel_count !== this.audio_metadata_.channel_count) {
+                Log.v(this.TAG, `MP3: Channel count changed from ` +
+                                `${this.audio_metadata_.channel_count} to ${data.channel_count}`);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private dispatchAudioInitSegment(sample: AudioData) {
+        let meta: any = {};
+        meta.type = 'audio';
+        meta.id = this.audio_track_.id;
+        meta.timescale = 1000;
+        meta.duration = this.duration_;
+
+        if (this.audio_metadata_.codec === 'aac') {
+            let aac_frame = sample.data as AACFrame;
+            let audio_specific_config = new AudioSpecificConfig(aac_frame);
+
+            meta.audioSampleRate = audio_specific_config.sampling_rate;
+            meta.channelCount = audio_specific_config.channel_count;
+            meta.codec = audio_specific_config.codec_mimetype;
+            meta.originalCodec = audio_specific_config.original_codec_mimetype;
+            meta.config = audio_specific_config.config;
+        } else if (this.audio_metadata_.codec === 'mp3') {
+            meta.audioSampleRate = this.audio_metadata_.sample_rate;
+            meta.channelCount = this.audio_metadata_.channel_count;
+            meta.codec = 'mp3';
+            meta.originalCodec = 'mp3';
+            meta.config = undefined;
+        }
+
+        meta.refSampleDuration = 1024 / meta.audioSampleRate * meta.timescale;
+
+        if (this.audio_init_segment_dispatched_ == false) {
+            Log.v(this.TAG, `Generated first AudioSpecificConfig for mimeType: ${meta.codec}`);
+        }
+
+        this.onTrackMetadata('audio', meta);
+        this.audio_init_segment_dispatched_ = true;
