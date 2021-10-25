@@ -473,3 +473,177 @@ class TSDemuxer extends BaseDemuxer {
         section_data.data = data;
         section_data.file_position = slice_queue.file_position;
         section_data.random_access_indicator = slice_queue.random_access_indicator;
+        this.parseSection(section_data);
+    }
+
+    private emitPESSlices(slice_queue: SliceQueue, misc: any): void {
+        let data = new Uint8Array(slice_queue.total_length);
+        for (let i = 0, offset = 0; i < slice_queue.slices.length; i++) {
+            let slice = slice_queue.slices[i];
+            data.set(slice, offset);
+            offset += slice.byteLength;
+        }
+        slice_queue.slices = [];
+        slice_queue.expected_length = -1;
+        slice_queue.total_length = 0;
+
+        let pes_data = new PESData();
+        pes_data.pid = misc.pid;
+        pes_data.data = data;
+        pes_data.stream_type = misc.stream_type;
+        pes_data.file_position = slice_queue.file_position;
+        pes_data.random_access_indicator = slice_queue.random_access_indicator;
+        this.parsePES(pes_data);
+    }
+
+    private clearSlices(slice_queue: SliceQueue, misc: any): void {
+        slice_queue.slices = [];
+        slice_queue.expected_length = -1;
+        slice_queue.total_length = 0;
+    }
+
+    private parseSection(section_data: SectionData): void {
+        let data = section_data.data;
+        let pid = section_data.pid;
+
+        if (pid === 0x00) {
+            this.parsePAT(data);
+        } else if (pid === this.current_pmt_pid_) {
+            this.parsePMT(data);
+        } else if (this.pmt_ != undefined && this.pmt_.scte_35_pids[pid]) {
+            this.parseSCTE35(data);
+        }
+    }
+
+    private parsePES(pes_data: PESData): void {
+        let data = pes_data.data;
+        let packet_start_code_prefix = (data[0] << 16) | (data[1] << 8) | (data[2]);
+        let stream_id = data[3];
+        let PES_packet_length = (data[4] << 8) | data[5];
+
+        if (packet_start_code_prefix !== 1) {
+            Log.e(this.TAG, `parsePES: packet_start_code_prefix should be 1 but with value ${packet_start_code_prefix}`);
+            return;
+        }
+
+        if (stream_id !== 0xBC  // program_stream_map
+                && stream_id !== 0xBE  // padding_stream
+                && stream_id !== 0xBF  // private_stream_2
+                && stream_id !== 0xF0  // ECM
+                && stream_id !== 0xF1  // EMM
+                && stream_id !== 0xFF  // program_stream_directory
+                && stream_id !== 0xF2  // DSMCC
+                && stream_id !== 0xF8) {
+            let PES_scrambling_control = (data[6] & 0x30) >>> 4;
+            let PTS_DTS_flags = (data[7] & 0xC0) >>> 6;
+            let PES_header_data_length = data[8];
+
+            let pts: number | undefined;
+            let dts: number | undefined;
+
+            if (PTS_DTS_flags === 0x02 || PTS_DTS_flags === 0x03) {
+                pts = (data[9] & 0x0E) * 536870912 + // 1 << 29
+                      (data[10] & 0xFF) * 4194304 + // 1 << 22
+                      (data[11] & 0xFE) * 16384 + // 1 << 14
+                      (data[12] & 0xFF) * 128 + // 1 << 7
+                      (data[13] & 0xFE) / 2;
+
+                if (PTS_DTS_flags === 0x03) {
+                    dts = (data[14] & 0x0E) * 536870912 + // 1 << 29
+                          (data[15] & 0xFF) * 4194304 + // 1 << 22
+                          (data[16] & 0xFE) * 16384 + // 1 << 14
+                          (data[17] & 0xFF) * 128 + // 1 << 7
+                          (data[18] & 0xFE) / 2;
+                } else {
+                    dts = pts;
+                }
+            }
+
+            let payload_start_index = 6 + 3 + PES_header_data_length;
+            let payload_length: number;
+
+            if (PES_packet_length !== 0) {
+                if (PES_packet_length < 3 + PES_header_data_length) {
+                    Log.v(this.TAG, `Malformed PES: PES_packet_length < 3 + PES_header_data_length`);
+                    return;
+                }
+                payload_length = PES_packet_length - 3 - PES_header_data_length;
+            } else {  // PES_packet_length === 0
+                payload_length = data.byteLength - payload_start_index;
+            }
+
+            let payload = data.subarray(payload_start_index, payload_start_index + payload_length);
+
+            switch (pes_data.stream_type) {
+                case StreamType.kMPEG1Audio:
+                case StreamType.kMPEG2Audio:
+                    this.parseMP3Payload(payload, pts);
+                    break;
+                case StreamType.kPESPrivateData:
+                    if (this.pmt_.smpte2038_pids[pes_data.pid]) {
+                        this.parseSMPTE2038MetadataPayload(payload, pts, dts, pes_data.pid, stream_id);
+                    } else {
+                        this.parsePESPrivateDataPayload(payload, pts, dts, pes_data.pid, stream_id);
+                    }
+                    break;
+                case StreamType.kADTSAAC:
+                    this.parseAACPayload(payload, pts);
+                    break;
+                case StreamType.kID3:
+                    this.parseTimedID3MetadataPayload(payload, pts, dts, pes_data.pid, stream_id);
+                    break;
+                case StreamType.kH264:
+                    this.parseH264Payload(payload, pts, dts, pes_data.file_position, pes_data.random_access_indicator);
+                    break;
+                case StreamType.kH265:
+                    this.parseH265Payload(payload, pts, dts, pes_data.file_position, pes_data.random_access_indicator);
+                    break;
+                default:
+                    break;
+            }
+        } else if (stream_id === 0xBC  // program_stream_map
+                       || stream_id === 0xBF  // private_stream_2
+                       || stream_id === 0xF0  // ECM
+                       || stream_id === 0xF1  // EMM
+                       || stream_id === 0xFF  // program_stream_directory
+                       || stream_id === 0xF2  // DSMCC_stream
+                       || stream_id === 0xF8) {  // ITU-T Rec. H.222.1 type E stream
+            if (pes_data.stream_type === StreamType.kPESPrivateData) {
+                let payload_start_index = 6;
+                let payload_length: number;
+
+                if (PES_packet_length !== 0) {
+                    payload_length = PES_packet_length;
+                } else {  // PES_packet_length === 0
+                    payload_length = data.byteLength - payload_start_index;
+                }
+
+                let payload = data.subarray(payload_start_index, payload_start_index + payload_length);
+                this.parsePESPrivateDataPayload(payload, undefined, undefined, pes_data.pid, stream_id);
+            }
+        }
+    }
+
+    private parsePAT(data: Uint8Array): void {
+        let table_id = data[0];
+        if (table_id !== 0x00) {
+            Log.e(this.TAG, `parsePAT: table_id ${table_id} is not corresponded to PAT!`);
+            return;
+        }
+
+        let section_length = ((data[1] & 0x0F) << 8) | data[2];
+
+        let transport_stream_id = (data[3] << 8) | data[4];
+        let version_number = (data[5] & 0x3E) >>> 1;
+        let current_next_indicator = data[5] & 0x01;
+        let section_number = data[6];
+        let last_section_number = data[7];
+
+        let pat: PAT = null;
+
+        if (current_next_indicator === 1 && section_number === 0) {
+            pat = new PAT();
+            pat.version_number = version_number;
+        } else {
+            pat = this.pat_;
+            if (pat == undefined) {
