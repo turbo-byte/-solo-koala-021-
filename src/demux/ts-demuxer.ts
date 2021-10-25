@@ -647,3 +647,161 @@ class TSDemuxer extends BaseDemuxer {
         } else {
             pat = this.pat_;
             if (pat == undefined) {
+                return;
+            }
+        }
+
+        let program_start_index = 8;
+        let program_bytes = section_length - 5 - 4;  // section_length - (headers + crc)
+        let first_program_number = -1;
+        let first_pmt_pid = -1;
+
+        for (let i = program_start_index; i < program_start_index + program_bytes; i += 4) {
+            let program_number = (data[i] << 8) | data[i + 1];
+            let pid = ((data[i + 2] & 0x1F) << 8) | data[i + 3];
+
+            if (program_number === 0) {
+                // network_PID
+                pat.network_pid = pid;
+            } else {
+                // program_map_PID
+                pat.program_pmt_pid[program_number] = pid;
+
+                if (first_program_number === -1) {
+                    first_program_number = program_number;
+                }
+
+                if (first_pmt_pid === -1) {
+                    first_pmt_pid = pid;
+                }
+            }
+        }
+
+        // Currently we only deal with first appeared PMT pid
+        if (current_next_indicator === 1 && section_number === 0) {
+            if (this.pat_ == undefined) {
+                Log.v(this.TAG, `Parsed first PAT: ${JSON.stringify(pat)}`);
+            }
+            this.pat_ = pat;
+            this.current_program_ = first_program_number;
+            this.current_pmt_pid_ = first_pmt_pid;
+        }
+    }
+
+    private parsePMT(data: Uint8Array): void {
+        let table_id = data[0];
+        if (table_id !== 0x02) {
+            Log.e(this.TAG, `parsePMT: table_id ${table_id} is not corresponded to PMT!`);
+            return;
+        }
+
+        let section_length = ((data[1] & 0x0F) << 8) | data[2];
+
+        let program_number = (data[3] << 8) | data[4];
+        let version_number = (data[5] & 0x3E) >>> 1;
+        let current_next_indicator = data[5] & 0x01;
+        let section_number = data[6];
+        let last_section_number = data[7];
+
+        let pmt: PMT = null;
+
+        if (current_next_indicator === 1 && section_number === 0) {
+            pmt = new PMT();
+            pmt.program_number = program_number;
+            pmt.version_number = version_number;
+            this.program_pmt_map_[program_number] = pmt;
+        } else {
+            pmt = this.program_pmt_map_[program_number];
+            if (pmt == undefined) {
+                return;
+            }
+        }
+
+        let PCR_PID = ((data[8] & 0x1F) << 8) | data[9];
+        let program_info_length = ((data[10] & 0x0F) << 8) | data[11];
+
+        let info_start_index = 12 + program_info_length;
+        let info_bytes = section_length - 9 - program_info_length - 4;
+
+        for (let i = info_start_index; i < info_start_index + info_bytes; ) {
+            let stream_type = data[i] as StreamType;
+            let elementary_PID = ((data[i + 1] & 0x1F) << 8) | data[i + 2];
+            let ES_info_length = ((data[i + 3] & 0x0F) << 8) | data[i + 4];
+
+            pmt.pid_stream_type[elementary_PID] = stream_type;
+
+            if (stream_type === StreamType.kH264 && !pmt.common_pids.h264 && !pmt.common_pids.h265) {
+                pmt.common_pids.h264 = elementary_PID;
+            } else if (stream_type === StreamType.kH265 && !pmt.common_pids.h264 && !pmt.common_pids.h265) {
+                pmt.common_pids.h265 = elementary_PID;
+            } else if (stream_type === StreamType.kADTSAAC && !pmt.common_pids.adts_aac) {
+                pmt.common_pids.adts_aac = elementary_PID;
+            } else if ((stream_type === StreamType.kMPEG1Audio || stream_type === StreamType.kMPEG2Audio) && !pmt.common_pids.mp3) {
+                pmt.common_pids.mp3 = elementary_PID;
+            } else if (stream_type === StreamType.kPESPrivateData) {
+                pmt.pes_private_data_pids[elementary_PID] = true;
+                if (ES_info_length > 0) {
+                    // parse descriptor for PES private data
+                    for (let offset = i + 5; offset < i + 5 + ES_info_length; ) {
+                        let tag = data[offset + 0];
+                        let length = data[offset + 1];
+                        if (tag === 0x05) { // Registration Descriptor
+                            let registration = String.fromCharCode(... Array.from(data.subarray(offset + 2, offset + 2 + length)));
+
+                            if (registration === 'VANC') {
+                                pmt.smpte2038_pids[elementary_PID] = true;
+                            }
+                        }
+                        offset += 2 + length;
+                    }
+                    // provide descriptor for PES private data via callback
+                    let descriptors = data.subarray(i + 5, i + 5 + ES_info_length);
+                    this.dispatchPESPrivateDataDescriptor(elementary_PID, stream_type, descriptors);
+                }
+            } else if (stream_type === StreamType.kID3) {
+                pmt.timed_id3_pids[elementary_PID] = true;
+            } else if (stream_type === StreamType.kSCTE35) {
+                pmt.scte_35_pids[elementary_PID] = true;
+            }
+
+            i += 5 + ES_info_length;
+        }
+
+        if (program_number === this.current_program_) {
+            if (this.pmt_ == undefined) {
+                Log.v(this.TAG, `Parsed first PMT: ${JSON.stringify(pmt)}`);
+            }
+            this.pmt_ = pmt;
+            if (pmt.common_pids.h264 || pmt.common_pids.h265) {
+                this.has_video_ = true;
+            }
+            if (pmt.common_pids.adts_aac || pmt.common_pids.mp3) {
+                this.has_audio_ = true;
+            }
+        }
+    }
+
+    private parseSCTE35(data: Uint8Array): void {
+        const scte35 = readSCTE35(data);
+
+        if (scte35.pts != undefined) {
+            let pts_ms = Math.floor(scte35.pts / this.timescale_);
+            scte35.pts = pts_ms;
+        } else {
+            scte35.nearest_pts = this.aac_last_sample_pts_;
+        }
+
+        if (this.onSCTE35Metadata) {
+            this.onSCTE35Metadata(scte35);
+        }
+    }
+
+    private parseH264Payload(data: Uint8Array, pts: number, dts: number, file_position: number, random_access_indicator: number) {
+        let annexb_parser = new H264AnnexBParser(data);
+        let nalu_payload: H264NaluPayload = null;
+        let units: {type: H264NaluType, data: Uint8Array}[] = [];
+        let length = 0;
+        let keyframe = false;
+
+        while ((nalu_payload = annexb_parser.readNextNaluPayload()) != null) {
+            let nalu_avc1 = new H264NaluAVC1(nalu_payload);
