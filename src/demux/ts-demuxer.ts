@@ -1350,3 +1350,109 @@ class TSDemuxer extends BaseDemuxer {
 
         this.onTrackMetadata('audio', meta);
         this.audio_init_segment_dispatched_ = true;
+        this.video_metadata_changed_ = false;
+
+        // notify new MediaInfo
+        let mi = this.media_info_;
+        mi.hasAudio = true;
+        mi.audioCodec = meta.originalCodec;
+        mi.audioSampleRate = meta.audioSampleRate;
+        mi.audioChannelCount = meta.channelCount;
+
+        if (mi.hasVideo && mi.videoCodec) {
+            mi.mimeType = `video/mp2t; codecs="${mi.videoCodec},${mi.audioCodec}"`;
+        } else {
+            mi.mimeType = `video/mp2t; codecs="${mi.audioCodec}"`;
+        }
+
+        if (mi.isComplete()) {
+            this.onMediaInfo(mi);
+        }
+    }
+
+    private dispatchPESPrivateDataDescriptor(pid: number, stream_type: number, descriptor: Uint8Array) {
+        let desc = new PESPrivateDataDescriptor();
+        desc.pid = pid;
+        desc.stream_type = stream_type;
+        desc.descriptor = descriptor;
+
+        if (this.onPESPrivateDataDescriptor) {
+            this.onPESPrivateDataDescriptor(desc);
+        }
+    }
+
+    private parsePESPrivateDataPayload(data: Uint8Array, pts: number, dts: number, pid: number, stream_id: number) {
+        let private_data = new PESPrivateData();
+
+        private_data.pid = pid;
+        private_data.stream_id = stream_id;
+        private_data.len = data.byteLength;
+        private_data.data = data;
+
+        if (pts != undefined) {
+            let pts_ms = Math.floor(pts / this.timescale_);
+            private_data.pts = pts_ms;
+        } else {
+            private_data.nearest_pts = this.aac_last_sample_pts_;
+        }
+
+        if (dts != undefined) {
+            let dts_ms = Math.floor(dts / this.timescale_);
+            private_data.dts = dts_ms;
+        }
+
+        if (this.onPESPrivateData) {
+            this.onPESPrivateData(private_data);
+        }
+    }
+
+    private parseTimedID3MetadataPayload(data: Uint8Array, pts: number, dts: number, pid: number, stream_id: number) {
+        let timed_id3_metadata = new PESPrivateData();
+
+        timed_id3_metadata.pid = pid;
+        timed_id3_metadata.stream_id = stream_id;
+        timed_id3_metadata.len = data.byteLength;
+        timed_id3_metadata.data = data;
+
+        if (pts != undefined) {
+            let pts_ms = Math.floor(pts / this.timescale_);
+            timed_id3_metadata.pts = pts_ms;
+        } 
+
+        if (dts != undefined) {
+            let dts_ms = Math.floor(dts / this.timescale_);
+            timed_id3_metadata.dts = dts_ms;
+        }
+
+        if (this.onTimedID3Metadata) {
+            this.onTimedID3Metadata(timed_id3_metadata);
+        }
+    }
+
+    private parseSMPTE2038MetadataPayload(data: Uint8Array, pts: number, dts: number, pid: number, stream_id: number) {
+        let smpte2038_data = new SMPTE2038Data();
+
+        smpte2038_data.pid = pid;
+        smpte2038_data.stream_id = stream_id;
+        smpte2038_data.len = data.byteLength;
+        smpte2038_data.data = data;
+
+        if (pts != undefined) {
+            let pts_ms = Math.floor(pts / this.timescale_);
+            smpte2038_data.pts = pts_ms;
+        }
+        smpte2038_data.nearest_pts = this.aac_last_sample_pts_;
+
+        if (dts != undefined) {
+            let dts_ms = Math.floor(dts / this.timescale_);
+            smpte2038_data.dts = dts_ms;
+        }
+
+        smpte2038_data.ancillaries = smpte2038parse(data);
+        if (this.onSMPTE2038Metadata) {
+            this.onSMPTE2038Metadata(smpte2038_data);
+        }
+    }
+}
+
+export default TSDemuxer;
