@@ -975,3 +975,199 @@ class TSDemuxer extends BaseDemuxer {
             return this.video_init_segment_dispatched_;
         }
         if (!this.has_video_ && this.has_audio_) {  // audio only
+            return this.audio_init_segment_dispatched_;
+        }
+        return false;
+    }
+
+    private dispatchVideoInitSegment() {
+        let details = this.video_metadata_.details;
+        let meta: any = {};
+
+        meta.type = 'video';
+        meta.id = this.video_track_.id;
+        meta.timescale = 1000;
+        meta.duration = this.duration_;
+
+        meta.codecWidth = details.codec_size.width;
+        meta.codecHeight = details.codec_size.height;
+        meta.presentWidth = details.present_size.width;
+        meta.presentHeight = details.present_size.height;
+
+        meta.profile = details.profile_string;
+        meta.level = details.level_string;
+        meta.bitDepth = details.bit_depth;
+        meta.chromaFormat = details.chroma_format;
+        meta.sarRatio = details.sar_ratio;
+        meta.frameRate = details.frame_rate;
+
+        let fps_den = meta.frameRate.fps_den;
+        let fps_num = meta.frameRate.fps_num;
+        meta.refSampleDuration = 1000 * (fps_den / fps_num);
+
+        meta.codec = details.codec_mimetype;
+
+        if (this.video_metadata_.vps) {
+            let vps_without_header = this.video_metadata_.vps.data.subarray(4);
+            let sps_without_header = this.video_metadata_.sps.data.subarray(4);
+            let pps_without_header = this.video_metadata_.pps.data.subarray(4);
+            let hvcc = new HEVCDecoderConfigurationRecord(vps_without_header, sps_without_header, pps_without_header, details);
+            meta.hvcc = hvcc.getData();
+
+            if (this.video_init_segment_dispatched_ == false) {
+                Log.v(this.TAG, `Generated first HEVCDecoderConfigurationRecord for mimeType: ${meta.codec}`);
+            }
+        } else {
+            let sps_without_header = this.video_metadata_.sps.data.subarray(4);
+            let pps_without_header = this.video_metadata_.pps.data.subarray(4);
+            let avcc = new AVCDecoderConfigurationRecord(sps_without_header, pps_without_header, details);
+            meta.avcc = avcc.getData();
+
+            if (this.video_init_segment_dispatched_ == false) {
+                Log.v(this.TAG, `Generated first AVCDecoderConfigurationRecord for mimeType: ${meta.codec}`);
+            }
+        }
+        this.onTrackMetadata('video', meta);
+        this.video_init_segment_dispatched_ = true;
+        this.video_metadata_changed_ = false;
+
+        // notify new MediaInfo
+        let mi = this.media_info_;
+        mi.hasVideo = true;
+        mi.width = meta.codecWidth;
+        mi.height = meta.codecHeight;
+        mi.fps = meta.frameRate.fps;
+        mi.profile = meta.profile;
+        mi.level = meta.level;
+        mi.refFrames = details.ref_frames;
+        mi.chromaFormat = details.chroma_format_string;
+        mi.sarNum = meta.sarRatio.width;
+        mi.sarDen = meta.sarRatio.height;
+        mi.videoCodec = meta.codec;
+
+        if (mi.hasAudio && mi.audioCodec) {
+            mi.mimeType = `video/mp2t; codecs="${mi.videoCodec},${mi.audioCodec}"`;
+        } else {
+            mi.mimeType = `video/mp2t; codecs="${mi.videoCodec}"`;
+        }
+
+        if (mi.isComplete()) {
+            this.onMediaInfo(mi);
+        }
+    }
+
+    private dispatchVideoMediaSegment() {
+        if (this.isInitSegmentDispatched()) {
+            if (this.video_track_.length) {
+                this.onDataAvailable(null, this.video_track_);
+            }
+        }
+    }
+
+    private dispatchAudioMediaSegment() {
+        if (this.isInitSegmentDispatched()) {
+            if (this.audio_track_.length) {
+                this.onDataAvailable(this.audio_track_, null);
+            }
+        }
+    }
+
+    private dispatchAudioVideoMediaSegment() {
+        if (this.isInitSegmentDispatched()) {
+            if (this.audio_track_.length || this.video_track_.length) {
+                this.onDataAvailable(this.audio_track_, this.video_track_);
+            }
+        }
+    }
+
+    private parseAACPayload(data: Uint8Array, pts: number) {
+        if (this.has_video_ && !this.video_init_segment_dispatched_) {
+            // If first video IDR frame hasn't been detected,
+            // Wait for first IDR frame and video init segment being dispatched
+            return;
+        }
+
+        if (this.aac_last_incomplete_data_) {
+            let buf = new Uint8Array(data.byteLength + this.aac_last_incomplete_data_.byteLength);
+            buf.set(this.aac_last_incomplete_data_, 0);
+            buf.set(data, this.aac_last_incomplete_data_.byteLength);
+            data = buf;
+        }
+
+        let ref_sample_duration: number;
+        let base_pts_ms: number;
+
+        if (pts != undefined) {
+            base_pts_ms = pts / this.timescale_;
+        }
+        if (this.audio_metadata_.codec === 'aac') {
+            if (pts == undefined && this.aac_last_sample_pts_ != undefined) {
+                ref_sample_duration = 1024 / this.audio_metadata_.sampling_frequency * 1000;
+                base_pts_ms = this.aac_last_sample_pts_ + ref_sample_duration;
+            } else if (pts == undefined){
+                Log.w(this.TAG, `AAC: Unknown pts`);
+                return;
+            }
+
+            if (this.aac_last_incomplete_data_ && this.aac_last_sample_pts_) {
+                ref_sample_duration = 1024 / this.audio_metadata_.sampling_frequency * 1000;
+                let new_pts_ms = this.aac_last_sample_pts_ + ref_sample_duration;
+
+                if (Math.abs(new_pts_ms - base_pts_ms) > 1) {
+                    Log.w(this.TAG, `AAC: Detected pts overlapped, ` +
+                                    `expected: ${new_pts_ms}ms, PES pts: ${base_pts_ms}ms`);
+                    base_pts_ms = new_pts_ms;
+                }
+            }
+        }
+
+        let adts_parser = new AACADTSParser(data);
+        let aac_frame: AACFrame = null;
+        let sample_pts_ms = base_pts_ms;
+        let last_sample_pts_ms: number;
+
+        while ((aac_frame = adts_parser.readNextAACFrame()) != null) {
+            ref_sample_duration = 1024 / aac_frame.sampling_frequency * 1000;
+            const audio_sample = {
+                codec: 'aac',
+                data: aac_frame
+            } as const;
+
+            if (this.audio_init_segment_dispatched_ == false) {
+                this.audio_metadata_ = {
+                    codec: 'aac',
+                    audio_object_type: aac_frame.audio_object_type,
+                    sampling_freq_index: aac_frame.sampling_freq_index,
+                    sampling_frequency: aac_frame.sampling_frequency,
+                    channel_config: aac_frame.channel_config
+                };
+                this.dispatchAudioInitSegment(audio_sample);
+            } else if (this.detectAudioMetadataChange(audio_sample)) {
+                // flush stashed frames before notify new AudioSpecificConfig
+                this.dispatchAudioMediaSegment();
+                // notify new AAC AudioSpecificConfig
+                this.dispatchAudioInitSegment(audio_sample);
+            }
+
+            last_sample_pts_ms = sample_pts_ms;
+            let sample_pts_ms_int = Math.floor(sample_pts_ms);
+
+            let aac_sample = {
+                unit: aac_frame.data,
+                length: aac_frame.data.byteLength,
+                pts: sample_pts_ms_int,
+                dts: sample_pts_ms_int
+            };
+            this.audio_track_.samples.push(aac_sample);
+            this.audio_track_.length += aac_frame.data.byteLength;
+
+            sample_pts_ms += ref_sample_duration;
+        }
+
+        if (adts_parser.hasIncompleteData()) {
+            this.aac_last_incomplete_data_ = adts_parser.getIncompleteData();
+        }
+
+        if (last_sample_pts_ms) {
+            this.aac_last_sample_pts_ = last_sample_pts_ms;
+        }
