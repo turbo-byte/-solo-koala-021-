@@ -805,3 +805,173 @@ class TSDemuxer extends BaseDemuxer {
 
         while ((nalu_payload = annexb_parser.readNextNaluPayload()) != null) {
             let nalu_avc1 = new H264NaluAVC1(nalu_payload);
+
+            if (nalu_avc1.type === H264NaluType.kSliceSPS) {
+                // Notice: parseSPS requires Nalu without startcode or length-header
+                let details = SPSParser.parseSPS(nalu_payload.data);
+                if (!this.video_init_segment_dispatched_) {
+                    this.video_metadata_.sps = nalu_avc1;
+                    this.video_metadata_.details = details;
+                } else if (this.detectVideoMetadataChange(nalu_avc1, details) === true) {
+                    Log.v(this.TAG, `H264: Critical h264 metadata has been changed, attempt to re-generate InitSegment`);
+                    this.video_metadata_changed_ = true;
+                    this.video_metadata_ = {vps: undefined, sps: nalu_avc1, pps: undefined, details: details};
+                }
+            } else if (nalu_avc1.type === H264NaluType.kSlicePPS) {
+                if (!this.video_init_segment_dispatched_ || this.video_metadata_changed_) {
+                    this.video_metadata_.pps = nalu_avc1;
+                    if (this.video_metadata_.sps && this.video_metadata_.pps) {
+                        if (this.video_metadata_changed_) {
+                            // flush stashed frames before changing codec metadata
+                            this.dispatchVideoMediaSegment();
+                        }
+                        // notify new codec metadata (maybe changed)
+                        this.dispatchVideoInitSegment();
+                    }
+                }
+            } else if (nalu_avc1.type === H264NaluType.kSliceIDR) {
+                keyframe = true;
+            } else if (nalu_avc1.type === H264NaluType.kSliceNonIDR && random_access_indicator === 1) {
+                // For open-gop stream, use random_access_indicator to identify keyframe
+                keyframe = true;
+            }
+
+            // Push samples to remuxer only if initialization metadata has been dispatched
+            if (this.video_init_segment_dispatched_) {
+                units.push(nalu_avc1);
+                length += nalu_avc1.data.byteLength;
+            }
+        }
+
+        let pts_ms = Math.floor(pts / this.timescale_);
+        let dts_ms = Math.floor(dts / this.timescale_);
+
+        if (units.length) {
+            let track = this.video_track_;
+            let avc_sample = {
+                units,
+                length,
+                isKeyframe: keyframe,
+                dts: dts_ms,
+                pts: pts_ms,
+                cts: pts_ms - dts_ms,
+                file_position
+            };
+            track.samples.push(avc_sample);
+            track.length += length;
+        }
+    }
+
+    private parseH265Payload(data: Uint8Array, pts: number, dts: number, file_position: number, random_access_indicator: number) {
+        let annexb_parser = new H265AnnexBParser(data);
+        let nalu_payload: H265NaluPayload = null;
+        let units: {type: H265NaluType, data: Uint8Array}[] = [];
+        let length = 0;
+        let keyframe = false;
+
+        while ((nalu_payload = annexb_parser.readNextNaluPayload()) != null) {
+            let nalu_hvc1 = new H265NaluHVC1(nalu_payload);
+
+            if (nalu_hvc1.type === H265NaluType.kSliceVPS) {
+                if (!this.video_init_segment_dispatched_) {
+                    let details = H265Parser.parseVPS(nalu_payload.data);
+                    this.video_metadata_.vps = nalu_hvc1;
+                    this.video_metadata_.details = {
+                        ... this.video_metadata_.details,
+                        ... details
+                    };
+                }
+            } else if (nalu_hvc1.type === H265NaluType.kSliceSPS) {
+                let details = H265Parser.parseSPS(nalu_payload.data);
+                if (!this.video_init_segment_dispatched_) {
+                    this.video_metadata_.sps = nalu_hvc1;
+                    this.video_metadata_.details = {
+                        ... this.video_metadata_.details,
+                        ... details
+                    };
+                } else if (this.detectVideoMetadataChange(nalu_hvc1, details) === true) {
+                    Log.v(this.TAG, `H265: Critical h265 metadata has been changed, attempt to re-generate InitSegment`);
+                    this.video_metadata_changed_ = true;
+                    this.video_metadata_ = { vps: undefined, sps: nalu_hvc1, pps: undefined, details: details};
+                }
+            } else if (nalu_hvc1.type === H265NaluType.kSlicePPS) {
+                if (!this.video_init_segment_dispatched_ || this.video_metadata_changed_) {
+                    let details = H265Parser.parsePPS(nalu_payload.data);
+                    this.video_metadata_.pps = nalu_hvc1;
+                    this.video_metadata_.details = {
+                        ... this.video_metadata_.details,
+                        ... details
+                    };
+
+                    if (this.video_metadata_.vps && this.video_metadata_.sps && this.video_metadata_.pps) {
+                        if (this.video_metadata_changed_) {
+                            // flush stashed frames before changing codec metadata
+                            this.dispatchVideoMediaSegment();
+                        }
+                        // notify new codec metadata (maybe changed)
+                        this.dispatchVideoInitSegment();
+                    }
+                }
+            } else if (nalu_hvc1.type === H265NaluType.kSliceIDR_W_RADL || nalu_hvc1.type === H265NaluType.kSliceIDR_N_LP || nalu_hvc1.type === H265NaluType.kSliceCRA_NUT) {
+                keyframe = true;
+            }
+
+            // Push samples to remuxer only if initialization metadata has been dispatched
+            if (this.video_init_segment_dispatched_) {
+                units.push(nalu_hvc1);
+                length += nalu_hvc1.data.byteLength;
+            }
+        }
+
+        let pts_ms = Math.floor(pts / this.timescale_);
+        let dts_ms = Math.floor(dts / this.timescale_);
+
+        if (units.length) {
+            let track = this.video_track_;
+            let hvc_sample = {
+                units,
+                length,
+                isKeyframe: keyframe,
+                dts: dts_ms,
+                pts: pts_ms,
+                cts: pts_ms - dts_ms,
+                file_position
+            };
+            track.samples.push(hvc_sample);
+            track.length += length;
+        }
+    }
+
+    private detectVideoMetadataChange(new_sps: H264NaluAVC1 | H265NaluHVC1, new_details: any): boolean {
+        if (new_details.codec_mimetype !== this.video_metadata_.details.codec_mimetype) {
+            Log.v(this.TAG, `Video: Codec mimeType changed from ` +
+                            `${this.video_metadata_.details.codec_mimetype} to ${new_details.codec_mimetype}`);
+            return true;
+        }
+
+        if (new_details.codec_size.width !== this.video_metadata_.details.codec_size.width
+            || new_details.codec_size.height !== this.video_metadata_.details.codec_size.height) {
+            let old_size = this.video_metadata_.details.codec_size;
+            let new_size = new_details.codec_size;
+            Log.v(this.TAG, `Video: Coded Resolution changed from ` +
+                            `${old_size.width}x${old_size.height} to ${new_size.width}x${new_size.height}`);
+            return true;
+        }
+
+        if (new_details.present_size.width !== this.video_metadata_.details.present_size.width) {
+            Log.v(this.TAG, `Video: Present resolution width changed from ` +
+                            `${this.video_metadata_.details.present_size.width} to ${new_details.present_size.width}`);
+            return true;
+        }
+
+        return false;
+    }
+
+    private isInitSegmentDispatched(): boolean {
+        if (this.has_video_ && this.has_audio_) {  // both video & audio
+            return this.video_init_segment_dispatched_ && this.audio_init_segment_dispatched_;
+        }
+        if (this.has_video_ && !this.has_audio_) {  // video only
+            return this.video_init_segment_dispatched_;
+        }
+        if (!this.has_video_ && this.has_audio_) {  // audio only
