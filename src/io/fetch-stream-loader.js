@@ -19,4 +19,9 @@
 import Log from '../utils/logger.js';
 import Browser from '../utils/browser.js';
 import {BaseLoader, LoaderStatus, LoaderErrors} from './loader.js';
-import {RuntimeE
+import {RuntimeException} from '../utils/exception.js';
+
+/* fetch + stream IO loader. Currently working on chrome 43+.
+ * fetch provides a better alternative http API to XMLHttpRequest
+ *
+ *
