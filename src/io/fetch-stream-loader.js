@@ -36,4 +36,11 @@ class FetchStreamLoader extends BaseLoader {
             // Fixed in Jan 10, 2017. Build 15048+ removed from blacklist.
             let isWorkWellEdge = Browser.msedge && Browser.version.minor >= 15048;
             let browserNotBlacklisted = Browser.msedge ? isWorkWellEdge : true;
-        
+            return (self.fetch && self.ReadableStream && browserNotBlacklisted);
+        } catch (e) {
+            return false;
+        }
+    }
+
+    constructor(seekHandler, config) {
+  
