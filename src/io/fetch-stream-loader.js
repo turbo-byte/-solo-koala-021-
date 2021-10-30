@@ -31,4 +31,6 @@ class FetchStreamLoader extends BaseLoader {
 
     static isSupported() {
         try {
-            // fetch + 
+            // fetch + stream is broken on Microsoft Edge. Disable before build 15048.
+            // see https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/8196907/
+            // Fixed in Jan 10, 2017. Build 15048
