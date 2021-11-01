@@ -43,4 +43,9 @@ class FetchStreamLoader extends BaseLoader {
     }
 
     constructor(seekHandler, config) {
-  
+        super('fetch-stream-loader');
+        this.TAG = 'FetchStreamLoader';
+
+        this._seekHandler = seekHandler;
+        this._config = config;
+        this._needStash = true;
