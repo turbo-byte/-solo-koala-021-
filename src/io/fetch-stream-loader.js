@@ -57,4 +57,12 @@ class FetchStreamLoader extends BaseLoader {
     }
 
     destroy() {
-        if (th
+        if (this.isWorking()) {
+            this.abort();
+        }
+        super.destroy();
+    }
+
+    open(dataSource, range) {
+        this._dataSource = dataSource;
+        this._range = ran
