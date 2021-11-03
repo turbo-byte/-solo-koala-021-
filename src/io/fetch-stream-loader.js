@@ -49,3 +49,12 @@ class FetchStreamLoader extends BaseLoader {
         this._seekHandler = seekHandler;
         this._config = config;
         this._needStash = true;
+
+        this._requestAbort = false;
+        this._abortController = null;
+        this._contentLength = null;
+        this._receivedLength = 0;
+    }
+
+    destroy() {
+        if (th
