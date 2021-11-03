@@ -70,3 +70,11 @@ class FetchStreamLoader extends BaseLoader {
         let sourceURL = dataSource.url;
         if (this._config.reuseRedirectedURL && dataSource.redirectedURL != undefined) {
             sourceURL = dataSource.redirectedURL;
+        }
+
+        let seekConfig = this._seekHandler.getConfig(sourceURL, range);
+
+        let headers = new self.Headers();
+
+        if (typeof seekConfig.headers === 'object') {
+            let conf
