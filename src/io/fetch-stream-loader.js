@@ -80,4 +80,13 @@ class FetchStreamLoader extends BaseLoader {
             let configHeaders = seekConfig.headers;
             for (let key in configHeaders) {
                 if (configHeaders.hasOwnProperty(key)) {
-                    headers.append(key, conf
+                    headers.append(key, configHeaders[key]);
+                }
+            }
+        }
+
+        let params = {
+            method: 'GET',
+            headers: headers,
+            mode: 'cors',
+            cach
