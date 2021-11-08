@@ -125,4 +125,9 @@ class FetchStreamLoader extends BaseLoader {
 
         this._status = LoaderStatus.kConnecting;
         self.fetch(seekConfig.url, params).then((res) => {
-            if (this._requestAbort)
+            if (this._requestAbort) {
+                this._status = LoaderStatus.kIdle;
+                res.body.cancel();
+                return;
+            }
+            if (res.ok && (res.status 
