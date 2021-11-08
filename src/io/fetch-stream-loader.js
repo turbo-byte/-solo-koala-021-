@@ -130,4 +130,7 @@ class FetchStreamLoader extends BaseLoader {
                 res.body.cancel();
                 return;
             }
-            if (res.ok && (res.status 
+            if (res.ok && (res.status >= 200 && res.status <= 299)) {
+                if (res.url !== seekConfig.url) {
+                    if (this._onURLRedirect) {
+                        let redirectedURL = this._seek
