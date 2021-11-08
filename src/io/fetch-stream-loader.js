@@ -103,4 +103,9 @@ class FetchStreamLoader extends BaseLoader {
         }
 
         // cors is enabled by default
-        if (dataSource.cors === false)
+        if (dataSource.cors === false) {
+            // no-cors means 'disregard cors policy', which can only be used in ServiceWorker
+            params.mode = 'same-origin';
+        }
+
+        // withCredentials is disabled b
