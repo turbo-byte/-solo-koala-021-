@@ -89,4 +89,7 @@ class FetchStreamLoader extends BaseLoader {
             method: 'GET',
             headers: headers,
             mode: 'cors',
-            cach
+            cache: 'default',
+            // The default policy of Fetch API in the whatwg standard
+            // Safari incorrectly indicates 'no-referrer' as default policy, fuck it
+            
