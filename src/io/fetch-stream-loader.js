@@ -108,4 +108,11 @@ class FetchStreamLoader extends BaseLoader {
             params.mode = 'same-origin';
         }
 
-        // withCredentials is disabled b
+        // withCredentials is disabled by default
+        if (dataSource.withCredentials) {
+            params.credentials = 'include';
+        }
+
+        // referrerPolicy from config
+        if (dataSource.referrerPolicy) {
+            params.ref
