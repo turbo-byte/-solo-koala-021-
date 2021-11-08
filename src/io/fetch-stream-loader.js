@@ -120,4 +120,9 @@ class FetchStreamLoader extends BaseLoader {
 
         if (self.AbortController) {
             this._abortController = new self.AbortController();
-            params.signal = this._a
+            params.signal = this._abortController.signal;
+        }
+
+        this._status = LoaderStatus.kConnecting;
+        self.fetch(seekConfig.url, params).then((res) => {
+            if (this._requestAbort)
