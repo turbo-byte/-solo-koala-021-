@@ -92,4 +92,9 @@ class FetchStreamLoader extends BaseLoader {
             cache: 'default',
             // The default policy of Fetch API in the whatwg standard
             // Safari incorrectly indicates 'no-referrer' as default policy, fuck it
-            
+            referrerPolicy: 'no-referrer-when-downgrade'
+        };
+
+        // add additional headers
+        if (typeof this._config.headers === 'object') {
+            for (let key in this._config.he
