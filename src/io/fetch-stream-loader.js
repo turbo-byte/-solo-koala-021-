@@ -115,4 +115,9 @@ class FetchStreamLoader extends BaseLoader {
 
         // referrerPolicy from config
         if (dataSource.referrerPolicy) {
-            params.ref
+            params.referrerPolicy = dataSource.referrerPolicy;
+        }
+
+        if (self.AbortController) {
+            this._abortController = new self.AbortController();
+            params.signal = this._a
