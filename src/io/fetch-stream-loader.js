@@ -97,4 +97,10 @@ class FetchStreamLoader extends BaseLoader {
 
         // add additional headers
         if (typeof this._config.headers === 'object') {
-            for (let key in this._config.he
+            for (let key in this._config.headers) {
+                headers.append(key, this._config.headers[key]);
+            }
+        }
+
+        // cors is enabled by default
+        if (dataSource.cors === false)
