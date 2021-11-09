@@ -158,4 +158,10 @@ class FetchStreamLoader extends BaseLoader {
                 }
             }
         }).catch((e) => {
-            if (this._a
+            if (this._abortController && this._abortController.signal.aborted) {
+                return;
+            }
+
+            this._status = LoaderStatus.kError;
+            if (this._onError) {
+ 
