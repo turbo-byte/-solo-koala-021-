@@ -164,4 +164,12 @@ class FetchStreamLoader extends BaseLoader {
 
             this._status = LoaderStatus.kError;
             if (this._onError) {
- 
+                this._onError(LoaderErrors.EXCEPTION, {code: -1, msg: e.message});
+            } else {
+                throw e;
+            }
+        });
+    }
+
+    abort() {
+        this._req
