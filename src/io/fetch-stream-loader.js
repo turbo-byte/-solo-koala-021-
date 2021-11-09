@@ -146,4 +146,9 @@ class FetchStreamLoader extends BaseLoader {
                             this._onContentLengthKnown(this._contentLength);
                         }
                     }
-        
+                }
+
+                return this._pump.call(this, res.body.getReader());
+            } else {
+                this._status = LoaderStatus.kError;
+                if (thi
