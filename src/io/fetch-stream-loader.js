@@ -154,4 +154,8 @@ class FetchStreamLoader extends BaseLoader {
                 if (this._onError) {
                     this._onError(LoaderErrors.HTTP_STATUS_CODE_INVALID, {code: res.status, msg: res.statusText});
                 } else {
-                    throw new 
+                    throw new RuntimeException('FetchStreamLoader: Http code invalid, ' + res.status + ' ' + res.statusText);
+                }
+            }
+        }).catch((e) => {
+            if (this._a
