@@ -202,4 +202,8 @@ class FetchStreamLoader extends BaseLoader {
                     // OK. Download complete
                     this._status = LoaderStatus.kComplete;
                     if (this._onComplete) {
-                        this._onComplete(this._range.from, this._
+                        this._onComplete(this._range.from, this._range.from + this._receivedLength - 1);
+                    }
+                }
+            } else {
+                if (this._abortController && this._abortContro
