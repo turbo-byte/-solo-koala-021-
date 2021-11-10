@@ -194,4 +194,9 @@ class FetchStreamLoader extends BaseLoader {
                     let type = LoaderErrors.EARLY_EOF;
                     let info = {code: -1, msg: 'Fetch stream meet Early-EOF'};
                     if (this._onError) {
-                        this._
+                        this._onError(type, info);
+                    } else {
+                        throw new RuntimeException(info.msg);
+                    }
+                } else {
+                    // OK. Downlo
