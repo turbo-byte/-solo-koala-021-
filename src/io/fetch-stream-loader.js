@@ -188,4 +188,7 @@ class FetchStreamLoader extends BaseLoader {
         return reader.read().then((result) => {
             if (result.done) {
                 // First check received length
-                if (this._content
+                if (this._contentLength !== null && this._receivedLength < this._contentLength) {
+                    // Report Early-EOF
+                    this._status = LoaderStatus.kError;
+                    le
