@@ -199,4 +199,7 @@ class FetchStreamLoader extends BaseLoader {
                         throw new RuntimeException(info.msg);
                     }
                 } else {
-                    // OK. Downlo
+                    // OK. Download complete
+                    this._status = LoaderStatus.kComplete;
+                    if (this._onComplete) {
+                        this._onComplete(this._range.from, this._
