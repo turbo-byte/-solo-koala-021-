@@ -206,4 +206,8 @@ class FetchStreamLoader extends BaseLoader {
                     }
                 }
             } else {
-                if (this._abortController && this._abortContro
+                if (this._abortController && this._abortController.signal.aborted) {
+                    this._status = LoaderStatus.kComplete;
+                    return;
+                } else if (this._requestAbort === true) {
+           
