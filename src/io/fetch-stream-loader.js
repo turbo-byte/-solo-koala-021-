@@ -184,4 +184,8 @@ class FetchStreamLoader extends BaseLoader {
         }
     }
 
-    _pump(reader) {  // Readable
+    _pump(reader) {  // ReadableStreamReader
+        return reader.read().then((result) => {
+            if (result.done) {
+                // First check received length
+                if (this._content
