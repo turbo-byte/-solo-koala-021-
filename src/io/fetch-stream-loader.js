@@ -176,4 +176,12 @@ class FetchStreamLoader extends BaseLoader {
 
         if (this._status !== LoaderStatus.kBuffering || !Browser.chrome) {
             // Chrome may throw Exception-like things here, avoid using if is buffering
-          
+            if (this._abortController) {
+                try {
+                    this._abortController.abort();
+                } catch (e) {}
+            }
+        }
+    }
+
+    _pump(reader) {  // Readable
