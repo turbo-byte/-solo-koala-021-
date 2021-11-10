@@ -210,4 +210,10 @@ class FetchStreamLoader extends BaseLoader {
                     this._status = LoaderStatus.kComplete;
                     return;
                 } else if (this._requestAbort === true) {
-           
+                    this._status = LoaderStatus.kComplete;
+                    return reader.cancel();
+                }
+
+                this._status = LoaderStatus.kBuffering;
+
+                let chunk = r
