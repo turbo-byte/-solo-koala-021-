@@ -172,4 +172,8 @@ class FetchStreamLoader extends BaseLoader {
     }
 
     abort() {
-        this._req
+        this._requestAbort = true;
+
+        if (this._status !== LoaderStatus.kBuffering || !Browser.chrome) {
+            // Chrome may throw Exception-like things here, avoid using if is buffering
+          
