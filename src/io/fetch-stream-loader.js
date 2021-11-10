@@ -191,4 +191,7 @@ class FetchStreamLoader extends BaseLoader {
                 if (this._contentLength !== null && this._receivedLength < this._contentLength) {
                     // Report Early-EOF
                     this._status = LoaderStatus.kError;
-                    le
+                    let type = LoaderErrors.EARLY_EOF;
+                    let info = {code: -1, msg: 'Fetch stream meet Early-EOF'};
+                    if (this._onError) {
+                        this._
