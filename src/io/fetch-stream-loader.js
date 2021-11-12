@@ -221,4 +221,10 @@ class FetchStreamLoader extends BaseLoader {
                 this._receivedLength += chunk.byteLength;
 
                 if (this._onDataArrival) {
-       
+                    this._onDataArrival(chunk, byteStart, this._receivedLength);
+                }
+
+                this._pump(reader);
+            }
+        }).catch((e) => {
+            if (this._abortContro
