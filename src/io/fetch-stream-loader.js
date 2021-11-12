@@ -232,4 +232,6 @@ class FetchStreamLoader extends BaseLoader {
                 return;
             }
 
-            if (e.code === 11 && Browser.msedge) {  // InvalidSt
+            if (e.code === 11 && Browser.msedge) {  // InvalidStateError on Microsoft Edge
+                // Workaround: Edge may throw InvalidStateError after ReadableStreamReader.cancel() call
+                // Ignore the unknown exce
