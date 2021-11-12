@@ -239,4 +239,9 @@ class FetchStreamLoader extends BaseLoader {
                 return;
             }
 
-            this._status = LoaderStatus.kE
+            this._status = LoaderStatus.kError;
+            let type = 0;
+            let info = null;
+
+            if ((e.code === 19 || e.message === 'network error') && // NETWORK_ERR
+                (this._contentLength 
