@@ -227,4 +227,9 @@ class FetchStreamLoader extends BaseLoader {
                 this._pump(reader);
             }
         }).catch((e) => {
-            if (this._abortContro
+            if (this._abortController && this._abortController.signal.aborted) {
+                this._status = LoaderStatus.kComplete;
+                return;
+            }
+
+            if (e.code === 11 && Browser.msedge) {  // InvalidSt
