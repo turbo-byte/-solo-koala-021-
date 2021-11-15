@@ -247,4 +247,7 @@ class FetchStreamLoader extends BaseLoader {
                 (this._contentLength === null ||
                 (this._contentLength !== null && this._receivedLength < this._contentLength))) {
                 type = LoaderErrors.EARLY_EOF;
-                inf
+                info = {code: e.code, msg: 'Fetch stream meet Early-EOF'};
+            } else {
+                type = LoaderErrors.EXCEPTION;
+                info = {code: e.code, msg: e.mess
