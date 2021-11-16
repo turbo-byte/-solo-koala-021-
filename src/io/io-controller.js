@@ -16,4 +16,8 @@
  * limitations under the License.
  */
 
-import Log from '../util
+import Log from '../utils/logger.js';
+import SpeedSampler from './speed-sampler.js';
+import {LoaderStatus, LoaderErrors} from './loader.js';
+import FetchStreamLoader from './fetch-stream-loader.js';
+import 
