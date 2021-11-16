@@ -250,4 +250,11 @@ class FetchStreamLoader extends BaseLoader {
                 info = {code: e.code, msg: 'Fetch stream meet Early-EOF'};
             } else {
                 type = LoaderErrors.EXCEPTION;
-                info = {code: e.code, msg: e.mess
+                info = {code: e.code, msg: e.message};
+            }
+
+            if (this._onError) {
+                this._onError(type, info);
+            } else {
+                throw new RuntimeException(info.msg);
+   
