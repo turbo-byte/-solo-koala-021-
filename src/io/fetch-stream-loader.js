@@ -257,4 +257,10 @@ class FetchStreamLoader extends BaseLoader {
                 this._onError(type, info);
             } else {
                 throw new RuntimeException(info.msg);
-   
+            }
+        });
+    }
+
+}
+
+export default FetchStreamLoader;
