@@ -45,4 +45,7 @@ class IOController {
         this.TAG = 'IOController';
 
         this._config = config;
-       
+        this._extraData = extraData;
+
+        this._stashInitialSize = 64 * 1024;  // default initial size: 64KB
+        if (config.stashInitialSize != undefined && config.stashInitialSize > 0)
