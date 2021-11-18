@@ -75,4 +75,6 @@ class IOController {
         this._currentRange = null;
         this._redirectedURL = null;
 
-        this._
+        this._speedNormalized = 0;
+        this._speedSampler = new SpeedSampler();
+        this._speedNormalizeList = [32, 64, 96, 128, 192, 256, 384, 512, 768, 1024, 1536, 2048, 3072, 4096
