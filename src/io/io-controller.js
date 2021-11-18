@@ -26,4 +26,11 @@ import RangeLoader from './xhr-range-loader.js';
 import WebSocketLoader from './websocket-loader.js';
 import RangeSeekHandler from './range-seek-handler.js';
 import ParamSeekHandler from './param-seek-handler.js';
-import {RuntimeException, IllegalStateExcept
+import {RuntimeException, IllegalStateException, InvalidArgumentException} from '../utils/exception.js';
+
+/**
+ * DataSource: {
+ *     url: string,
+ *     filesize: number,
+ *     cors: boolean,
+ *     withCreden
