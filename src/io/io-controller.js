@@ -70,4 +70,9 @@ class IOController {
         this._dataSource = dataSource;
         this._isWebSocketURL = /wss?:\/\/(.+?)/.test(dataSource.url);
         this._refTotalLength = dataSource.filesize ? dataSource.filesize : null;
-    
+        this._totalLength = this._refTotalLength;
+        this._fullRequestFlag = false;
+        this._currentRange = null;
+        this._redirectedURL = null;
+
+        this._
