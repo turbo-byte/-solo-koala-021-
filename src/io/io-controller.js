@@ -59,4 +59,12 @@ class IOController {
         this._stashBuffer = new ArrayBuffer(this._bufferSize);
         this._stashByteStart = 0;
         this._enableStash = true;
-        if (c
+        if (config.enableStashBuffer === false) {
+            this._enableStash = false;
+        }
+
+        this._loader = null;
+        this._loaderClass = null;
+        this._seekHandler = null;
+
+     
