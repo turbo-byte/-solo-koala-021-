@@ -33,4 +33,16 @@ import {RuntimeException, IllegalStateException, InvalidArgumentException} from 
  *     url: string,
  *     filesize: number,
  *     cors: boolean,
- *     withCreden
+ *     withCredentials: boolean
+ * }
+ * 
+ */
+
+// Manage IO Loaders
+class IOController {
+
+    constructor(dataSource, config, extraData) {
+        this.TAG = 'IOController';
+
+        this._config = config;
+       
