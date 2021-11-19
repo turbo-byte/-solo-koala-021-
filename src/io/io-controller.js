@@ -87,3 +87,10 @@ class IOController {
         this._onDataArrival = null;
         this._onSeeked = null;
         this._onError = null;
+        this._onComplete = null;
+        this._onRedirect = null;
+        this._onRecoveredEarlyEof = null;
+
+        this._selectSeekHandler();
+        this._selectLoader();
+        t
