@@ -101,4 +101,8 @@ class IOController {
             this._loader.abort();
         }
         this._loader.destroy();
-        this._loa
+        this._loader = null;
+        this._loaderClass = null;
+        this._dataSource = null;
+        this._stashBuffer = null;
+        this._stashUsed = this._stashSize = this._bufferSize = this._sta
