@@ -93,4 +93,12 @@ class IOController {
 
         this._selectSeekHandler();
         this._selectLoader();
-        t
+        this._createLoader();
+    }
+
+    destroy() {
+        if (this._loader.isWorking()) {
+            this._loader.abort();
+        }
+        this._loader.destroy();
+        this._loa
