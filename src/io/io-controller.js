@@ -121,4 +121,14 @@ class IOController {
         this._extraData = null;
     }
 
-   
+    isWorking() {
+        return this._loader && this._loader.isWorking() && !this._paused;
+    }
+
+    isPaused() {
+        return this._paused;
+    }
+
+    get status() {
+        return this._loader.status;
+ 
