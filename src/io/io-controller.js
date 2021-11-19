@@ -77,4 +77,13 @@ class IOController {
 
         this._speedNormalized = 0;
         this._speedSampler = new SpeedSampler();
-        this._speedNormalizeList = [32, 64, 96, 128, 192, 256, 384, 512, 768, 1024, 1536, 2048, 3072, 4096
+        this._speedNormalizeList = [32, 64, 96, 128, 192, 256, 384, 512, 768, 1024, 1536, 2048, 3072, 4096];
+
+        this._isEarlyEofReconnecting = false;
+
+        this._paused = false;
+        this._resumeFrom = 0;
+
+        this._onDataArrival = null;
+        this._onSeeked = null;
+        this._onError = null;
