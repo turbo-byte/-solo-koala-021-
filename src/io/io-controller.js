@@ -105,4 +105,12 @@ class IOController {
         this._loaderClass = null;
         this._dataSource = null;
         this._stashBuffer = null;
-        this._stashUsed = this._stashSize = this._bufferSize = this._sta
+        this._stashUsed = this._stashSize = this._bufferSize = this._stashByteStart = 0;
+        this._currentRange = null;
+        this._speedSampler = null;
+
+        this._isEarlyEofReconnecting = false;
+
+        this._onDataArrival = null;
+        this._onSeeked = null;
+  
