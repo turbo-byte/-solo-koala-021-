@@ -200,4 +200,11 @@ class IOController {
     }
 
     get currentRedirectedURL() {
-        return this._redirectedURL || this._dataSource.redirectedUR
+        return this._redirectedURL || this._dataSource.redirectedURL;
+    }
+
+    // in KB/s
+    get currentSpeed() {
+        if (this._loaderClass === RangeLoader) {
+            // SpeedSampler is inaccuracy if loader is RangeLoader
+       
