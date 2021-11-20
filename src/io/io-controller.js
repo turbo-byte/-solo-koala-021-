@@ -176,4 +176,15 @@ class IOController {
     }
 
     get onRedirect() {
-        return this._onRedi
+        return this._onRedirect;
+    }
+
+    set onRedirect(callback) {
+        this._onRedirect = callback;
+    }
+
+    get onRecoveredEarlyEof() {
+        return this._onRecoveredEarlyEof;
+    }
+
+    
