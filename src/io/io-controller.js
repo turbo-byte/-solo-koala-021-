@@ -196,4 +196,8 @@ class IOController {
     }
 
     get hasRedirect() {
-    
+        return (this._redirectedURL != null || this._dataSource.redirectedURL != undefined);
+    }
+
+    get currentRedirectedURL() {
+        return this._redirectedURL || this._dataSource.redirectedUR
