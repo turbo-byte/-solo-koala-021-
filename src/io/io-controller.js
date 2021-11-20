@@ -150,3 +150,12 @@ class IOController {
         this._onDataArrival = callback;
     }
 
+    get onSeeked() {
+        return this._onSeeked;
+    }
+
+    set onSeeked(callback) {
+        this._onSeeked = callback;
+    }
+
+    // prototype: function onError(type: number, info: {
