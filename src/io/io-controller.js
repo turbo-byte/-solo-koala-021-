@@ -141,4 +141,12 @@ class IOController {
         this._extraData = data;
     }
 
-    // prototype: function onDataArrival(chu
+    // prototype: function onDataArrival(chunks: ArrayBuffer, byteStart: number): number
+    get onDataArrival() {
+        return this._onDataArrival;
+    }
+
+    set onDataArrival(callback) {
+        this._onDataArrival = callback;
+    }
+
