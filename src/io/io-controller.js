@@ -167,4 +167,13 @@ class IOController {
         this._onError = callback;
     }
 
-    get 
+    get onComplete() {
+        return this._onComplete;
+    }
+
+    set onComplete(callback) {
+        this._onComplete = callback;
+    }
+
+    get onRedirect() {
+        return this._onRedi
