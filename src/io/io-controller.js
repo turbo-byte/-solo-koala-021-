@@ -187,4 +187,13 @@ class IOController {
         return this._onRecoveredEarlyEof;
     }
 
+    set onRecoveredEarlyEof(callback) {
+        this._onRecoveredEarlyEof = callback;
+    }
+
+    get currentURL() {
+        return this._dataSource.url;
+    }
+
+    get hasRedirect() {
     
