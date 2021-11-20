@@ -131,4 +131,14 @@ class IOController {
 
     get status() {
         return this._loader.status;
- 
+    }
+
+    get extraData() {
+        return this._extraData;
+    }
+
+    set extraData(data) {
+        this._extraData = data;
+    }
+
+    // prototype: function onDataArrival(chu
