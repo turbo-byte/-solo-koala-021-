@@ -158,4 +158,13 @@ class IOController {
         this._onSeeked = callback;
     }
 
-    // prototype: function onError(type: number, info: {
+    // prototype: function onError(type: number, info: {code: number, msg: string}): void
+    get onError() {
+        return this._onError;
+    }
+
+    set onError(callback) {
+        this._onError = callback;
+    }
+
+    get 
