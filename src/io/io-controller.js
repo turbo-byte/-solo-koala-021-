@@ -216,4 +216,8 @@ class IOController {
         return this._loader.type;
     }
 
-    _selectS
+    _selectSeekHandler() {
+        let config = this._config;
+
+        if (config.seekType === 'range') {
+            this._seekHandler = new RangeSeekHandler(this._config.rangeLoadZeroSta
