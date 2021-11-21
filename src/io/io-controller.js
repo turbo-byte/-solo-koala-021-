@@ -220,4 +220,9 @@ class IOController {
         let config = this._config;
 
         if (config.seekType === 'range') {
-            this._seekHandler = new RangeSeekHandler(this._config.rangeLoadZeroSta
+            this._seekHandler = new RangeSeekHandler(this._config.rangeLoadZeroStart);
+        } else if (config.seekType === 'param') {
+            let paramStart = config.seekParamStart || 'bstart';
+            let paramEnd = config.seekParamEnd || 'bend';
+
+            this._s
