@@ -207,4 +207,13 @@ class IOController {
     get currentSpeed() {
         if (this._loaderClass === RangeLoader) {
             // SpeedSampler is inaccuracy if loader is RangeLoader
-       
+            return this._loader.currentSpeed;
+        }
+        return this._speedSampler.lastSecondKBps;
+    }
+
+    get loaderType() {
+        return this._loader.type;
+    }
+
+    _selectS
