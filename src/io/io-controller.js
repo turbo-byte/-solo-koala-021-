@@ -237,4 +237,7 @@ class IOController {
     }
 
     _selectLoader() {
-        if (this.
+        if (this._config.customLoader != null) {
+            this._loaderClass = this._config.customLoader;
+        } else if (this._isWebSocketURL) {
+            this._loaderCla
