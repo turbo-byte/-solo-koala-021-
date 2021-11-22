@@ -248,4 +248,9 @@ class IOController {
         } else if (RangeLoader.isSupported()) {
             this._loaderClass = RangeLoader;
         } else {
-            throw new RuntimeException(
+            throw new RuntimeException('Your browser doesn\'t support xhr with arraybuffer responseType!');
+        }
+    }
+
+    _createLoader() {
+        this._loader = new this._loaderClass(this._seekHandler, this._config);
