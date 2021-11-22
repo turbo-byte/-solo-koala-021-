@@ -225,4 +225,7 @@ class IOController {
             let paramStart = config.seekParamStart || 'bstart';
             let paramEnd = config.seekParamEnd || 'bend';
 
-            this._s
+            this._seekHandler = new ParamSeekHandler(paramStart, paramEnd);
+        } else if (config.seekType === 'custom') {
+            if (typeof config.customSeekHandler !== 'function') {
+      
