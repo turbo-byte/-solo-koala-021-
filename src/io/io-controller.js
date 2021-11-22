@@ -260,4 +260,10 @@ class IOController {
         this._loader.onContentLengthKnown = this._onContentLengthKnown.bind(this);
         this._loader.onURLRedirect = this._onURLRedirect.bind(this);
         this._loader.onDataArrival = this._onLoaderChunkArrival.bind(this);
-        this._loader.onComplete = this._onLoa
+        this._loader.onComplete = this._onLoaderComplete.bind(this);
+        this._loader.onError = this._onLoaderError.bind(this);
+    }
+
+    open(optionalFrom) {
+        this._currentRange = {from: 0, to: -1};
+        if (optional
