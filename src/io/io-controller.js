@@ -254,3 +254,8 @@ class IOController {
 
     _createLoader() {
         this._loader = new this._loaderClass(this._seekHandler, this._config);
+        if (this._loader.needStashBuffer === false) {
+            this._enableStash = false;
+        }
+        this._loader.onContentLengthKnown = this._onContentLengthKnown.bind(this);
+    
