@@ -228,4 +228,6 @@ class IOController {
             this._seekHandler = new ParamSeekHandler(paramStart, paramEnd);
         } else if (config.seekType === 'custom') {
             if (typeof config.customSeekHandler !== 'function') {
-      
+                throw new InvalidArgumentException('Custom seekType specified in config but invalid customSeekHandler!');
+            }
+            this._seekHandler = new config.customSeekHandler()
