@@ -258,4 +258,6 @@ class IOController {
             this._enableStash = false;
         }
         this._loader.onContentLengthKnown = this._onContentLengthKnown.bind(this);
-    
+        this._loader.onURLRedirect = this._onURLRedirect.bind(this);
+        this._loader.onDataArrival = this._onLoaderChunkArrival.bind(this);
+        this._loader.onComplete = this._onLoa
