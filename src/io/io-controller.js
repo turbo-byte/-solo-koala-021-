@@ -230,4 +230,11 @@ class IOController {
             if (typeof config.customSeekHandler !== 'function') {
                 throw new InvalidArgumentException('Custom seekType specified in config but invalid customSeekHandler!');
             }
-            this._seekHandler = new config.customSeekHandler()
+            this._seekHandler = new config.customSeekHandler();
+        } else {
+            throw new InvalidArgumentException(`Invalid seekType in config: ${config.seekType}`);
+        }
+    }
+
+    _selectLoader() {
+        if (this.
