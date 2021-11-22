@@ -240,4 +240,7 @@ class IOController {
         if (this._config.customLoader != null) {
             this._loaderClass = this._config.customLoader;
         } else if (this._isWebSocketURL) {
-            this._loaderCla
+            this._loaderClass = WebSocketLoader;
+        } else if (FetchStreamLoader.isSupported()) {
+            this._loaderClass = FetchStreamLoader;
+        } else if (MozChunkedLoader.isSupported()) {
