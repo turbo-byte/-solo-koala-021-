@@ -266,4 +266,11 @@ class IOController {
 
     open(optionalFrom) {
         this._currentRange = {from: 0, to: -1};
-        if (optional
+        if (optionalFrom) {
+            this._currentRange.from = optionalFrom;
+        }
+
+        this._speedSampler.reset();
+        if (!optionalFrom) {
+            this._fullRequestFlag = true;
+      
