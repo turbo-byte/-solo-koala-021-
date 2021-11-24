@@ -295,4 +295,12 @@ class IOController {
                 this._resumeFrom = this._stashByteStart;
                 this._currentRange.to = this._stashByteStart - 1;
             } else {
-                
+                this._resumeFrom = this._currentRange.to + 1;
+            }
+            this._stashUsed = 0;
+            this._stashByteStart = 0;
+            this._paused = true;
+        }
+    }
+
+    r
