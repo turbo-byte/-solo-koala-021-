@@ -273,4 +273,12 @@ class IOController {
         this._speedSampler.reset();
         if (!optionalFrom) {
             this._fullRequestFlag = true;
-      
+        }
+
+        this._loader.open(this._dataSource, Object.assign({}, this._currentRange));
+    }
+
+    abort() {
+        this._loader.abort();
+
+        if (this._pause
