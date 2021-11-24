@@ -289,4 +289,10 @@ class IOController {
 
     pause() {
         if (this.isWorking()) {
-            this._loader.abort()
+            this._loader.abort();
+
+            if (this._stashUsed !== 0) {
+                this._resumeFrom = this._stashByteStart;
+                this._currentRange.to = this._stashByteStart - 1;
+            } else {
+                
