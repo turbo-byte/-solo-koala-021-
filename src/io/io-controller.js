@@ -281,4 +281,12 @@ class IOController {
     abort() {
         this._loader.abort();
 
-        if (this._pause
+        if (this._paused) {
+            this._paused = false;
+            this._resumeFrom = 0;
+        }
+    }
+
+    pause() {
+        if (this.isWorking()) {
+            this._loader.abort()
