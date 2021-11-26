@@ -312,3 +312,12 @@ class IOController {
         }
     }
 
+    seek(bytes) {
+        this._paused = false;
+        this._stashUsed = 0;
+        this._stashByteStart = 0;
+        this._internalSeek(bytes, true);
+    }
+
+    /**
+     * When
