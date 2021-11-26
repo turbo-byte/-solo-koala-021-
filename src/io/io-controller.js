@@ -303,4 +303,12 @@ class IOController {
         }
     }
 
-    r
+    resume() {
+        if (this._paused) {
+            this._paused = false;
+            let bytes = this._resumeFrom;
+            this._resumeFrom = 0;
+            this._internalSeek(bytes, true);
+        }
+    }
+
