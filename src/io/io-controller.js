@@ -320,4 +320,7 @@ class IOController {
     }
 
     /**
-     * When
+     * When seeking request is from media seeking, unconsumed stash data should be dropped
+     * However, stash data shouldn't be dropped if seeking requested from http reconnection
+     *
+     * @dropUnconsumed: 
