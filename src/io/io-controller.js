@@ -323,4 +323,8 @@ class IOController {
      * When seeking request is from media seeking, unconsumed stash data should be dropped
      * However, stash data shouldn't be dropped if seeking requested from http reconnection
      *
-     * @dropUnconsumed: 
+     * @dropUnconsumed: Ignore and discard all unconsumed data in stash buffer
+     */
+    _internalSeek(bytes, dropUnconsumed) {
+        if (this._loader.isWorking()) {
+            this._load
