@@ -340,4 +340,9 @@ class IOController {
         this._currentRange = {from: requestRange.from, to: -1};
 
         this._speedSampler.reset();
-     
+        this._stashSize = this._stashInitialSize;
+        this._createLoader();
+        this._loader.open(this._dataSource, requestRange);
+
+        if (this._onSeeked) {
+            thi
