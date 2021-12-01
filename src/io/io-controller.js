@@ -334,4 +334,10 @@ class IOController {
         this._flushStashBuffer(dropUnconsumed);
 
         this._loader.destroy();
-        this._loader 
+        this._loader = null;
+
+        let requestRange = {from: bytes, to: -1};
+        this._currentRange = {from: requestRange.from, to: -1};
+
+        this._speedSampler.reset();
+     
