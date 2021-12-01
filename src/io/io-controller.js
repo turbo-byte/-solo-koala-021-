@@ -327,4 +327,11 @@ class IOController {
      */
     _internalSeek(bytes, dropUnconsumed) {
         if (this._loader.isWorking()) {
-            this._load
+            this._loader.abort();
+        }
+
+        // dispatch & flush stash buffer before seek
+        this._flushStashBuffer(dropUnconsumed);
+
+        this._loader.destroy();
+        this._loader 
