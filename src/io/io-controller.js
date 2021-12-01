@@ -345,4 +345,10 @@ class IOController {
         this._loader.open(this._dataSource, requestRange);
 
         if (this._onSeeked) {
-            thi
+            this._onSeeked();
+        }
+    }
+
+    updateUrl(url) {
+        if (!url || typeof url !== 'string' || url.length === 0) {
+            throw new InvalidArgumentException('Url must be a non-empty str
