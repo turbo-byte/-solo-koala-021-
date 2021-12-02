@@ -351,4 +351,13 @@ class IOController {
 
     updateUrl(url) {
         if (!url || typeof url !== 'string' || url.length === 0) {
-            throw new InvalidArgumentException('Url must be a non-empty str
+            throw new InvalidArgumentException('Url must be a non-empty string!');
+        }
+
+        this._dataSource.url = url;
+
+        // TODO: replace with new url
+    }
+
+    _expandBuffer(expectedBytes) {
+        let bufferNew
