@@ -360,4 +360,9 @@ class IOController {
     }
 
     _expandBuffer(expectedBytes) {
-        let bufferNew
+        let bufferNewSize = this._stashSize;
+        while (bufferNewSize + 1024 * 1024 * 1 < expectedBytes) {
+            bufferNewSize *= 2;
+        }
+
+        bufferNewSize += 1024 * 1024 * 1;  // bufferSize = 
