@@ -365,4 +365,11 @@ class IOController {
             bufferNewSize *= 2;
         }
 
-        bufferNewSize += 1024 * 1024 * 1;  // bufferSize = 
+        bufferNewSize += 1024 * 1024 * 1;  // bufferSize = stashSize + 1MB
+        if (bufferNewSize === this._bufferSize) {
+            return;
+        }
+
+        let newBuffer = new ArrayBuffer(bufferNewSize);
+
+        if (this._stashUsed > 0) {  // cop
