@@ -374,4 +374,12 @@ class IOController {
 
         if (this._stashUsed > 0) {  // copy existing data into new buffer
             let stashOldArray = new Uint8Array(this._stashBuffer, 0, this._stashUsed);
-            let stashNewArray = new Uint8Array(newBuffer, 0, bufferNewSi
+            let stashNewArray = new Uint8Array(newBuffer, 0, bufferNewSize);
+            stashNewArray.set(stashOldArray, 0);
+        }
+
+        this._stashBuffer = newBuffer;
+        this._bufferSize = bufferNewSize;
+    }
+
+    _normalizeSpeed(input
