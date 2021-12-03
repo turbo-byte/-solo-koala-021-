@@ -402,4 +402,12 @@ class IOController {
                 lbound = mid + 1;
             } else {
                 ubound = mid - 1;
-           
+            }
+        }
+    }
+
+    _adjustStashSize(normalized) {
+        let stashSizeKB = 0;
+
+        if (this._config.isLive) {
+            // live stream: always use 1/8 normalized speed for
