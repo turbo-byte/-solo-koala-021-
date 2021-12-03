@@ -390,4 +390,10 @@ class IOController {
         let ubound = last;
 
         if (input < list[0]) {
-            re
+            return list[0];
+        }
+
+        // binary search
+        while (lbound <= ubound) {
+            mid = lbound + Math.floor((ubound - lbound) / 2);
+            if (mid === last || (input >= list[mid] && inpu
