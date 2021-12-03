@@ -396,4 +396,10 @@ class IOController {
         // binary search
         while (lbound <= ubound) {
             mid = lbound + Math.floor((ubound - lbound) / 2);
-            if (mid === last || (input >= list[mid] && inpu
+            if (mid === last || (input >= list[mid] && input < list[mid + 1])) {
+                return list[mid];
+            } else if (list[mid] < input) {
+                lbound = mid + 1;
+            } else {
+                ubound = mid - 1;
+           
