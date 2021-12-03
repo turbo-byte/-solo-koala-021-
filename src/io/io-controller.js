@@ -382,4 +382,12 @@ class IOController {
         this._bufferSize = bufferNewSize;
     }
 
-    _normalizeSpeed(input
+    _normalizeSpeed(input) {
+        let list = this._speedNormalizeList;
+        let last = list.length - 1;
+        let mid = 0;
+        let lbound = 0;
+        let ubound = last;
+
+        if (input < list[0]) {
+            re
