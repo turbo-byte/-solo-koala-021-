@@ -415,4 +415,11 @@ class IOController {
         } else {
             if (normalized < 512) {
                 stashSizeKB = normalized;
-            } else if (normalized >= 512
+            } else if (normalized >= 512 && normalized <= 1024) {
+                stashSizeKB = Math.floor(normalized * 1.5);
+            } else {
+                stashSizeKB = normalized * 2;
+            }
+        }
+
+        if (stas
