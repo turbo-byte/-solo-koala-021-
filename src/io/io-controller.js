@@ -427,4 +427,11 @@ class IOController {
         }
 
         let bufferSize = stashSizeKB * 1024 + 1024 * 1024 * 1;  // stashSize + 1MB
-        if (this._bufferSize < buffe
+        if (this._bufferSize < bufferSize) {
+            this._expandBuffer(bufferSize);
+        }
+        this._stashSize = stashSizeKB * 1024;
+    }
+
+    _dispatchChunks(chunks, byteStart) {
+        this._currentRange.to =
