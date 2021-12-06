@@ -434,4 +434,9 @@ class IOController {
     }
 
     _dispatchChunks(chunks, byteStart) {
-        this._currentRange.to =
+        this._currentRange.to = byteStart + chunks.byteLength - 1;
+        return this._onDataArrival(chunks, byteStart);
+    }
+
+    _onURLRedirect(redirectedURL) {
+        this._redirectedURL = redirectedURL
