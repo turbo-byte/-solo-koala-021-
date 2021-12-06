@@ -452,4 +452,8 @@ class IOController {
         }
     }
 
-    _onLoaderChunkArrival(chunk, byteStart, receivedLen
+    _onLoaderChunkArrival(chunk, byteStart, receivedLength) {
+        if (!this._onDataArrival) {
+            throw new IllegalStateException('IOController: No existing consumer (onDataArrival) callback!');
+        }
+        if (this._paused
