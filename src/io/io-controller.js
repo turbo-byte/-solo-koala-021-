@@ -447,4 +447,9 @@ class IOController {
 
     _onContentLengthKnown(contentLength) {
         if (contentLength && this._fullRequestFlag) {
-   
+            this._totalLength = contentLength;
+            this._fullRequestFlag = false;
+        }
+    }
+
+    _onLoaderChunkArrival(chunk, byteStart, receivedLen
