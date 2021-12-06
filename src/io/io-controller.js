@@ -456,4 +456,9 @@ class IOController {
         if (!this._onDataArrival) {
             throw new IllegalStateException('IOController: No existing consumer (onDataArrival) callback!');
         }
-        if (this._paused
+        if (this._paused) {
+            return;
+        }
+        if (this._isEarlyEofReconnecting) {
+            // Auto-reconnect for EarlyEof succeed, notify to upper-layer by callback
+            this._isEarly
