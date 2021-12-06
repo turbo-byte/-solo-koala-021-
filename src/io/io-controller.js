@@ -422,4 +422,9 @@ class IOController {
             }
         }
 
-        if (stas
+        if (stashSizeKB > 8192) {
+            stashSizeKB = 8192;
+        }
+
+        let bufferSize = stashSizeKB * 1024 + 1024 * 1024 * 1;  // stashSize + 1MB
+        if (this._bufferSize < buffe
