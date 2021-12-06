@@ -439,4 +439,12 @@ class IOController {
     }
 
     _onURLRedirect(redirectedURL) {
-        this._redirectedURL = redirectedURL
+        this._redirectedURL = redirectedURL;
+        if (this._onRedirect) {
+            this._onRedirect(redirectedURL);
+        }
+    }
+
+    _onContentLengthKnown(contentLength) {
+        if (contentLength && this._fullRequestFlag) {
+   
