@@ -481,4 +481,7 @@ class IOController {
 
         if (!this._enableStash) {  // disable stash
             if (this._stashUsed === 0) {
-                // dispatch chunk dir
+                // dispatch chunk directly to consumer;
+                // check ret value (consumed bytes) and stash unconsumed to stashBuffer
+                let consumed = this._dispatchChunks(chunk, byteStart);
+                if (con
