@@ -472,4 +472,7 @@ class IOController {
         // adjust stash buffer size according to network speed dynamically
         let KBps = this._speedSampler.lastSecondKBps;
         if (KBps !== 0) {
-            let normalized
+            let normalized = this._normalizeSpeed(KBps);
+            if (this._speedNormalized !== normalized) {
+                this._speedNormalized = normalized;
+                this._adjustStashSi
