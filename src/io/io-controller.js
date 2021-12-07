@@ -484,4 +484,7 @@ class IOController {
                 // dispatch chunk directly to consumer;
                 // check ret value (consumed bytes) and stash unconsumed to stashBuffer
                 let consumed = this._dispatchChunks(chunk, byteStart);
-                if (con
+                if (consumed < chunk.byteLength) {  // unconsumed data remain.
+                    let remain = chunk.byteLength - consumed;
+                    if (remain > this._bufferSize) {
+      
