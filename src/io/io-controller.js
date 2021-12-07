@@ -461,4 +461,10 @@ class IOController {
         }
         if (this._isEarlyEofReconnecting) {
             // Auto-reconnect for EarlyEof succeed, notify to upper-layer by callback
-            this._isEarly
+            this._isEarlyEofReconnecting = false;
+            if (this._onRecoveredEarlyEof) {
+                this._onRecoveredEarlyEof();
+            }
+        }
+
+        this._speedSampler.addBytes(chunk.byteLengt
