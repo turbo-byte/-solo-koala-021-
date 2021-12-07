@@ -487,4 +487,7 @@ class IOController {
                 if (consumed < chunk.byteLength) {  // unconsumed data remain.
                     let remain = chunk.byteLength - consumed;
                     if (remain > this._bufferSize) {
-      
+                        this._expandBuffer(remain);
+                    }
+                    let stashArray = new Uint8Array(this._stashBuffer, 0, this._bufferSize);
+                    stashArray.set(new Uin
