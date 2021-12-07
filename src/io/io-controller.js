@@ -475,4 +475,10 @@ class IOController {
             let normalized = this._normalizeSpeed(KBps);
             if (this._speedNormalized !== normalized) {
                 this._speedNormalized = normalized;
-                this._adjustStashSi
+                this._adjustStashSize(normalized);
+            }
+        }
+
+        if (!this._enableStash) {  // disable stash
+            if (this._stashUsed === 0) {
+                // dispatch chunk dir
