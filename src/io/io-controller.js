@@ -490,4 +490,8 @@ class IOController {
                         this._expandBuffer(remain);
                     }
                     let stashArray = new Uint8Array(this._stashBuffer, 0, this._bufferSize);
-                    stashArray.set(new Uin
+                    stashArray.set(new Uint8Array(chunk, consumed), 0);
+                    this._stashUsed += remain;
+                    this._stashByteStart = byteStart + consumed;
+                }
+            } e
