@@ -497,4 +497,7 @@ class IOController {
             } else {
                 // else: Merge chunk into stashBuffer, and dispatch stashBuffer to consumer.
                 if (this._stashUsed + chunk.byteLength > this._bufferSize) {
-      
+                    this._expandBuffer(this._stashUsed + chunk.byteLength);
+                }
+                let stashArray = new Uint8Array(this._stashBuffer, 0, this._bufferSize);
+           
