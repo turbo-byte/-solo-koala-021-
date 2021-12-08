@@ -494,4 +494,7 @@ class IOController {
                     this._stashUsed += remain;
                     this._stashByteStart = byteStart + consumed;
                 }
-            } e
+            } else {
+                // else: Merge chunk into stashBuffer, and dispatch stashBuffer to consumer.
+                if (this._stashUsed + chunk.byteLength > this._bufferSize) {
+      
