@@ -512,4 +512,8 @@ class IOController {
             }
         } else {  // enable stash
             if (this._stashUsed === 0 && this._stashByteStart === 0) {  // seeked? or init chunk?
-                // This is t
+                // This is the first chunk after seek action
+                this._stashByteStart = byteStart;
+            }
+            if (this._stashUsed + chunk.byteLength <= this._stashSize) {
+                // just st
