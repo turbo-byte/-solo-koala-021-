@@ -508,4 +508,8 @@ class IOController {
                     stashArray.set(remainArray, 0);
                 }
                 this._stashUsed -= consumed;
-                this._stashByteStart 
+                this._stashByteStart += consumed;
+            }
+        } else {  // enable stash
+            if (this._stashUsed === 0 && this._stashByteStart === 0) {  // seeked? or init chunk?
+                // This is t
