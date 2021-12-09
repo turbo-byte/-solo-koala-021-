@@ -504,4 +504,8 @@ class IOController {
                 this._stashUsed += chunk.byteLength;
                 let consumed = this._dispatchChunks(this._stashBuffer.slice(0, this._stashUsed), this._stashByteStart);
                 if (consumed < this._stashUsed && consumed > 0) {  // unconsumed data remain
-                    let remainArray = new Uin
+                    let remainArray = new Uint8Array(this._stashBuffer, consumed);
+                    stashArray.set(remainArray, 0);
+                }
+                this._stashUsed -= consumed;
+                this._stashByteStart 
