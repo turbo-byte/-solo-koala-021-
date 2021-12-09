@@ -516,4 +516,7 @@ class IOController {
                 this._stashByteStart = byteStart;
             }
             if (this._stashUsed + chunk.byteLength <= this._stashSize) {
-                // just st
+                // just stash
+                let stashArray = new Uint8Array(this._stashBuffer, 0, this._stashSize);
+                stashArray.set(new Uint8Array(chunk), this._stashUsed);
+            
