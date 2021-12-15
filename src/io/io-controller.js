@@ -521,4 +521,6 @@ class IOController {
                 stashArray.set(new Uint8Array(chunk), this._stashUsed);
                 this._stashUsed += chunk.byteLength;
             } else {  // stashUsed + chunkSize > stashSize, size limit exceeded
-                let stashArray = n
+                let stashArray = new Uint8Array(this._stashBuffer, 0, this._bufferSize);
+                if (this._stashUsed > 0) {  // There're stash datas in buffer
+                    // dispatch the whole stas
