@@ -523,4 +523,7 @@ class IOController {
             } else {  // stashUsed + chunkSize > stashSize, size limit exceeded
                 let stashArray = new Uint8Array(this._stashBuffer, 0, this._bufferSize);
                 if (this._stashUsed > 0) {  // There're stash datas in buffer
-                    // dispatch the whole stas
+                    // dispatch the whole stashBuffer, and stash remain data
+                    // then append chunk to stashBuffer (stash)
+                    let buffer = this._stashBuffer.slice(0, this._stashUsed);
+              
