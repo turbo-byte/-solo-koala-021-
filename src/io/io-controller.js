@@ -526,4 +526,7 @@ class IOController {
                     // dispatch the whole stashBuffer, and stash remain data
                     // then append chunk to stashBuffer (stash)
                     let buffer = this._stashBuffer.slice(0, this._stashUsed);
-              
+                    let consumed = this._dispatchChunks(buffer, this._stashByteStart);
+                    if (consumed < buffer.byteLength) {
+                        if (consumed > 0) {
+                    
