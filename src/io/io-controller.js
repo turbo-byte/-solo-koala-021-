@@ -531,4 +531,9 @@ class IOController {
                         if (consumed > 0) {
                             let remainArray = new Uint8Array(buffer, consumed);
                             stashArray.set(remainArray, 0);
-                            this._stashUsed = remainArray.byteLength
+                            this._stashUsed = remainArray.byteLength;
+                            this._stashByteStart += consumed;
+                        }
+                    } else {
+                        this._stashUsed = 0;
+                    
