@@ -536,4 +536,7 @@ class IOController {
                         }
                     } else {
                         this._stashUsed = 0;
-                    
+                        this._stashByteStart += consumed;
+                    }
+                    if (this._stashUsed + chunk.byteLength > this._bufferSize) {
+                        this._expandBuffer(this._stashUse
