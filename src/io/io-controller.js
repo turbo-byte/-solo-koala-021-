@@ -539,4 +539,7 @@ class IOController {
                         this._stashByteStart += consumed;
                     }
                     if (this._stashUsed + chunk.byteLength > this._bufferSize) {
-                        this._expandBuffer(this._stashUse
+                        this._expandBuffer(this._stashUsed + chunk.byteLength);
+                        stashArray = new Uint8Array(this._stashBuffer, 0, this._bufferSize);
+                    }
+                    stashArray.set(n
