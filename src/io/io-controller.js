@@ -542,4 +542,7 @@ class IOController {
                         this._expandBuffer(this._stashUsed + chunk.byteLength);
                         stashArray = new Uint8Array(this._stashBuffer, 0, this._bufferSize);
                     }
-                    stashArray.set(n
+                    stashArray.set(new Uint8Array(chunk), this._stashUsed);
+                    this._stashUsed += chunk.byteLength;
+                } else {  // stash buffer empty, but chunkSize > stashSize (oh, holy shit)
+       
