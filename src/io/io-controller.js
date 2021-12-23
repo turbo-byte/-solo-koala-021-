@@ -545,4 +545,6 @@ class IOController {
                     stashArray.set(new Uint8Array(chunk), this._stashUsed);
                     this._stashUsed += chunk.byteLength;
                 } else {  // stash buffer empty, but chunkSize > stashSize (oh, holy shit)
-       
+                    // dispatch chunk directly and stash remain data
+                    let consumed = this._dispatchChunks(chunk, byteStart);
+                    if (consumed < chunk.byteLength) {
