@@ -548,3 +548,7 @@ class IOController {
                     // dispatch chunk directly and stash remain data
                     let consumed = this._dispatchChunks(chunk, byteStart);
                     if (consumed < chunk.byteLength) {
+                        let remain = chunk.byteLength - consumed;
+                        if (remain > this._bufferSize) {
+                            this._expandBuffer(remain);
+        
