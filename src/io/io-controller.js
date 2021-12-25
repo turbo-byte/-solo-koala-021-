@@ -554,4 +554,12 @@ class IOController {
                             stashArray = new Uint8Array(this._stashBuffer, 0, this._bufferSize);
                         }
                         stashArray.set(new Uint8Array(chunk, consumed), 0);
-            
+                        this._stashUsed += remain;
+                        this._stashByteStart = byteStart + consumed;
+                    }
+                }
+            }
+        }
+    }
+
+    _flushStashBuffe
