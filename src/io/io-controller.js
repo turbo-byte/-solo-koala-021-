@@ -566,4 +566,8 @@ class IOController {
         if (this._stashUsed > 0) {
             let buffer = this._stashBuffer.slice(0, this._stashUsed);
             let consumed = this._dispatchChunks(buffer, this._stashByteStart);
- 
+            let remain = buffer.byteLength - consumed;
+
+            if (consumed < buffer.byteLength) {
+                if (dropUnconsumed) {
+                    Log.w(this.TAG, `${remain} bytes unco
