@@ -562,4 +562,8 @@ class IOController {
         }
     }
 
-    _flushStashBuffe
+    _flushStashBuffer(dropUnconsumed) {
+        if (this._stashUsed > 0) {
+            let buffer = this._stashBuffer.slice(0, this._stashUsed);
+            let consumed = this._dispatchChunks(buffer, this._stashByteStart);
+ 
