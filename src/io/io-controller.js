@@ -573,4 +573,7 @@ class IOController {
                     Log.w(this.TAG, `${remain} bytes unconsumed data remain when flush buffer, dropped`);
                 } else {
                     if (consumed > 0) {
-                        let stashArray = new Uint8Array(this._stashBuffer, 0, this._buff
+                        let stashArray = new Uint8Array(this._stashBuffer, 0, this._bufferSize);
+                        let remainArray = new Uint8Array(buffer, consumed);
+                        stashArray.set(remainArray, 0);
+                        this._stashUs
