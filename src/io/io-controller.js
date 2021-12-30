@@ -576,4 +576,10 @@ class IOController {
                         let stashArray = new Uint8Array(this._stashBuffer, 0, this._bufferSize);
                         let remainArray = new Uint8Array(buffer, consumed);
                         stashArray.set(remainArray, 0);
-                        this._stashUs
+                        this._stashUsed = remainArray.byteLength;
+                        this._stashByteStart += consumed;
+                    }
+                    return 0;
+                }
+            }
+            this._stas
