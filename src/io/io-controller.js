@@ -582,4 +582,12 @@ class IOController {
                     return 0;
                 }
             }
-            this._stas
+            this._stashUsed = 0;
+            this._stashByteStart = 0;
+            return remain;
+        }
+        return 0;
+    }
+
+    _onLoaderComplete(from, to) {
+        // Force-flush stash buffer, and dr
