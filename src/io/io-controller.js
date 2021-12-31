@@ -598,4 +598,9 @@ class IOController {
         }
     }
 
-    _onLoaderError(type, da
+    _onLoaderError(type, data) {
+        Log.e(this.TAG, `Loader error, code = ${data.code}, msg = ${data.msg}`);
+
+        this._flushStashBuffer(false);
+
+        if (this._isEarlyEofReconnecting) 
