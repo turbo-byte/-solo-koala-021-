@@ -590,4 +590,12 @@ class IOController {
     }
 
     _onLoaderComplete(from, to) {
-        // Force-flush stash buffer, and dr
+        // Force-flush stash buffer, and drop unconsumed data
+        this._flushStashBuffer(true);
+
+        if (this._onComplete) {
+            this._onComplete(this._extraData);
+        }
+    }
+
+    _onLoaderError(type, da
