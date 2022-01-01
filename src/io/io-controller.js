@@ -603,4 +603,7 @@ class IOController {
 
         this._flushStashBuffer(false);
 
-        if (this._isEarlyEofReconnecting) 
+        if (this._isEarlyEofReconnecting) {
+            // Auto-reconnect for EarlyEof failed, throw UnrecoverableEarlyEof error to upper-layer
+            this._isEarlyEofReconnecting = false;
+            type = LoaderErrors.UNRECOVERABLE_E
