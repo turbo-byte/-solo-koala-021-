@@ -606,4 +606,10 @@ class IOController {
         if (this._isEarlyEofReconnecting) {
             // Auto-reconnect for EarlyEof failed, throw UnrecoverableEarlyEof error to upper-layer
             this._isEarlyEofReconnecting = false;
-            type = LoaderErrors.UNRECOVERABLE_E
+            type = LoaderErrors.UNRECOVERABLE_EARLY_EOF;
+        }
+
+        switch (type) {
+            case LoaderErrors.EARLY_EOF: {
+                if (!this._config.isLive) {
+                    // Do internal http reconnect 
