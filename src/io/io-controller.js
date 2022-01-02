@@ -612,4 +612,7 @@ class IOController {
         switch (type) {
             case LoaderErrors.EARLY_EOF: {
                 if (!this._config.isLive) {
-                    // Do internal http reconnect 
+                    // Do internal http reconnect if not live stream
+                    if (this._totalLength) {
+                        let nextFrom = this._currentRange.to + 1;
+                        if (nextFrom < 
