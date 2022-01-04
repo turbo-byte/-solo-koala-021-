@@ -615,4 +615,7 @@ class IOController {
                     // Do internal http reconnect if not live stream
                     if (this._totalLength) {
                         let nextFrom = this._currentRange.to + 1;
-                        if (nextFrom < 
+                        if (nextFrom < this._totalLength) {
+                            Log.w(this.TAG, 'Connection lost, trying reconnect...');
+                            this._isEarlyEofReconnecting = true;
+                       
