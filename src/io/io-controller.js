@@ -618,4 +618,8 @@ class IOController {
                         if (nextFrom < this._totalLength) {
                             Log.w(this.TAG, 'Connection lost, trying reconnect...');
                             this._isEarlyEofReconnecting = true;
-                       
+                            this._internalSeek(nextFrom, false);
+                        }
+                        return;
+                    }
+                    // else: We don't know totalLength, throw Unre
