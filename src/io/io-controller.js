@@ -622,4 +622,8 @@ class IOController {
                         }
                         return;
                     }
-                    // else: We don't know totalLength, throw Unre
+                    // else: We don't know totalLength, throw UnrecoverableEarlyEof
+                }
+                // live stream: throw UnrecoverableEarlyEof error to upper-layer
+                type = LoaderErrors.UNRECOVERABLE_EARLY_EOF;
+     
