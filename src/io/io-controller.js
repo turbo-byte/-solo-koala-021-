@@ -630,4 +630,12 @@ class IOController {
             }
             case LoaderErrors.UNRECOVERABLE_EARLY_EOF:
             case LoaderErrors.CONNECTING_TIMEOUT:
-            case LoaderErrors.HTTP_STATUS_CODE
+            case LoaderErrors.HTTP_STATUS_CODE_INVALID:
+            case LoaderErrors.EXCEPTION:
+                break;
+        }
+
+        if (this._onError) {
+            this._onError(type, data);
+        } else {
+      
