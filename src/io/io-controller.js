@@ -626,4 +626,8 @@ class IOController {
                 }
                 // live stream: throw UnrecoverableEarlyEof error to upper-layer
                 type = LoaderErrors.UNRECOVERABLE_EARLY_EOF;
-     
+                break;
+            }
+            case LoaderErrors.UNRECOVERABLE_EARLY_EOF:
+            case LoaderErrors.CONNECTING_TIMEOUT:
+            case LoaderErrors.HTTP_STATUS_CODE
