@@ -638,4 +638,10 @@ class IOController {
         if (this._onError) {
             this._onError(type, data);
         } else {
-      
+            throw new RuntimeException('IOException: ' + data.msg);
+        }
+    }
+
+}
+
+export default IOController;
