@@ -26,4 +26,9 @@ export const LoaderStatus = {
     kComplete: 4
 };
 
-export const LoaderErrors = 
+export const LoaderErrors = {
+    OK: 'OK',
+    EXCEPTION: 'Exception',
+    HTTP_STATUS_CODE_INVALID: 'HttpStatusCodeInvalid',
+    CONNECTING_TIMEOUT: 'ConnectingTimeout',
+    EA
