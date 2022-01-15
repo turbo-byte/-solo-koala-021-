@@ -39,4 +39,7 @@ export const LoaderErrors = {
  *     function onContentLengthKnown(contentLength: number): void
  *     function onURLRedirect(url: string): void
  *     function onDataArrival(chunk: ArrayBuffer, byteStart: number, receivedLength: number): void
- *     func
+ *     function onError(errorType: number, errorInfo: {code: number, msg: string}): void
+ *     function onComplete(rangeFrom: number, rangeTo: number): void
+ */
+export class BaseLoader {
