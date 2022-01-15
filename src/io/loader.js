@@ -36,4 +36,7 @@ export const LoaderErrors = {
 };
 
 /* Loader has callbacks which have following prototypes:
- *     function onContentLengthKnown(contentLeng
+ *     function onContentLengthKnown(contentLength: number): void
+ *     function onURLRedirect(url: string): void
+ *     function onDataArrival(chunk: ArrayBuffer, byteStart: number, receivedLength: number): void
+ *     func
