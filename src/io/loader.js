@@ -43,3 +43,9 @@ export const LoaderErrors = {
  *     function onComplete(rangeFrom: number, rangeTo: number): void
  */
 export class BaseLoader {
+
+    constructor(typeName) {
+        this._type = typeName || 'undefined';
+        this._status = LoaderStatus.kIdle;
+        this._needStash = false;
+        // call
