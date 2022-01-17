@@ -48,4 +48,9 @@ export class BaseLoader {
         this._type = typeName || 'undefined';
         this._status = LoaderStatus.kIdle;
         this._needStash = false;
-        // call
+        // callbacks
+        this._onContentLengthKnown = null;
+        this._onURLRedirect = null;
+        this._onDataArrival = null;
+        this._onError = null;
+        this
