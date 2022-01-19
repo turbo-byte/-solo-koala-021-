@@ -53,4 +53,11 @@ export class BaseLoader {
         this._onURLRedirect = null;
         this._onDataArrival = null;
         this._onError = null;
-        this
+        this._onComplete = null;
+    }
+
+    destroy() {
+        this._status = LoaderStatus.kIdle;
+        this._onContentLengthKnown = null;
+        this._onURLRedirect = null;
+        this._onDat
