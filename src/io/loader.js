@@ -60,4 +60,10 @@ export class BaseLoader {
         this._status = LoaderStatus.kIdle;
         this._onContentLengthKnown = null;
         this._onURLRedirect = null;
-        this._onDat
+        this._onDataArrival = null;
+        this._onError = null;
+        this._onComplete = null;
+    }
+
+    isWorking() {
+        return this._status === LoaderStatus.kConnecting || this._status === LoaderS
