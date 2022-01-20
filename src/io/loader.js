@@ -66,4 +66,16 @@ export class BaseLoader {
     }
 
     isWorking() {
-        return this._status === LoaderStatus.kConnecting || this._status === LoaderS
+        return this._status === LoaderStatus.kConnecting || this._status === LoaderStatus.kBuffering;
+    }
+
+    get type() {
+        return this._type;
+    }
+
+    get status() {
+        return this._status;
+    }
+
+    get needStashBuffer() {
+        return this._needSt
