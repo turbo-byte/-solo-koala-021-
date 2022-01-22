@@ -78,4 +78,12 @@ export class BaseLoader {
     }
 
     get needStashBuffer() {
-        return this._needSt
+        return this._needStash;
+    }
+
+    get onContentLengthKnown() {
+        return this._onContentLengthKnown;
+    }
+
+    set onContentLengthKnown(callback) {
+        this._onContentLength
