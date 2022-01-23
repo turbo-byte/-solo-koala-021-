@@ -86,4 +86,15 @@ export class BaseLoader {
     }
 
     set onContentLengthKnown(callback) {
-        this._onContentLength
+        this._onContentLengthKnown = callback;
+    }
+
+    get onURLRedirect() {
+        return this._onURLRedirect;
+    }
+
+    set onURLRedirect(callback) {
+        this._onURLRedirect = callback;
+    }
+
+    get onDataArrival(
