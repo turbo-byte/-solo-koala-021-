@@ -97,4 +97,14 @@ export class BaseLoader {
         this._onURLRedirect = callback;
     }
 
-    get onDataArrival(
+    get onDataArrival() {
+        return this._onDataArrival;
+    }
+
+    set onDataArrival(callback) {
+        this._onDataArrival = callback;
+    }
+
+    get onError() {
+        return this._onError;
+ 
