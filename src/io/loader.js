@@ -107,4 +107,17 @@ export class BaseLoader {
 
     get onError() {
         return this._onError;
- 
+    }
+
+    set onError(callback) {
+        this._onError = callback;
+    }
+
+    get onComplete() {
+        return this._onComplete;
+    }
+
+    set onComplete(callback) {
+        this._onComplete = callback;
+    }
+
