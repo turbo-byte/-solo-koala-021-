@@ -121,3 +121,10 @@ export class BaseLoader {
         this._onComplete = callback;
     }
 
+    // pure virtual
+    open(dataSource, range) {
+        throw new NotImplementedException('Unimplemented abstract function!');
+    }
+
+    abort() {
+        throw new NotImplemen
