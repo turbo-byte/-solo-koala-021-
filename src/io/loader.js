@@ -127,4 +127,8 @@ export class BaseLoader {
     }
 
     abort() {
-        throw new NotImplemen
+        throw new NotImplementedException('Unimplemented abstract function!');
+    }
+
+
+}
