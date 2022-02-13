@@ -34,4 +34,10 @@ class ParamSeekHandler {
             }
 
             if (needAnd) {
-                url += '&
+                url += '&';
+            }
+
+            url += `${this._startName}=${range.from.toString()}`;
+
+            if (range.to !== -1) {
+                url += `&${this._endName
