@@ -27,4 +27,11 @@ class ParamSeekHandler {
         let url = baseUrl;
 
         if (range.from !== 0 || range.to !== -1) {
-   
+            let needAnd = true;
+            if (url.indexOf('?') === -1) {
+                url += '?';
+                needAnd = false;
+            }
+
+            if (needAnd) {
+                url += '&
