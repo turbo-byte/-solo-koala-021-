@@ -40,4 +40,15 @@ class ParamSeekHandler {
             url += `${this._startName}=${range.from.toString()}`;
 
             if (range.to !== -1) {
-                url += `&${this._endName
+                url += `&${this._endName}=${range.to.toString()}`;
+            }
+        }
+
+        return {
+            url: url,
+            headers: {}
+        };
+    }
+
+    removeURLParameters(seekedURL) {
+        let baseURL = se
