@@ -51,4 +51,10 @@ class ParamSeekHandler {
     }
 
     removeURLParameters(seekedURL) {
-        let baseURL = se
+        let baseURL = seekedURL.split('?')[0];
+        let params = undefined;
+
+        let queryIndex = seekedURL.indexOf('?');
+        if (queryIndex !== -1) {
+            params = seekedURL.substring(queryIndex + 1);
+      
