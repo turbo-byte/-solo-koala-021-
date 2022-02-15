@@ -57,4 +57,15 @@ class ParamSeekHandler {
         let queryIndex = seekedURL.indexOf('?');
         if (queryIndex !== -1) {
             params = seekedURL.substring(queryIndex + 1);
-      
+        }
+
+        let resultParams = '';
+
+        if (params != undefined && params.length > 0) {
+            let pairs = params.split('&');
+
+            for (let i = 0; i < pairs.length; i++) {
+                let pair = pairs[i].split('=');
+                let requireAnd = (i > 0);
+
+                if (pair[0] !== this._startName && pair[0
