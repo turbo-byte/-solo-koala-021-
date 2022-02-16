@@ -73,4 +73,13 @@ class ParamSeekHandler {
                         resultParams += '&';
                     }
                     resultParams += pairs[i];
-        
+                }
+            }
+        }
+
+        return (resultParams.length === 0) ? baseURL : baseURL + '?' + resultParams;
+    }
+
+}
+
+export default ParamSeekHandler;
