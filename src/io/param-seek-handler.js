@@ -68,4 +68,9 @@ class ParamSeekHandler {
                 let pair = pairs[i].split('=');
                 let requireAnd = (i > 0);
 
-                if (pair[0] !== this._startName && pair[0
+                if (pair[0] !== this._startName && pair[0] !== this._endName) {
+                    if (requireAnd) {
+                        resultParams += '&';
+                    }
+                    resultParams += pairs[i];
+        
