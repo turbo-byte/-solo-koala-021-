@@ -17,4 +17,10 @@
  */
 
 import Log from '../utils/logger.js';
-import {BaseLoader, LoaderStatus, LoaderError
+import {BaseLoader, LoaderStatus, LoaderErrors} from './loader.js';
+import {RuntimeException} from '../utils/exception.js';
+
+// For MPEG-TS/FLV over WebSocket live stream
+class WebSocketLoader extends BaseLoader {
+
+    stati
