@@ -23,4 +23,13 @@ import {RuntimeException} from '../utils/exception.js';
 // For MPEG-TS/FLV over WebSocket live stream
 class WebSocketLoader extends BaseLoader {
 
-    stati
+    static isSupported() {
+        try {
+            return (typeof self.WebSocket !== 'undefined');
+        } catch (e) {
+            return false;
+        }
+    }
+
+    constructor() {
+      
