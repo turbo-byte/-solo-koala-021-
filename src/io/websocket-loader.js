@@ -39,4 +39,16 @@ class WebSocketLoader extends BaseLoader {
 
         this._ws = null;
         this._requestAbort = false;
-    
+        this._receivedLength = 0;
+    }
+
+    destroy() {
+        if (this._ws) {
+            this.abort();
+        }
+        super.destroy();
+    }
+
+    open(dataSource) {
+        try {
+          
