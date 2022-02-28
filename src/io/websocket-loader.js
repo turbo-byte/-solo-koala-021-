@@ -54,4 +54,9 @@ class WebSocketLoader extends BaseLoader {
             let ws = this._ws = new self.WebSocket(dataSource.url);
             ws.binaryType = 'arraybuffer';
             ws.onopen = this._onWebSocketOpen.bind(this);
-            ws.onclose = this._onWebS
+            ws.onclose = this._onWebSocketClose.bind(this);
+            ws.onmessage = this._onWebSocketMessage.bind(this);
+            ws.onerror = this._onWebSocketError.bind(this);
+
+            this._status = LoaderStatus.kConnecting;
+     
