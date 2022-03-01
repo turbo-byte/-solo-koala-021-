@@ -59,4 +59,10 @@ class WebSocketLoader extends BaseLoader {
             ws.onerror = this._onWebSocketError.bind(this);
 
             this._status = LoaderStatus.kConnecting;
-     
+        } catch (e) {
+            this._status = LoaderStatus.kError;
+
+            let info = {code: e.code, msg: e.message};
+
+            if (this._onError) {
+ 
