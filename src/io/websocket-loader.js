@@ -65,4 +65,12 @@ class WebSocketLoader extends BaseLoader {
             let info = {code: e.code, msg: e.message};
 
             if (this._onError) {
- 
+                this._onError(LoaderErrors.EXCEPTION, info);
+            } else {
+                throw new RuntimeException(info.msg);
+            }
+        }
+    }
+
+    abort() {
+        let ws
