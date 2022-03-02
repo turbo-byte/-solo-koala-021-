@@ -80,4 +80,13 @@ class WebSocketLoader extends BaseLoader {
         }
 
         this._ws = null;
-       
+        this._status = LoaderStatus.kComplete;
+    }
+
+    _onWebSocketOpen(e) {
+        this._status = LoaderStatus.kBuffering;
+    }
+
+    _onWebSocketClose(e) {
+        if (this._requestAbort === true) {
+ 
