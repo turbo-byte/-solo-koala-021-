@@ -73,4 +73,11 @@ class WebSocketLoader extends BaseLoader {
     }
 
     abort() {
-        let ws
+        let ws = this._ws;
+        if (ws && (ws.readyState === 0 || ws.readyState === 1)) {  // CONNECTING || OPEN
+            this._requestAbort = true;
+            ws.close();
+        }
+
+        this._ws = null;
+       
