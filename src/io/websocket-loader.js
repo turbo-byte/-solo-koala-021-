@@ -89,4 +89,11 @@ class WebSocketLoader extends BaseLoader {
 
     _onWebSocketClose(e) {
         if (this._requestAbort === true) {
- 
+            this._requestAbort = false;
+            return;
+        }
+
+        this._status = LoaderStatus.kComplete;
+
+        if (this._onComplete) {
+            this._onComplete(0, this._receivedL
