@@ -96,4 +96,11 @@ class WebSocketLoader extends BaseLoader {
         this._status = LoaderStatus.kComplete;
 
         if (this._onComplete) {
-            this._onComplete(0, this._receivedL
+            this._onComplete(0, this._receivedLength - 1);
+        }
+    }
+
+    _onWebSocketMessage(e) {
+        if (e.data instanceof ArrayBuffer) {
+            this._dispatchArrayBuffer(e.data);
+        } 
