@@ -103,4 +103,9 @@ class WebSocketLoader extends BaseLoader {
     _onWebSocketMessage(e) {
         if (e.data instanceof ArrayBuffer) {
             this._dispatchArrayBuffer(e.data);
-        } 
+        } else if (e.data instanceof Blob) {
+            let reader = new FileReader();
+            reader.onload = () => {
+                this._dispatchArrayBuffer(reader.result);
+            };
+      
