@@ -108,4 +108,7 @@ class WebSocketLoader extends BaseLoader {
             reader.onload = () => {
                 this._dispatchArrayBuffer(reader.result);
             };
-      
+            reader.readAsArrayBuffer(e.data);
+        } else {
+            this._status = LoaderStatus.kError;
+            let info = {code: -1, msg: 'Unsupported WebSocket message type: 
