@@ -111,4 +111,9 @@ class WebSocketLoader extends BaseLoader {
             reader.readAsArrayBuffer(e.data);
         } else {
             this._status = LoaderStatus.kError;
-            let info = {code: -1, msg: 'Unsupported WebSocket message type: 
+            let info = {code: -1, msg: 'Unsupported WebSocket message type: ' + e.data.constructor.name};
+
+            if (this._onError) {
+                this._onError(LoaderErrors.EXCEPTION, info);
+            } else {
+                throw new RuntimeExceptio
