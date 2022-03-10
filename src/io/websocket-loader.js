@@ -116,4 +116,12 @@ class WebSocketLoader extends BaseLoader {
             if (this._onError) {
                 this._onError(LoaderErrors.EXCEPTION, info);
             } else {
-                throw new RuntimeExceptio
+                throw new RuntimeException(info.msg);
+            }
+        }
+    }
+
+    _dispatchArrayBuffer(arraybuffer) {
+        let chunk = arraybuffer;
+        let byteStart = this._receivedLength;
+        this._receivedLength += chu
