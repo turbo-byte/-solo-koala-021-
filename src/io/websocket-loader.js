@@ -124,4 +124,12 @@ class WebSocketLoader extends BaseLoader {
     _dispatchArrayBuffer(arraybuffer) {
         let chunk = arraybuffer;
         let byteStart = this._receivedLength;
-        this._receivedLength += chu
+        this._receivedLength += chunk.byteLength;
+
+        if (this._onDataArrival) {
+            this._onDataArrival(chunk, byteStart, this._receivedLength);
+        }
+    }
+
+    _onWebSocketError(e) {
+        this._stat
