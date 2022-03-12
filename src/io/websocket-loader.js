@@ -132,4 +132,12 @@ class WebSocketLoader extends BaseLoader {
     }
 
     _onWebSocketError(e) {
-        this._stat
+        this._status = LoaderStatus.kError;
+
+        let info = {
+            code: e.code,
+            msg: e.message
+        };
+
+        if (this._onError) {
+            this._onError(LoaderErrors.EXCEPTION, info
