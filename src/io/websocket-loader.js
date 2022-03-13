@@ -140,4 +140,12 @@ class WebSocketLoader extends BaseLoader {
         };
 
         if (this._onError) {
-            this._onError(LoaderErrors.EXCEPTION, info
+            this._onError(LoaderErrors.EXCEPTION, info);
+        } else {
+            throw new RuntimeException(info.msg);
+        }
+    }
+
+}
+
+export default WebSocketLoader;
