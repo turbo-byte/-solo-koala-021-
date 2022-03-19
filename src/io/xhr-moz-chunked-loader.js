@@ -20,4 +20,10 @@ import Log from '../utils/logger.js';
 import {BaseLoader, LoaderStatus, LoaderErrors} from './loader.js';
 import {RuntimeException} from '../utils/exception.js';
 
-// For FireFox
+// For FireFox browser which supports `xhr.responseType = 'moz-chunked-arraybuffer'`
+class MozChunkedLoader extends BaseLoader {
+
+    static isSupported() {
+        try {
+            let xhr = new XMLHttpRequest();
+            // 
