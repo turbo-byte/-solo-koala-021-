@@ -32,4 +32,13 @@ class MozChunkedLoader extends BaseLoader {
             return (xhr.responseType === 'moz-chunked-arraybuffer');
         } catch (e) {
             Log.w('MozChunkedLoader', e.message);
-            return fa
+            return false;
+        }
+    }
+
+    constructor(seekHandler, config) {
+        super('xhr-moz-chunked-loader');
+        this.TAG = 'MozChunkedLoader';
+
+        this._seekHandler = seekHandler;
+        
