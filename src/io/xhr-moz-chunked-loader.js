@@ -28,4 +28,8 @@ class MozChunkedLoader extends BaseLoader {
             let xhr = new XMLHttpRequest();
             // Firefox 37- requires .open() to be called before setting responseType
             xhr.open('GET', 'https://example.com', true);
-            xhr.responseType = 'moz-chunked-arraybuffer'
+            xhr.responseType = 'moz-chunked-arraybuffer';
+            return (xhr.responseType === 'moz-chunked-arraybuffer');
+        } catch (e) {
+            Log.w('MozChunkedLoader', e.message);
+            return fa
