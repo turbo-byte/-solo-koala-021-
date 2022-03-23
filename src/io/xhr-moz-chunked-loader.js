@@ -41,4 +41,10 @@ class MozChunkedLoader extends BaseLoader {
         this.TAG = 'MozChunkedLoader';
 
         this._seekHandler = seekHandler;
-        
+        this._config = config;
+        this._needStash = true;
+
+        this._xhr = null;
+        this._requestAbort = false;
+        this._contentLength = null;
+        this._recei
