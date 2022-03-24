@@ -62,4 +62,11 @@ class MozChunkedLoader extends BaseLoader {
             this._xhr = null;
         }
         super.destroy();
- 
+    }
+
+    open(dataSource, range) {
+        this._dataSource = dataSource;
+        this._range = range;
+
+        let sourceURL = dataSource.url;
+        if (this._config.reuseRedirectedURL && dat
