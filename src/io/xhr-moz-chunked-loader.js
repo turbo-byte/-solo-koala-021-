@@ -56,4 +56,10 @@ class MozChunkedLoader extends BaseLoader {
         }
         if (this._xhr) {
             this._xhr.onreadystatechange = null;
-            this._
+            this._xhr.onprogress = null;
+            this._xhr.onloadend = null;
+            this._xhr.onerror = null;
+            this._xhr = null;
+        }
+        super.destroy();
+ 
