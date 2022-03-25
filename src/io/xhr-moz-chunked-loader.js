@@ -69,4 +69,9 @@ class MozChunkedLoader extends BaseLoader {
         this._range = range;
 
         let sourceURL = dataSource.url;
-        if (this._config.reuseRedirectedURL && dat
+        if (this._config.reuseRedirectedURL && dataSource.redirectedURL != undefined) {
+            sourceURL = dataSource.redirectedURL;
+        }
+
+        let seekConfig = this._seekHandler.getConfig(sourceURL, range);
+        this._requestURL = seekCon
