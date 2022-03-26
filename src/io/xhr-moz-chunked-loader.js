@@ -79,4 +79,7 @@ class MozChunkedLoader extends BaseLoader {
         let xhr = this._xhr = new XMLHttpRequest();
         xhr.open('GET', seekConfig.url, true);
         xhr.responseType = 'moz-chunked-arraybuffer';
-        xhr.onreadystatechange
+        xhr.onreadystatechange = this._onReadyStateChange.bind(this);
+        xhr.onprogress = this._onProgress.bind(this);
+        xhr.onloadend = this._onLoadEnd.bind(this);
+        xhr.onerror = this._onXhrError.bind(thi
