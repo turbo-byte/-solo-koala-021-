@@ -74,4 +74,9 @@ class MozChunkedLoader extends BaseLoader {
         }
 
         let seekConfig = this._seekHandler.getConfig(sourceURL, range);
-        this._requestURL = seekCon
+        this._requestURL = seekConfig.url;
+
+        let xhr = this._xhr = new XMLHttpRequest();
+        xhr.open('GET', seekConfig.url, true);
+        xhr.responseType = 'moz-chunked-arraybuffer';
+        xhr.onreadystatechange
