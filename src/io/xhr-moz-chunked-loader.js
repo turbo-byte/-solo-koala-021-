@@ -91,4 +91,9 @@ class MozChunkedLoader extends BaseLoader {
             xhr.withCredentials = true;
         }
 
-      
+        if (typeof seekConfig.headers === 'object') {
+            let headers = seekConfig.headers;
+
+            for (let key in headers) {
+                if (headers.hasOwnProperty(key)) {
+  
