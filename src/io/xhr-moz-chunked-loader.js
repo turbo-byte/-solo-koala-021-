@@ -82,4 +82,13 @@ class MozChunkedLoader extends BaseLoader {
         xhr.onreadystatechange = this._onReadyStateChange.bind(this);
         xhr.onprogress = this._onProgress.bind(this);
         xhr.onloadend = this._onLoadEnd.bind(this);
-        xhr.onerror = this._onXhrError.bind(thi
+        xhr.onerror = this._onXhrError.bind(this);
+
+        // cors is auto detected and enabled by xhr
+
+        // withCredentials is disabled by default
+        if (dataSource.withCredentials) {
+            xhr.withCredentials = true;
+        }
+
+      
