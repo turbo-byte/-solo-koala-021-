@@ -107,4 +107,14 @@ class MozChunkedLoader extends BaseLoader {
 
             for (let key in headers) {
                 if (headers.hasOwnProperty(key)) {
-                    xhr.setRequestH
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+        }
+
+        this._status = LoaderStatus.kConnecting;
+        xhr.send();
+    }
+
+    abort() {
+        this._requestAb
