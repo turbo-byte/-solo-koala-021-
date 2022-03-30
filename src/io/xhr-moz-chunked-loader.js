@@ -129,4 +129,7 @@ class MozChunkedLoader extends BaseLoader {
 
         if (xhr.readyState === 2) {  // HEADERS_RECEIVED
             if (xhr.responseURL != undefined && xhr.responseURL !== this._requestURL) {
-                if (this._onURLRed
+                if (this._onURLRedirect) {
+                    let redirectedURL = this._seekHandler.removeURLParameters(xhr.responseURL);
+                    this._onURLRedirect(redirectedURL);
+                }
