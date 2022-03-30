@@ -125,4 +125,8 @@ class MozChunkedLoader extends BaseLoader {
     }
 
     _onReadyStateChange(e) {
-        let xhr = e
+        let xhr = e.target;
+
+        if (xhr.readyState === 2) {  // HEADERS_RECEIVED
+            if (xhr.responseURL != undefined && xhr.responseURL !== this._requestURL) {
+                if (this._onURLRed
