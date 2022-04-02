@@ -137,4 +137,7 @@ class MozChunkedLoader extends BaseLoader {
 
             if (xhr.status !== 0 && (xhr.status < 200 || xhr.status > 299)) {
                 this._status = LoaderStatus.kError;
-                if (this._onError
+                if (this._onError) {
+                    this._onError(LoaderErrors.HTTP_STATUS_CODE_INVALID, {code: xhr.status, msg: xhr.statusText});
+                } else {
+                    throw new Run
