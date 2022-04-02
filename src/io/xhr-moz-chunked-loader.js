@@ -133,3 +133,8 @@ class MozChunkedLoader extends BaseLoader {
                     let redirectedURL = this._seekHandler.removeURLParameters(xhr.responseURL);
                     this._onURLRedirect(redirectedURL);
                 }
+            }
+
+            if (xhr.status !== 0 && (xhr.status < 200 || xhr.status > 299)) {
+                this._status = LoaderStatus.kError;
+                if (this._onError
