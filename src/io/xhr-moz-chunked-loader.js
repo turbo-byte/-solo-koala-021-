@@ -140,4 +140,7 @@ class MozChunkedLoader extends BaseLoader {
                 if (this._onError) {
                     this._onError(LoaderErrors.HTTP_STATUS_CODE_INVALID, {code: xhr.status, msg: xhr.statusText});
                 } else {
-                    throw new Run
+                    throw new RuntimeException('MozChunkedLoader: Http code invalid, ' + xhr.status + ' ' + xhr.statusText);
+                }
+            } else {
+                this._status = LoaderSt
