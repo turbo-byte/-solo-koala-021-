@@ -143,4 +143,15 @@ class MozChunkedLoader extends BaseLoader {
                     throw new RuntimeException('MozChunkedLoader: Http code invalid, ' + xhr.status + ' ' + xhr.statusText);
                 }
             } else {
-                this._status = LoaderSt
+                this._status = LoaderStatus.kBuffering;
+            }
+        }
+    }
+
+    _onProgress(e) {
+        if (this._status === LoaderStatus.kError) {
+            // Ignore error response
+            return;
+        }
+
+        if (this._contentLength ===
