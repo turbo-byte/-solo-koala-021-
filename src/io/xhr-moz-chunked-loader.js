@@ -158,4 +158,10 @@ class MozChunkedLoader extends BaseLoader {
             if (e.total !== null && e.total !== 0) {
                 this._contentLength = e.total;
                 if (this._onContentLengthKnown) {
-                 
+                    this._onContentLengthKnown(this._contentLength);
+                }
+            }
+        }
+
+        let chunk = e.target.response;
+        let byteStart = this._range.from + this._receivedLen
