@@ -154,4 +154,8 @@ class MozChunkedLoader extends BaseLoader {
             return;
         }
 
-        if (this._contentLength ===
+        if (this._contentLength === null) {
+            if (e.total !== null && e.total !== 0) {
+                this._contentLength = e.total;
+                if (this._onContentLengthKnown) {
+                 
