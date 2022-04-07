@@ -168,4 +168,12 @@ class MozChunkedLoader extends BaseLoader {
         this._receivedLength += chunk.byteLength;
 
         if (this._onDataArrival) {
-            this._onDataArrival(chunk, byteStart, this._receivedLength
+            this._onDataArrival(chunk, byteStart, this._receivedLength);
+        }
+    }
+
+    _onLoadEnd(e) {
+        if (this._requestAbort === true) {
+            this._requestAbort = false;
+            return;
+        } else if (this._status === Load
