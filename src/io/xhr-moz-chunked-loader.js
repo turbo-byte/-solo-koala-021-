@@ -176,4 +176,10 @@ class MozChunkedLoader extends BaseLoader {
         if (this._requestAbort === true) {
             this._requestAbort = false;
             return;
-        } else if (this._status === Load
+        } else if (this._status === LoaderStatus.kError) {
+            return;
+        }
+
+        this._status = LoaderStatus.kComplete;
+        if (this._onComplete) {
+            this._onComplete(this._ran
