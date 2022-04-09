@@ -182,4 +182,11 @@ class MozChunkedLoader extends BaseLoader {
 
         this._status = LoaderStatus.kComplete;
         if (this._onComplete) {
-            this._onComplete(this._ran
+            this._onComplete(this._range.from, this._range.from + this._receivedLength - 1);
+        }
+    }
+
+    _onXhrError(e) {
+        this._status = LoaderStatus.kError;
+        let type = 0;
+        let info = null;
