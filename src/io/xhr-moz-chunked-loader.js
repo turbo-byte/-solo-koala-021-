@@ -190,3 +190,8 @@ class MozChunkedLoader extends BaseLoader {
         this._status = LoaderStatus.kError;
         let type = 0;
         let info = null;
+
+        if (this._contentLength && e.loaded < this._contentLength) {
+            type = LoaderErrors.EARLY_EOF;
+            info = {code: -1, msg: 'Moz-Chunked stream meet Early-Eof'};
+      
