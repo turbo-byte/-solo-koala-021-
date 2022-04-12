@@ -201,4 +201,11 @@ class MozChunkedLoader extends BaseLoader {
 
         if (this._onError) {
             this._onError(type, info);
+        } else {
+            throw new RuntimeException(info.msg);
         }
+    }
+
+}
+
+export default MozChunkedLoader;
