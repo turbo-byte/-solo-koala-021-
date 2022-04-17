@@ -63,3 +63,190 @@ class MSStreamLoader extends BaseLoader {
 
         this._totalRange = null;
         this._currentRange = null;
+
+        this._currentRequestURL = null;
+        this._currentRedirectedURL = null;
+
+        this._contentLength = null;
+        this._receivedLength = 0;
+
+        this._bufferLimit = 16 * 1024 * 1024;  // 16MB
+        this._lastTimeBufferSize = 0;
+        this._isReconnecting = false;
+    }
+
+    destroy() {
+        if (this.isWorking()) {
+            this.abort();
+        }
+        if (this._reader) {
+            this._reader.onprogress = null;
+            this._reader.onload = null;
+            this._reader.onerror = null;
+            this._reader = null;
+        }
+        if (this._xhr) {
+            this._xhr.onreadystatechange = null;
+            this._xhr = null;
+        }
+        super.destroy();
+    }
+
+    open(dataSource, range) {
+        this._internalOpen(dataSource, range, false);
+    }
+
+    _internalOpen(dataSource, range, isSubrange) {
+        this._dataSource = dataSource;
+
+        if (!isSubrange) {
+            this._totalRange = range;
+        } else {
+            this._currentRange = range;
+        }
+
+        let sourceURL = dataSource.url;
+        if (this._config.reuseRedirectedURL) {
+            if (this._currentRedirectedURL != undefined) {
+                sourceURL = this._currentRedirectedURL;
+            } else if (dataSource.redirectedURL != undefined) {
+                sourceURL = dataSource.redirectedURL;
+            }
+        }
+
+        let seekConfig = this._seekHandler.getConfig(sourceURL, range);
+        this._currentRequestURL = seekConfig.url;
+
+        let reader = this._reader = new self.MSStreamReader();
+        reader.onprogress = this._msrOnProgress.bind(this);
+        reader.onload = this._msrOnLoad.bind(this);
+        reader.onerror = this._msrOnError.bind(this);
+
+        let xhr = this._xhr = new XMLHttpRequest();
+        xhr.open('GET', seekConfig.url, true);
+        xhr.responseType = 'ms-stream';
+        xhr.onreadystatechange = this._xhrOnReadyStateChange.bind(this);
+        xhr.onerror = this._xhrOnError.bind(this);
+
+        if (dataSource.withCredentials) {
+            xhr.withCredentials = true;
+        }
+
+        if (typeof seekConfig.headers === 'object') {
+            let headers = seekConfig.headers;
+
+            for (let key in headers) {
+                if (headers.hasOwnProperty(key)) {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+        }
+
+        // add additional headers
+        if (typeof this._config.headers === 'object') {
+            let headers = this._config.headers;
+
+            for (let key in headers) {
+                if (headers.hasOwnProperty(key)) {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+        }
+
+        if (this._isReconnecting) {
+            this._isReconnecting = false;
+        } else {
+            this._status = LoaderStatus.kConnecting;
+        }
+        xhr.send();
+    }
+
+    abort() {
+        this._internalAbort();
+        this._status = LoaderStatus.kComplete;
+    }
+
+    _internalAbort() {
+        if (this._reader) {
+            if (this._reader.readyState === 1) {  // LOADING
+                this._reader.abort();
+            }
+            this._reader.onprogress = null;
+            this._reader.onload = null;
+            this._reader.onerror = null;
+            this._reader = null;
+        }
+        if (this._xhr) {
+            this._xhr.abort();
+            this._xhr.onreadystatechange = null;
+            this._xhr = null;
+        }
+    }
+
+    _xhrOnReadyStateChange(e) {
+        let xhr = e.target;
+
+        if (xhr.readyState === 2) {  // HEADERS_RECEIVED
+            if (xhr.status >= 200 && xhr.status <= 299) {
+                this._status = LoaderStatus.kBuffering;
+
+                if (xhr.responseURL != undefined) {
+                    let redirectedURL = this._seekHandler.removeURLParameters(xhr.responseURL);
+                    if (xhr.responseURL !== this._currentRequestURL && redirectedURL !== this._currentRedirectedURL) {
+                        this._currentRedirectedURL = redirectedURL;
+                        if (this._onURLRedirect) {
+                            this._onURLRedirect(redirectedURL);
+                        }
+                    }
+                }
+
+                let lengthHeader = xhr.getResponseHeader('Content-Length');
+                if (lengthHeader != null && this._contentLength == null) {
+                    let length = parseInt(lengthHeader);
+                    if (length > 0) {
+                        this._contentLength = length;
+                        if (this._onContentLengthKnown) {
+                            this._onContentLengthKnown(this._contentLength);
+                        }
+                    }
+                }
+            } else {
+                this._status = LoaderStatus.kError;
+                if (this._onError) {
+                    this._onError(LoaderErrors.HTTP_STATUS_CODE_INVALID, {code: xhr.status, msg: xhr.statusText});
+                } else {
+                    throw new RuntimeException('MSStreamLoader: Http code invalid, ' + xhr.status + ' ' + xhr.statusText);
+                }
+            }
+        } else if (xhr.readyState === 3) {  // LOADING
+            if (xhr.status >= 200 && xhr.status <= 299) {
+                this._status = LoaderStatus.kBuffering;
+
+                let msstream = xhr.response;
+                this._reader.readAsArrayBuffer(msstream);
+            }
+        }
+    }
+
+    _xhrOnError(e) {
+        this._status = LoaderStatus.kError;
+        let type = LoaderErrors.EXCEPTION;
+        let info = {code: -1, msg: e.constructor.name + ' ' + e.type};
+
+        if (this._onError) {
+            this._onError(type, info);
+        } else {
+            throw new RuntimeException(info.msg);
+        }
+    }
+
+    _msrOnProgress(e) {
+        let reader = e.target;
+        let bigbuffer = reader.result;
+        if (bigbuffer == null) {  // result may be null, workaround for buggy M$
+            this._doReconnectIfNeeded();
+            return;
+        }
+
+        let slice = bigbuffer.slice(this._lastTimeBufferSize);
+        this._lastTimeBufferSize = bigbuffer.byteLength;
