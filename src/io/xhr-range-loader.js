@@ -125,3 +125,183 @@ class RangeLoader extends BaseLoader {
 
     _internalOpen(dataSource, range) {
         this._lastTimeLoaded = 0;
+
+        let sourceURL = dataSource.url;
+        if (this._config.reuseRedirectedURL) {
+            if (this._currentRedirectedURL != undefined) {
+                sourceURL = this._currentRedirectedURL;
+            } else if (dataSource.redirectedURL != undefined) {
+                sourceURL = dataSource.redirectedURL;
+            }
+        }
+
+        let seekConfig = this._seekHandler.getConfig(sourceURL, range);
+        this._currentRequestURL = seekConfig.url;
+
+        let xhr = this._xhr = new XMLHttpRequest();
+        xhr.open('GET', seekConfig.url, true);
+        xhr.responseType = 'arraybuffer';
+        xhr.onreadystatechange = this._onReadyStateChange.bind(this);
+        xhr.onprogress = this._onProgress.bind(this);
+        xhr.onload = this._onLoad.bind(this);
+        xhr.onerror = this._onXhrError.bind(this);
+
+        if (dataSource.withCredentials) {
+            xhr.withCredentials = true;
+        }
+
+        if (typeof seekConfig.headers === 'object') {
+            let headers = seekConfig.headers;
+
+            for (let key in headers) {
+                if (headers.hasOwnProperty(key)) {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+        }
+
+        // add additional headers
+        if (typeof this._config.headers === 'object') {
+            let headers = this._config.headers;
+
+            for (let key in headers) {
+                if (headers.hasOwnProperty(key)) {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+        }
+
+        xhr.send();
+    }
+
+    abort() {
+        this._requestAbort = true;
+        this._internalAbort();
+        this._status = LoaderStatus.kComplete;
+    }
+
+    _internalAbort() {
+        if (this._xhr) {
+            this._xhr.onreadystatechange = null;
+            this._xhr.onprogress = null;
+            this._xhr.onload = null;
+            this._xhr.onerror = null;
+            this._xhr.abort();
+            this._xhr = null;
+        }
+    }
+
+    _onReadyStateChange(e) {
+        let xhr = e.target;
+
+        if (xhr.readyState === 2) {  // HEADERS_RECEIVED
+            if (xhr.responseURL != undefined) {  // if the browser support this property
+                let redirectedURL = this._seekHandler.removeURLParameters(xhr.responseURL);
+                if (xhr.responseURL !== this._currentRequestURL && redirectedURL !== this._currentRedirectedURL) {
+                    this._currentRedirectedURL = redirectedURL;
+                    if (this._onURLRedirect) {
+                        this._onURLRedirect(redirectedURL);
+                    }
+                }
+            }
+
+            if ((xhr.status >= 200 && xhr.status <= 299)) {
+                if (this._waitForTotalLength) {
+                    return;
+                }
+                this._status = LoaderStatus.kBuffering;
+            } else {
+                this._status = LoaderStatus.kError;
+                if (this._onError) {
+                    this._onError(LoaderErrors.HTTP_STATUS_CODE_INVALID, {code: xhr.status, msg: xhr.statusText});
+                } else {
+                    throw new RuntimeException('RangeLoader: Http code invalid, ' + xhr.status + ' ' + xhr.statusText);
+                }
+            }
+        }
+    }
+
+    _onProgress(e) {
+        if (this._status === LoaderStatus.kError) {
+            // Ignore error response
+            return;
+        }
+
+        if (this._contentLength === null) {
+            let openNextRange = false;
+
+            if (this._waitForTotalLength) {
+                this._waitForTotalLength = false;
+                this._totalLengthReceived = true;
+                openNextRange = true;
+
+                let total = e.total;
+                this._internalAbort();
+                if (total != null & total !== 0) {
+                    this._totalLength = total;
+                }
+            }
+
+            // calculate currrent request range's contentLength
+            if (this._range.to === -1) {
+                this._contentLength = this._totalLength - this._range.from;
+            } else {  // to !== -1
+                this._contentLength = this._range.to - this._range.from + 1;
+            }
+
+            if (openNextRange) {
+                this._openSubRange();
+                return;
+            }
+            if (this._onContentLengthKnown) {
+                this._onContentLengthKnown(this._contentLength);
+            }
+        }
+
+        let delta = e.loaded - this._lastTimeLoaded;
+        this._lastTimeLoaded = e.loaded;
+        this._speedSampler.addBytes(delta);
+    }
+
+    _normalizeSpeed(input) {
+        let list = this._chunkSizeKBList;
+        let last = list.length - 1;
+        let mid = 0;
+        let lbound = 0;
+        let ubound = last;
+
+        if (input < list[0]) {
+            return list[0];
+        }
+
+        while (lbound <= ubound) {
+            mid = lbound + Math.floor((ubound - lbound) / 2);
+            if (mid === last || (input >= list[mid] && input < list[mid + 1])) {
+                return list[mid];
+            } else if (list[mid] < input) {
+                lbound = mid + 1;
+            } else {
+                ubound = mid - 1;
+            }
+        }
+    }
+
+    _onLoad(e) {
+        if (this._status === LoaderStatus.kError) {
+            // Ignore error response
+            return;
+        }
+
+        if (this._waitForTotalLength) {
+            this._waitForTotalLength = false;
+            return;
+        }
+
+        this._lastTimeLoaded = 0;
+        let KBps = this._speedSampler.lastSecondKBps;
+        if (KBps === 0) {
+            this._zeroSpeedChunkCount++;
+            if (this._zeroSpeedChunkCount >= 3) {
+                // Try get currentKBps after 3 chunks
+                KBps = this._speedSampler.currentKBps;
+            }
