@@ -250,3 +250,59 @@ class MSStreamLoader extends BaseLoader {
 
         let slice = bigbuffer.slice(this._lastTimeBufferSize);
         this._lastTimeBufferSize = bigbuffer.byteLength;
+        let byteStart = this._totalRange.from + this._receivedLength;
+        this._receivedLength += slice.byteLength;
+
+        if (this._onDataArrival) {
+            this._onDataArrival(slice, byteStart, this._receivedLength);
+        }
+
+        if (bigbuffer.byteLength >= this._bufferLimit) {
+            Log.v(this.TAG, `MSStream buffer exceeded max size near ${byteStart + slice.byteLength}, reconnecting...`);
+            this._doReconnectIfNeeded();
+        }
+    }
+
+    _doReconnectIfNeeded() {
+        if (this._contentLength == null || this._receivedLength < this._contentLength) {
+            this._isReconnecting = true;
+            this._lastTimeBufferSize = 0;
+            this._internalAbort();
+
+            let range = {
+                from: this._totalRange.from + this._receivedLength,
+                to: -1
+            };
+            this._internalOpen(this._dataSource, range, true);
+        }
+    }
+
+    _msrOnLoad(e) {  // actually it is onComplete event
+        this._status = LoaderStatus.kComplete;
+        if (this._onComplete) {
+            this._onComplete(this._totalRange.from, this._totalRange.from + this._receivedLength - 1);
+        }
+    }
+
+    _msrOnError(e) {
+        this._status = LoaderStatus.kError;
+        let type = 0;
+        let info = null;
+
+        if (this._contentLength && this._receivedLength < this._contentLength) {
+            type = LoaderErrors.EARLY_EOF;
+            info = {code: -1, msg: 'MSStream meet Early-Eof'};
+        } else {
+            type = LoaderErrors.EARLY_EOF;
+            info = {code: -1, msg: e.constructor.name + ' ' + e.type};
+        }
+
+        if (this._onError) {
+            this._onError(type, info);
+        } else {
+            throw new RuntimeException(info.msg);
+        }
+    }
+}
+
+export default MSStreamLoader;
