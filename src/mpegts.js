@@ -26,4 +26,13 @@ import {ErrorTypes, ErrorDetails} from './player/player-errors.js';
 import LoggingControl from './utils/logging-control.js';
 import {InvalidArgumentException} from './utils/exception.js';
 
-// here are
+// here are all the interfaces
+
+// install polyfills
+Polyfill.install();
+
+
+// factory method
+function createPlayer(mediaDataSource, optionalConfig) {
+    let mds = mediaDataSource;
+    if
