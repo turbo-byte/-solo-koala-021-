@@ -40,4 +40,9 @@ function createPlayer(mediaDataSource, optionalConfig) {
     }
 
     if (!mds.hasOwnProperty('type')) {
- 
+        throw new InvalidArgumentException('MediaDataSource must has type field to indicate video file type!');
+    }
+
+    switch (mds.type) {
+        case 'mse':
+        case 'mpegts':
