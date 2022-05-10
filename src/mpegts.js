@@ -46,3 +46,8 @@ function createPlayer(mediaDataSource, optionalConfig) {
     switch (mds.type) {
         case 'mse':
         case 'mpegts':
+        case 'm2ts':
+        case 'flv':
+            return new MSEPlayer(mds, optionalConfig);
+        default:
+            return new NativePlayer(mds, opti
