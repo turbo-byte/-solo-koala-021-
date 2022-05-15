@@ -50,4 +50,20 @@ function createPlayer(mediaDataSource, optionalConfig) {
         case 'flv':
             return new MSEPlayer(mds, optionalConfig);
         default:
-            return new NativePlayer(mds, opti
+            return new NativePlayer(mds, optionalConfig);
+    }
+}
+
+
+// feature detection
+function isSupported() {
+    return Features.supportMSEH264Playback();
+}
+
+function getFeatureList() {
+    return Features.getFeatureList();
+}
+
+
+// interfaces
+let mpegts = 
