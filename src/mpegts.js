@@ -66,4 +66,11 @@ function getFeatureList() {
 
 
 // interfaces
-let mpegts = 
+let mpegts = {};
+
+mpegts.createPlayer = createPlayer;
+mpegts.isSupported = isSupported;
+mpegts.getFeatureList = getFeatureList;
+
+mpegts.BaseLoader = BaseLoader;
+mpegts.LoaderStatus = Loa
