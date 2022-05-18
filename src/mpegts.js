@@ -81,4 +81,10 @@ mpegts.ErrorTypes = ErrorTypes;
 mpegts.ErrorDetails = ErrorDetails;
 
 mpegts.MSEPlayer = MSEPlayer;
-mpegts.NativePlayer = 
+mpegts.NativePlayer = NativePlayer;
+mpegts.LoggingControl = LoggingControl;
+
+Object.defineProperty(mpegts, 'version', {
+    enumerable: true,
+    get: function () {
+        // replaced by webpack.DefinePlu
