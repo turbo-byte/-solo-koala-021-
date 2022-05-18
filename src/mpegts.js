@@ -73,4 +73,12 @@ mpegts.isSupported = isSupported;
 mpegts.getFeatureList = getFeatureList;
 
 mpegts.BaseLoader = BaseLoader;
-mpegts.LoaderStatus = Loa
+mpegts.LoaderStatus = LoaderStatus;
+mpegts.LoaderErrors = LoaderErrors;
+
+mpegts.Events = PlayerEvents;
+mpegts.ErrorTypes = ErrorTypes;
+mpegts.ErrorDetails = ErrorDetails;
+
+mpegts.MSEPlayer = MSEPlayer;
+mpegts.NativePlayer = 
