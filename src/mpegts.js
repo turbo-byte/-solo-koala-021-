@@ -87,4 +87,9 @@ mpegts.LoggingControl = LoggingControl;
 Object.defineProperty(mpegts, 'version', {
     enumerable: true,
     get: function () {
-        // replaced by webpack.DefinePlu
+        // replaced by webpack.DefinePlugin
+        return __VERSION__;
+    }
+});
+
+export default mpegts;
