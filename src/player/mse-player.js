@@ -292,3 +292,181 @@ class MSEPlayer {
         if (this._transmuxer) {
             this._transmuxer.close();
             this._transmuxer.destroy();
+            this._transmuxer = null;
+        }
+    }
+
+    play() {
+        return this._mediaElement.play();
+    }
+
+    pause() {
+        this._mediaElement.pause();
+    }
+
+    get type() {
+        return this._type;
+    }
+
+    get buffered() {
+        return this._mediaElement.buffered;
+    }
+
+    get duration() {
+        return this._mediaElement.duration;
+    }
+
+    get volume() {
+        return this._mediaElement.volume;
+    }
+
+    set volume(value) {
+        this._mediaElement.volume = value;
+    }
+
+    get muted() {
+        return this._mediaElement.muted;
+    }
+
+    set muted(muted) {
+        this._mediaElement.muted = muted;
+    }
+
+    get currentTime() {
+        if (this._mediaElement) {
+            return this._mediaElement.currentTime;
+        }
+        return 0;
+    }
+
+    set currentTime(seconds) {
+        if (this._mediaElement) {
+            this._internalSeek(seconds);
+        } else {
+            this._pendingSeekTime = seconds;
+        }
+    }
+
+    get mediaInfo() {
+        return Object.assign({}, this._mediaInfo);
+    }
+
+    get statisticsInfo() {
+        if (this._statisticsInfo == null) {
+            this._statisticsInfo = {};
+        }
+        this._statisticsInfo = this._fillStatisticsInfo(this._statisticsInfo);
+        return Object.assign({}, this._statisticsInfo);
+    }
+
+    _fillStatisticsInfo(statInfo) {
+        statInfo.playerType = this._type;
+
+        if (!(this._mediaElement instanceof HTMLVideoElement)) {
+            return statInfo;
+        }
+
+        let hasQualityInfo = true;
+        let decoded = 0;
+        let dropped = 0;
+
+        if (this._mediaElement.getVideoPlaybackQuality) {
+            let quality = this._mediaElement.getVideoPlaybackQuality();
+            decoded = quality.totalVideoFrames;
+            dropped = quality.droppedVideoFrames;
+        } else if (this._mediaElement.webkitDecodedFrameCount != undefined) {
+            decoded = this._mediaElement.webkitDecodedFrameCount;
+            dropped = this._mediaElement.webkitDroppedFrameCount;
+        } else {
+            hasQualityInfo = false;
+        }
+
+        if (hasQualityInfo) {
+            statInfo.decodedFrames = decoded;
+            statInfo.droppedFrames = dropped;
+        }
+
+        return statInfo;
+    }
+
+    _onmseUpdateEnd() {
+        let buffered = this._mediaElement.buffered;
+        let currentTime = this._mediaElement.currentTime;
+
+        if (this._config.isLive
+                && this._config.liveBufferLatencyChasing
+                && buffered.length > 0
+                && !this._mediaElement.paused) {
+            let buffered_end = buffered.end(buffered.length - 1);
+            if (buffered_end > this._config.liveBufferLatencyMaxLatency) {
+                // Ensure there's enough buffered data
+                if (buffered_end - currentTime > this._config.liveBufferLatencyMaxLatency) {
+                    // if remained data duration has larger than config.liveBufferLatencyMaxLatency
+                    let target_time = buffered_end - this._config.liveBufferLatencyMinRemain;
+                    this.currentTime = target_time;
+                }
+            }
+        }
+
+        if (!this._config.lazyLoad || this._config.isLive) {
+            return;
+        }
+
+        let currentRangeStart = 0;
+        let currentRangeEnd = 0;
+
+        for (let i = 0; i < buffered.length; i++) {
+            let start = buffered.start(i);
+            let end = buffered.end(i);
+            if (start <= currentTime && currentTime < end) {
+                currentRangeStart = start;
+                currentRangeEnd = end;
+                break;
+            }
+        }
+
+        if (currentRangeEnd >= currentTime + this._config.lazyLoadMaxDuration && this._progressChecker == null) {
+            Log.v(this.TAG, 'Maximum buffering duration exceeded, suspend transmuxing task');
+            this._suspendTransmuxer();
+        }
+    }
+
+    _onmseBufferFull() {
+        Log.v(this.TAG, 'MSE SourceBuffer is full, suspend transmuxing task');
+        if (this._progressChecker == null) {
+            this._suspendTransmuxer();
+        }
+    }
+
+    _suspendTransmuxer() {
+        if (this._transmuxer) {
+            this._transmuxer.pause();
+
+            if (this._progressChecker == null) {
+                this._progressChecker = window.setInterval(this._checkProgressAndResume.bind(this), 1000);
+            }
+        }
+    }
+
+    _checkProgressAndResume() {
+        let currentTime = this._mediaElement.currentTime;
+        let buffered = this._mediaElement.buffered;
+
+        let needResume = false;
+
+        for (let i = 0; i < buffered.length; i++) {
+            let from = buffered.start(i);
+            let to = buffered.end(i);
+            if (currentTime >= from && currentTime < to) {
+                if (currentTime >= to - this._config.lazyLoadRecoverDuration) {
+                    needResume = true;
+                }
+                break;
+            }
+        }
+
+        if (needResume) {
+            window.clearInterval(this._progressChecker);
+            this._progressChecker = null;
+            if (needResume) {
+                Log.v(this.TAG, 'Continue loading from paused position');
