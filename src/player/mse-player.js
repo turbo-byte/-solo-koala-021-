@@ -635,3 +635,12 @@ class MSEPlayer {
 
     _onvStalled(e) {
         this._checkAndResumeStuckPlayback(true);
+    }
+
+    _onvProgress(e) {
+        this._checkAndResumeStuckPlayback();
+    }
+
+}
+
+export default MSEPlayer;
