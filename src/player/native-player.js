@@ -180,3 +180,83 @@ class NativePlayer {
 
     set muted(muted) {
         this._mediaElement.muted = muted;
+    }
+
+    get currentTime() {
+        if (this._mediaElement) {
+            return this._mediaElement.currentTime;
+        }
+        return 0;
+    }
+
+    set currentTime(seconds) {
+        if (this._mediaElement) {
+            this._mediaElement.currentTime = seconds;
+        } else {
+            this._pendingSeekTime = seconds;
+        }
+    }
+
+    get mediaInfo() {
+        let mediaPrefix = (this._mediaElement instanceof HTMLAudioElement) ? 'audio/' : 'video/';
+        let info = {
+            mimeType: mediaPrefix + this._mediaDataSource.type
+        };
+        if (this._mediaElement) {
+            info.duration = Math.floor(this._mediaElement.duration * 1000);
+            if (this._mediaElement instanceof HTMLVideoElement) {
+                info.width = this._mediaElement.videoWidth;
+                info.height = this._mediaElement.videoHeight;
+            }
+        }
+        return info;
+    }
+
+    get statisticsInfo() {
+        let info = {
+            playerType: this._type,
+            url: this._mediaDataSource.url
+        };
+
+        if (!(this._mediaElement instanceof HTMLVideoElement)) {
+            return info;
+        }
+
+        let hasQualityInfo = true;
+        let decoded = 0;
+        let dropped = 0;
+
+        if (this._mediaElement.getVideoPlaybackQuality) {
+            let quality = this._mediaElement.getVideoPlaybackQuality();
+            decoded = quality.totalVideoFrames;
+            dropped = quality.droppedVideoFrames;
+        } else if (this._mediaElement.webkitDecodedFrameCount != undefined) {
+            decoded = this._mediaElement.webkitDecodedFrameCount;
+            dropped = this._mediaElement.webkitDroppedFrameCount;
+        } else {
+            hasQualityInfo = false;
+        }
+
+        if (hasQualityInfo) {
+            info.decodedFrames = decoded;
+            info.droppedFrames = dropped;
+        }
+        
+        return info;
+    }
+
+    _onvLoadedMetadata(e) {
+        if (this._pendingSeekTime != null) {
+            this._mediaElement.currentTime = this._pendingSeekTime;
+            this._pendingSeekTime = null;
+        }
+        this._emitter.emit(PlayerEvents.MEDIA_INFO, this.mediaInfo);
+    }
+
+    _reportStatisticsInfo() {
+        this._emitter.emit(PlayerEvents.STATISTICS_INFO, this.statisticsInfo);
+    }
+
+}
+
+export default NativePlayer;
