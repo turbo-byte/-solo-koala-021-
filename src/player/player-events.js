@@ -20,4 +20,8 @@ const PlayerEvents = {
     ERROR: 'error',
     LOADING_COMPLETE: 'loading_complete',
     RECOVERED_EARLY_EOF: 'recovered_early_eof',
-    MEDIA_INFO: 
+    MEDIA_INFO: 'media_info',
+    METADATA_ARRIVED: 'metadata_arrived',
+    SCRIPTDATA_ARRIVED: 'scriptdata_arrived',
+    TIMED_ID3_METADATA_ARRIVED: 'timed_id3_metadata_arrived',
+    SMPTE2038_METADATA_
