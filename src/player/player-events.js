@@ -27,4 +27,8 @@ const PlayerEvents = {
     SMPTE2038_METADATA_ARRIVED: 'smpte2038_metadata_arrived',
     SCTE35_METADATA_ARRIVED: 'scte35_metadata_arrived',
     PES_PRIVATE_DATA_DESCRIPTOR: 'pes_private_data_descriptor',
-    PES_PRIVATE
+    PES_PRIVATE_DATA_ARRIVED: 'pes_private_data_arrived',
+    STATISTICS_INFO: 'statistics_info'
+};
+
+export default PlayerEvents;
