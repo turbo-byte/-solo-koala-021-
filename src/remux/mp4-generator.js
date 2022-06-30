@@ -196,3 +196,174 @@ class MP4 {
             0x40, 0x00, 0x00, 0x00,  // ----end composition matrix----
             0x00, 0x00, 0x00, 0x00,  // ----begin pre_defined 6 * 4 bytes----
             0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,  // ----end pre_defined 6 * 4 bytes----
+            0xFF, 0xFF, 0xFF, 0xFF   // next_track_ID
+        ]));
+    }
+
+    // Track box
+    static trak(meta) {
+        return MP4.box(MP4.types.trak, MP4.tkhd(meta), MP4.mdia(meta));
+    }
+
+    // Track header box
+    static tkhd(meta) {
+        let trackId = meta.id, duration = meta.duration;
+        let width = meta.presentWidth, height = meta.presentHeight;
+
+        return MP4.box(MP4.types.tkhd, new Uint8Array([
+            0x00, 0x00, 0x00, 0x07,  // version(0) + flags
+            0x00, 0x00, 0x00, 0x00,  // creation_time
+            0x00, 0x00, 0x00, 0x00,  // modification_time
+            (trackId >>> 24) & 0xFF,  // track_ID: 4 bytes
+            (trackId >>> 16) & 0xFF,
+            (trackId >>>  8) & 0xFF,
+            (trackId) & 0xFF,
+            0x00, 0x00, 0x00, 0x00,  // reserved: 4 bytes
+            (duration >>> 24) & 0xFF, // duration: 4 bytes
+            (duration >>> 16) & 0xFF,
+            (duration >>>  8) & 0xFF,
+            (duration) & 0xFF,
+            0x00, 0x00, 0x00, 0x00,  // reserved: 2 * 4 bytes
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,  // layer(2bytes) + alternate_group(2bytes)
+            0x00, 0x00, 0x00, 0x00,  // volume(2bytes) + reserved(2bytes)
+            0x00, 0x01, 0x00, 0x00,  // ----begin composition matrix----
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x01, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x40, 0x00, 0x00, 0x00,  // ----end composition matrix----
+            (width >>> 8) & 0xFF,    // width and height
+            (width) & 0xFF,
+            0x00, 0x00,
+            (height >>> 8) & 0xFF,
+            (height) & 0xFF,
+            0x00, 0x00
+        ]));
+    }
+
+    // Media Box
+    static mdia(meta) {
+        return MP4.box(MP4.types.mdia, MP4.mdhd(meta), MP4.hdlr(meta), MP4.minf(meta));
+    }
+
+    // Media header box
+    static mdhd(meta) {
+        let timescale = meta.timescale;
+        let duration = meta.duration;
+        return MP4.box(MP4.types.mdhd, new Uint8Array([
+            0x00, 0x00, 0x00, 0x00,  // version(0) + flags
+            0x00, 0x00, 0x00, 0x00,  // creation_time
+            0x00, 0x00, 0x00, 0x00,  // modification_time
+            (timescale >>> 24) & 0xFF,  // timescale: 4 bytes
+            (timescale >>> 16) & 0xFF,
+            (timescale >>>  8) & 0xFF,
+            (timescale) & 0xFF,
+            (duration >>> 24) & 0xFF,   // duration: 4 bytes
+            (duration >>> 16) & 0xFF,
+            (duration >>>  8) & 0xFF,
+            (duration) & 0xFF,
+            0x55, 0xC4,             // language: und (undetermined)
+            0x00, 0x00              // pre_defined = 0
+        ]));
+    }
+
+    // Media handler reference box
+    static hdlr(meta) {
+        let data = null;
+        if (meta.type === 'audio') {
+            data = MP4.constants.HDLR_AUDIO;
+        } else {
+            data = MP4.constants.HDLR_VIDEO;
+        }
+        return MP4.box(MP4.types.hdlr, data);
+    }
+
+    // Media infomation box
+    static minf(meta) {
+        let xmhd = null;
+        if (meta.type === 'audio') {
+            xmhd = MP4.box(MP4.types.smhd, MP4.constants.SMHD);
+        } else {
+            xmhd = MP4.box(MP4.types.vmhd, MP4.constants.VMHD);
+        }
+        return MP4.box(MP4.types.minf, xmhd, MP4.dinf(), MP4.stbl(meta));
+    }
+
+    // Data infomation box
+    static dinf() {
+        let result = MP4.box(MP4.types.dinf,
+            MP4.box(MP4.types.dref, MP4.constants.DREF)
+        );
+        return result;
+    }
+
+    // Sample table box
+    static stbl(meta) {
+        let result = MP4.box(MP4.types.stbl,  // type: stbl
+            MP4.stsd(meta),  // Sample Description Table
+            MP4.box(MP4.types.stts, MP4.constants.STTS),  // Time-To-Sample
+            MP4.box(MP4.types.stsc, MP4.constants.STSC),  // Sample-To-Chunk
+            MP4.box(MP4.types.stsz, MP4.constants.STSZ),  // Sample size
+            MP4.box(MP4.types.stco, MP4.constants.STCO)   // Chunk offset
+        ); 
+        return result; 
+    }
+
+    // Sample description box
+    static stsd(meta) {
+        if (meta.type === 'audio') {
+            if (meta.codec === 'mp3') {
+                return MP4.box(MP4.types.stsd, MP4.constants.STSD_PREFIX, MP4.mp3(meta));
+            }
+            // else: aac -> mp4a
+            return MP4.box(MP4.types.stsd, MP4.constants.STSD_PREFIX, MP4.mp4a(meta));
+        } else if (meta.type === 'video' && meta.codec.startsWith('hvc1')) {
+            return MP4.box(MP4.types.stsd, MP4.constants.STSD_PREFIX, MP4.hvc1(meta));
+        } else {
+            return MP4.box(MP4.types.stsd, MP4.constants.STSD_PREFIX, MP4.avc1(meta));
+        }
+    }
+
+    static mp3(meta) {
+        let channelCount = meta.channelCount;
+        let sampleRate = meta.audioSampleRate;
+
+        let data = new Uint8Array([
+            0x00, 0x00, 0x00, 0x00,  // reserved(4)
+            0x00, 0x00, 0x00, 0x01,  // reserved(2) + data_reference_index(2)
+            0x00, 0x00, 0x00, 0x00,  // reserved: 2 * 4 bytes
+            0x00, 0x00, 0x00, 0x00,
+            0x00, channelCount,      // channelCount(2)
+            0x00, 0x10,              // sampleSize(2)
+            0x00, 0x00, 0x00, 0x00,  // reserved(4)
+            (sampleRate >>> 8) & 0xFF,  // Audio sample rate
+            (sampleRate) & 0xFF,
+            0x00, 0x00
+        ]);
+
+        return MP4.box(MP4.types['.mp3'], data);
+    }
+
+    static mp4a(meta) {
+        let channelCount = meta.channelCount;
+        let sampleRate = meta.audioSampleRate;
+
+        let data = new Uint8Array([
+            0x00, 0x00, 0x00, 0x00,  // reserved(4)
+            0x00, 0x00, 0x00, 0x01,  // reserved(2) + data_reference_index(2)
+            0x00, 0x00, 0x00, 0x00,  // reserved: 2 * 4 bytes
+            0x00, 0x00, 0x00, 0x00,
+            0x00, channelCount,      // channelCount(2)
+            0x00, 0x10,              // sampleSize(2)
+            0x00, 0x00, 0x00, 0x00,  // reserved(4)
+            (sampleRate >>> 8) & 0xFF,  // Audio sample rate
+            (sampleRate) & 0xFF,
+            0x00, 0x00
