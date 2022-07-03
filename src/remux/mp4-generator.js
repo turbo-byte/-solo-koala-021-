@@ -559,3 +559,49 @@ class MP4 {
         offset += 8 + dataSize;
 
         data.set([
+            0x00, 0x00, 0x0F, 0x01,      // version(0) & flags
+            (sampleCount >>> 24) & 0xFF, // sample_count
+            (sampleCount >>> 16) & 0xFF,
+            (sampleCount >>>  8) & 0xFF,
+            (sampleCount) & 0xFF,
+            (offset >>> 24) & 0xFF,      // data_offset
+            (offset >>> 16) & 0xFF,
+            (offset >>>  8) & 0xFF,
+            (offset) & 0xFF
+        ], 0);
+
+        for (let i = 0; i < sampleCount; i++) {
+            let duration = samples[i].duration;
+            let size = samples[i].size;
+            let flags = samples[i].flags;
+            let cts = samples[i].cts;
+            data.set([
+                (duration >>> 24) & 0xFF,  // sample_duration
+                (duration >>> 16) & 0xFF,
+                (duration >>>  8) & 0xFF,
+                (duration) & 0xFF,
+                (size >>> 24) & 0xFF,      // sample_size
+                (size >>> 16) & 0xFF,
+                (size >>>  8) & 0xFF,
+                (size) & 0xFF,
+                (flags.isLeading << 2) | flags.dependsOn,  // sample_flags
+                (flags.isDependedOn << 6) | (flags.hasRedundancy << 4) | flags.isNonSync,
+                0x00, 0x00,                // sample_degradation_priority
+                (cts >>> 24) & 0xFF,       // sample_composition_time_offset
+                (cts >>> 16) & 0xFF,
+                (cts >>>  8) & 0xFF,
+                (cts) & 0xFF
+            ], 12 + 16 * i);
+        }
+        return MP4.box(MP4.types.trun, data);
+    }
+
+    static mdat(data) {
+        return MP4.box(MP4.types.mdat, data);
+    }
+
+}
+
+MP4.init();
+
+export default MP4;
