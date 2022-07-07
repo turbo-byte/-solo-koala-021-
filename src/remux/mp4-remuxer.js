@@ -12,4 +12,11 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissio
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import Log from '../utils/logger.js';
+import MP4 from './mp4-generator.js';
+import AAC from './aac-silent.js';
+import Browser from '../utils/
