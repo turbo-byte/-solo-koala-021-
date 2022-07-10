@@ -24,4 +24,13 @@ import { SampleInfo, MediaSegmentInfo, MediaSegmentInfoList } from '../core/medi
 import { IllegalStateException } from '../utils/exception.js';
 
 
-// 
+// Fragmented mp4 remuxer
+class MP4Remuxer {
+
+    constructor(config) {
+        this.TAG = 'MP4Remuxer';
+
+        this._config = config;
+        this._isLive = (config.isLive === true) ? true : false;
+
+        this._dt
