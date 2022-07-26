@@ -43,4 +43,9 @@ class MP4Remuxer {
         this._videoStashedLastSample = null;
 
         this._audioMeta = null;
-        this._videoMeta =
+        this._videoMeta = null;
+
+        this._audioSegmentInfoList = new MediaSegmentInfoList('audio');
+        this._videoSegmentInfoList = new MediaSegmentInfoList('video');
+
+        this._onInit
