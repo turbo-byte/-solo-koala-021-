@@ -52,4 +52,7 @@ class MP4Remuxer {
         this._onMediaSegment = null;
 
         // Workaround for chrome < 50: Always force first sample as a Random Access Point in media segment
-        // see https://bugs.chromium.org/p/c
+        // see https://bugs.chromium.org/p/chromium/issues/detail?id=229412
+        this._forceFirstIDR = (Browser.chrome &&
+                              (Browser.version.major < 50 ||
+                              (Browser.version.major === 50 && Browser.version
