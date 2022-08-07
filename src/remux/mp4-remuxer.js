@@ -80,4 +80,10 @@ class MP4Remuxer {
         this._onMediaSegment = null;
     }
 
-    bindDataSource(produc
+    bindDataSource(producer) {
+        producer.onDataAvailable = this.remux.bind(this);
+        producer.onTrackMetadata = this._onTrackMetadataReceived.bind(this);
+        return this;
+    }
+
+    /* prototype: fun
