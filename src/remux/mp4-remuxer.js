@@ -91,4 +91,15 @@ class MP4Remuxer {
            type: string,
            data: ArrayBuffer,
            codec: string,
-           container:
+           container: string
+       }
+    */
+    get onInitSegment() {
+        return this._onInitSegment;
+    }
+
+    set onInitSegment(callback) {
+        this._onInitSegment = callback;
+    }
+
+    /* prototype: fun
