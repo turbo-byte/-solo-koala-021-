@@ -102,4 +102,12 @@ class MP4Remuxer {
         this._onInitSegment = callback;
     }
 
-    /* prototype: fun
+    /* prototype: function onMediaSegment(type: string, mediaSegment: MediaSegment): void
+       MediaSegment: {
+           type: string,
+           data: ArrayBuffer,
+           sampleCount: int32
+           info: MediaSegmentInfo
+       }
+    */
+    
