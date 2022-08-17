@@ -110,4 +110,13 @@ class MP4Remuxer {
            info: MediaSegmentInfo
        }
     */
-    
+    get onMediaSegment() {
+        return this._onMediaSegment;
+    }
+
+    set onMediaSegment(callback) {
+        this._onMediaSegment = callback;
+    }
+
+    insertDiscontinuity() {
+        
