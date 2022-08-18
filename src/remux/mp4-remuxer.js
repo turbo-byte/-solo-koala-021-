@@ -124,4 +124,10 @@ class MP4Remuxer {
 
     seek(originalDts) {
         this._audioStashedLastSample = null;
-        this._videoStashedLastSample =
+        this._videoStashedLastSample = null;
+        this._videoSegmentInfoList.clear();
+        this._audioSegmentInfoList.clear();
+    }
+
+    remux(audioTrack, videoTrack) {
+        if (!this._onMediaSegmen
