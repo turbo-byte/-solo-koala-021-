@@ -130,4 +130,8 @@ class MP4Remuxer {
     }
 
     remux(audioTrack, videoTrack) {
-        if (!this._onMediaSegmen
+        if (!this._onMediaSegment) {
+            throw new IllegalStateException('MP4Remuxer: onMediaSegment callback must be specificed!');
+        }
+        if (!this._dtsBaseInited) {
+            this._calculateDtsBase(a
