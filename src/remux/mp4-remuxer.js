@@ -148,4 +148,9 @@ class MP4Remuxer {
         let metabox = null;
 
         let container = 'mp4';
-        let codec = metadat
+        let codec = metadata.codec;
+
+        if (type === 'audio') {
+            this._audioMeta = metadata;
+            if (metadata.codec === 'mp3' && this._mp3UseMpegAudio) {
+                
