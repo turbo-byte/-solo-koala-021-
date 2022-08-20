@@ -140,4 +140,12 @@ class MP4Remuxer {
             this._remuxVideo(videoTrack);
         }
         if (audioTrack) {
-            this.
+            this._remuxAudio(audioTrack);
+        }
+    }
+
+    _onTrackMetadataReceived(type, metadata) {
+        let metabox = null;
+
+        let container = 'mp4';
+        let codec = metadat
