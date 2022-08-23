@@ -163,3 +163,10 @@ class MP4Remuxer {
             }
         } else if (type === 'video') {
             this._videoMeta = metadata;
+            metabox = MP4.generateInitSegment(metadata);
+        } else {
+            return;
+        }
+
+        // dispatch metabox (Initialization Segment)
+        if (!this._onInitSegm
