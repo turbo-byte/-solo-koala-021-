@@ -180,3 +180,10 @@ class MP4Remuxer {
             mediaDuration: metadata.duration  // in timescale 1000 (milliseconds)
         });
     }
+
+    _calculateDtsBase(audioTrack, videoTrack) {
+        if (this._dtsBaseInited) {
+            return;
+        }
+
+        if (audioTrack && audioTrack.samples && audioTrack.samples.length) 
