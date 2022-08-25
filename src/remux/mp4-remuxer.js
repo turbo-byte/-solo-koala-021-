@@ -174,4 +174,9 @@ class MP4Remuxer {
         }
         this._onInitSegment(type, {
             type: type,
-            data: metabox.bu
+            data: metabox.buffer,
+            codec: codec,
+            container: `${type}/${container}`,
+            mediaDuration: metadata.duration  // in timescale 1000 (milliseconds)
+        });
+    }
