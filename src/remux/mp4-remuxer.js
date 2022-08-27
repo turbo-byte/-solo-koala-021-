@@ -190,4 +190,11 @@ class MP4Remuxer {
             this._audioDtsBase = audioTrack.samples[0].dts;
         }
         if (videoTrack && videoTrack.samples && videoTrack.samples.length) {
-            this._videoDtsBase = 
+            this._videoDtsBase = videoTrack.samples[0].dts;
+        }
+
+        this._dtsBase = Math.min(this._audioDtsBase, this._videoDtsBase);
+        this._dtsBaseInited = true;
+    }
+
+    getTimestampBase() {
