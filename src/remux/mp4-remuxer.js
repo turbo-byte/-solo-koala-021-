@@ -212,4 +212,10 @@ class MP4Remuxer {
             type: 'video',
             id: 1,
             sequenceNumber: 0,
-            sample
+            samples: [],
+            length: 0
+        };
+
+        if (videoSample != null) {
+            videoTrack.samples.push(videoSample);
+            videoTrack.length = videoSample.length;
