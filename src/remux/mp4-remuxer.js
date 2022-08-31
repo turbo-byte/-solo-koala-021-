@@ -229,4 +229,10 @@ class MP4Remuxer {
             length: 0
         };
 
-      
+        if (audioSample != null) {
+            audioTrack.samples.push(audioSample);
+            audioTrack.length = audioSample.length;
+        }
+
+        this._videoStashedLastSample = null;
+        this._audioStashedL
