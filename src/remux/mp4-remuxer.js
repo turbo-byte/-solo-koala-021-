@@ -235,4 +235,11 @@ class MP4Remuxer {
         }
 
         this._videoStashedLastSample = null;
-        this._audioStashedL
+        this._audioStashedLastSample = null;
+
+        this._remuxVideo(videoTrack, true);
+        this._remuxAudio(audioTrack, true);
+    }
+
+    _remuxAudio(audioTrack, force) {
+        if (this._audi
