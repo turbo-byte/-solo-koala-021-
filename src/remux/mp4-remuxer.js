@@ -257,4 +257,9 @@ class MP4Remuxer {
 
         let insertPrefixSilentFrame = false;
 
-        if (!samples || samples.length === 0) 
+        if (!samples || samples.length === 0) {
+            return;
+        }
+        if (samples.length === 1 && !force) {
+            // If [sample count in current batch] === 1 && (force != true)
+            // Ignore and keep in demux
