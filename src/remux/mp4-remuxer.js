@@ -253,3 +253,8 @@ class MP4Remuxer {
         let refSampleDuration = this._audioMeta.refSampleDuration;
 
         let mpegRawTrack = this._audioMeta.codec === 'mp3' && this._mp3UseMpegAudio;
+        let firstSegmentAfterSeek = this._dtsBaseInited && this._audioNextDts === undefined;
+
+        let insertPrefixSilentFrame = false;
+
+        if (!samples || samples.length === 0) 
