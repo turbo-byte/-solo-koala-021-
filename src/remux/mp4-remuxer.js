@@ -249,4 +249,7 @@ class MP4Remuxer {
         let track = audioTrack;
         let samples = track.samples;
         let dtsCorrection = undefined;
-        let firstDts = -1, l
+        let firstDts = -1, lastDts = -1, lastPts = -1;
+        let refSampleDuration = this._audioMeta.refSampleDuration;
+
+        let mpegRawTrack = this._audioMeta.codec === 'mp3' && this._mp3UseMpegAudio;
