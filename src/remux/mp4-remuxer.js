@@ -242,4 +242,11 @@ class MP4Remuxer {
     }
 
     _remuxAudio(audioTrack, force) {
-        if (this._audi
+        if (this._audioMeta == null) {
+            return;
+        }
+
+        let track = audioTrack;
+        let samples = track.samples;
+        let dtsCorrection = undefined;
+        let firstDts = -1, l
