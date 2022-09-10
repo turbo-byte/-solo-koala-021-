@@ -291,4 +291,8 @@ class MP4Remuxer {
         }
 
         // Insert [stashed lastSample in the previous batch] to the front
-        if (this._audioStashedL
+        if (this._audioStashedLastSample != null) {
+            let sample = this._audioStashedLastSample;
+            this._audioStashedLastSample = null;
+            samples.unshift(sample);
+            mdatBytes 
