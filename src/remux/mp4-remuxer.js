@@ -277,4 +277,12 @@ class MP4Remuxer {
             mdatBytes = track.length;
         } else {
             // for fmp4 mdat box
-            o
+            offset = 8;  // size + type
+            mdatBytes = 8 + track.length;
+        }
+
+
+        let lastSample = null;
+
+        // Pop the lastSample and waiting for stash
+        if (samples
