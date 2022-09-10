@@ -285,4 +285,10 @@ class MP4Remuxer {
         let lastSample = null;
 
         // Pop the lastSample and waiting for stash
-        if (samples
+        if (samples.length > 1) {
+            lastSample = samples.pop();
+            mdatBytes -= lastSample.length;
+        }
+
+        // Insert [stashed lastSample in the previous batch] to the front
+        if (this._audioStashedL
