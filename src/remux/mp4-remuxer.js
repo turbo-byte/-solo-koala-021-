@@ -295,4 +295,10 @@ class MP4Remuxer {
             let sample = this._audioStashedLastSample;
             this._audioStashedLastSample = null;
             samples.unshift(sample);
-            mdatBytes 
+            mdatBytes += sample.length;
+        }
+
+        // Stash the lastSample of current batch, waiting for next batch
+        if (lastSample != null) {
+            this._audioStashedLastSample = lastSample;
+     
