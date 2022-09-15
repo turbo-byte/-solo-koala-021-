@@ -308,4 +308,8 @@ class MP4Remuxer {
 
         // calculate dtsCorrection
         if (this._audioNextDts) {
-            dtsCorrection = firstSampl
+            dtsCorrection = firstSampleOriginalDts - this._audioNextDts;
+        } else {  // this._audioNextDts == undefined
+            if (this._audioSegmentInfoList.isEmpty()) {
+                dtsCorrection = 0;
+                if
