@@ -312,4 +312,7 @@ class MP4Remuxer {
         } else {  // this._audioNextDts == undefined
             if (this._audioSegmentInfoList.isEmpty()) {
                 dtsCorrection = 0;
-                if
+                if (this._fillSilentAfterSeek && !this._videoSegmentInfoList.isEmpty()) {
+                    if (this._audioMeta.originalCodec !== 'mp3') {
+                        insertPrefixSilentFrame = true;
+            
