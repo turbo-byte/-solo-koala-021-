@@ -315,4 +315,9 @@ class MP4Remuxer {
                 if (this._fillSilentAfterSeek && !this._videoSegmentInfoList.isEmpty()) {
                     if (this._audioMeta.originalCodec !== 'mp3') {
                         insertPrefixSilentFrame = true;
-            
+                    }
+                }
+            } else {
+                let lastSample = this._audioSegmentInfoList.getLastSampleBefore(firstSampleOriginalDts);
+                if (lastSample != null) {
+     
