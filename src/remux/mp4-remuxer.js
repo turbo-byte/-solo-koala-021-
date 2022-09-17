@@ -320,4 +320,6 @@ class MP4Remuxer {
             } else {
                 let lastSample = this._audioSegmentInfoList.getLastSampleBefore(firstSampleOriginalDts);
                 if (lastSample != null) {
-     
+                    let distance = (firstSampleOriginalDts - (lastSample.originalDts + lastSample.duration));
+                    if (distance <= 3) {
+                        distance
