@@ -326,4 +326,11 @@ class MP4Remuxer {
                     }
                     let expectedDts = lastSample.dts + lastSample.duration + distance;
                     dtsCorrection = firstSampleOriginalDts - expectedDts;
-                } else { // lastSa
+                } else { // lastSample == null, cannot found
+                    dtsCorrection = 0;
+                }
+            }
+        }
+
+        if (insertPrefixSilentFrame) {
+            // align audio segment beginDts 
