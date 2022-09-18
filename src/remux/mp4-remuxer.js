@@ -335,4 +335,6 @@ class MP4Remuxer {
         if (insertPrefixSilentFrame) {
             // align audio segment beginDts to match with current video segment's beginDts
             let firstSampleDts = firstSampleOriginalDts - dtsCorrection;
-            let videoSegment = this._videoSegmentInfoList.
+            let videoSegment = this._videoSegmentInfoList.getLastSegmentBefore(firstSampleOriginalDts);
+            if (videoSegment != null && videoSegment.beginDts < firstSampleDts) {
+                let silentUnit = AAC.getSilentFrame(this._audioMeta
