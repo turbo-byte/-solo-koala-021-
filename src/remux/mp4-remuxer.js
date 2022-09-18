@@ -322,4 +322,8 @@ class MP4Remuxer {
                 if (lastSample != null) {
                     let distance = (firstSampleOriginalDts - (lastSample.originalDts + lastSample.duration));
                     if (distance <= 3) {
-                        distance
+                        distance = 0;
+                    }
+                    let expectedDts = lastSample.dts + lastSample.duration + distance;
+                    dtsCorrection = firstSampleOriginalDts - expectedDts;
+                } else { // lastSa
