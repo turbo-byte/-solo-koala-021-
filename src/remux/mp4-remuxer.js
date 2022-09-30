@@ -344,4 +344,12 @@ class MP4Remuxer {
                     Log.v(this.TAG, `InsertPrefixSilentAudio: dts: ${dts}, duration: ${silentFrameDuration}`);
                     samples.unshift({ unit: silentUnit, dts: dts, pts: dts });
                     mdatBytes += silentUnit.byteLength;
-                }  // silentUnit == null: Cannot generate
+                }  // silentUnit == null: Cannot generate, skip
+            } else {
+                insertPrefixSilentFrame = false;
+            }
+        }
+
+        let mp4Samples = [];
+
+        // Correct dts for each sample, and calculate sample 
