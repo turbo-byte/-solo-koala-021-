@@ -362,4 +362,9 @@ class MP4Remuxer {
             let silentFrames = null;
             let sampleDuration = 0;
 
+            if (originalDts < -0.001) {
+                continue; //pass the first sample with the invalid dts
+            }
+
+            if (this._audioMeta.codec !== 'mp3') {
            
