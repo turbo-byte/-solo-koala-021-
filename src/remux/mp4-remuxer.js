@@ -370,4 +370,9 @@ class MP4Remuxer {
                 // for AAC codec, we need to keep dts increase based on refSampleDuration
                 let curRefDts = originalDts;
                 const maxAudioFramesDrift = 3;
-               
+                if (this._audioNextDts) {
+                    curRefDts = this._audioNextDts;
+                }
+
+                dtsCorrection = originalDts - curRefDts;
+                if (dtsCorrection 
