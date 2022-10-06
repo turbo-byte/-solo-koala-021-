@@ -377,4 +377,6 @@ class MP4Remuxer {
                 dtsCorrection = originalDts - curRefDts;
                 if (dtsCorrection <= -maxAudioFramesDrift * refSampleDuration) {
                     // If we're overlapping by more than maxAudioFramesDrift number of frame, drop this sample
-                    Log.w(this.TAG, `D
+                    Log.w(this.TAG, `Dropping 1 audio frame (originalDts: ${originalDts} ms ,curRefDts: ${curRefDts} ms)  due to dtsCorrection: ${dtsCorrection} ms overlap.`);
+                    continue;
+          
