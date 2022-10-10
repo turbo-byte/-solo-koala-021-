@@ -388,4 +388,8 @@ class MP4Remuxer {
                     Log.w(this.TAG, 'Large audio timestamp gap detected, may cause AV sync to drift. ' +
                         'Silent frames will be generated to avoid unsync.\n' +
                         `originalDts: ${originalDts} ms, curRefDts: ${curRefDts} ms, ` +
-        
+                        `dtsCorrection: ${Math.round(dtsCorrection)} ms, generate: ${frameCount} frames`);
+
+
+                    dts = Math.floor(curRefDts);
+                    sampleDuration =
