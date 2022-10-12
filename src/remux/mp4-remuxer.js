@@ -395,4 +395,6 @@ class MP4Remuxer {
                     sampleDuration = Math.floor(curRefDts + refSampleDuration) - dts;
 
                     let silentUnit = AAC.getSilentFrame(this._audioMeta.originalCodec, this._audioMeta.channelCount);
-                    if
+                    if (silentUnit == null) {
+                        Log.w(this.TAG, 'Unable to generate silent frame for ' +
+                            `${this._audioMeta.origina
