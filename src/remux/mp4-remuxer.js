@@ -397,4 +397,7 @@ class MP4Remuxer {
                     let silentUnit = AAC.getSilentFrame(this._audioMeta.originalCodec, this._audioMeta.channelCount);
                     if (silentUnit == null) {
                         Log.w(this.TAG, 'Unable to generate silent frame for ' +
-                            `${this._audioMeta.origina
+                            `${this._audioMeta.originalCodec} with ${this._audioMeta.channelCount} channels, repeat last frame`);
+                        // Repeat last frame
+                        silentUnit = unit;
+                   
