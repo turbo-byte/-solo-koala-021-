@@ -400,4 +400,9 @@ class MP4Remuxer {
                             `${this._audioMeta.originalCodec} with ${this._audioMeta.channelCount} channels, repeat last frame`);
                         // Repeat last frame
                         silentUnit = unit;
-                   
+                    }
+                    silentFrames = [];
+
+                    for (let j = 0; j < frameCount; j++) {
+                        curRefDts = curRefDts + refSampleDuration;
+      
