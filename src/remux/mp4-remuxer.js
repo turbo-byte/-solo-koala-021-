@@ -432,4 +432,9 @@ class MP4Remuxer {
                 } else {
 
                     dts = Math.floor(curRefDts);
-                    sampleDuration = Math.flo
+                    sampleDuration = Math.floor(curRefDts + refSampleDuration) - dts;
+                    this._audioNextDts = curRefDts + refSampleDuration;
+
+                }
+            } else {
+                // keep the origin
