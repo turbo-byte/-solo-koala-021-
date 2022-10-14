@@ -427,4 +427,9 @@ class MP4Remuxer {
 
                     }
 
-     
+                    this._audioNextDts = curRefDts + refSampleDuration;
+
+                } else {
+
+                    dts = Math.floor(curRefDts);
+                    sampleDuration = Math.flo
