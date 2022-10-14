@@ -420,4 +420,11 @@ class MP4Remuxer {
                                 dependsOn: 1,
                                 isDependedOn: 0,
                                 hasRedundancy: 0
-      
+                            }
+                        };
+                        silentFrames.push(frame);
+                        mdatBytes += frame.size;;
+
+                    }
+
+     
