@@ -437,4 +437,9 @@ class MP4Remuxer {
 
                 }
             } else {
-                // keep the origin
+                // keep the original dts calculate algorithm for mp3
+                dts = originalDts - dtsCorrection;
+
+
+                if (i !== samples.length - 1) {
+                    let nextDts = samples[i + 1].dts - this._
