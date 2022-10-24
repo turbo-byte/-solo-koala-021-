@@ -454,4 +454,13 @@ class MP4Remuxer {
                         sampleDuration = Math.floor(refSampleDuration);
                     }
                 }
-                this._audioNextDts = dts + sam
+                this._audioNextDts = dts + sampleDuration;
+            }
+
+            if (firstDts === -1) {
+                firstDts = dts;
+            }
+            mp4Samples.push({
+                dts: dts,
+                pts: dts,
+             
