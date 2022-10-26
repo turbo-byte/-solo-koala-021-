@@ -468,4 +468,12 @@ class MP4Remuxer {
                 size: sample.unit.byteLength,
                 duration: sampleDuration,
                 originalDts: originalDts,
-        
+                flags: {
+                    isLeading: 0,
+                    dependsOn: 1,
+                    isDependedOn: 0,
+                    hasRedundancy: 0
+                }
+            });
+
+   
