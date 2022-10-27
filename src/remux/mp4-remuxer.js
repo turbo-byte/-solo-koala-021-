@@ -498,4 +498,8 @@ class MP4Remuxer {
             mdatbox = new Uint8Array(mdatBytes);
             // size field
             mdatbox[0] = (mdatBytes >>> 24) & 0xFF;
-            mdatbox[1] = (mdatBytes
+            mdatbox[1] = (mdatBytes >>> 16) & 0xFF;
+            mdatbox[2] = (mdatBytes >>>  8) & 0xFF;
+            mdatbox[3] = (mdatBytes) & 0xFF;
+            // type field (fourCC)
+            mda
