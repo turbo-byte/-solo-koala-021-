@@ -489,4 +489,9 @@ class MP4Remuxer {
             return;
         }
 
-     
+        // allocate mdatbox
+        if (mpegRawTrack) {
+            // allocate for raw mpeg buffer
+            mdatbox = new Uint8Array(mdatBytes);
+        } else {
+            // allocate 
