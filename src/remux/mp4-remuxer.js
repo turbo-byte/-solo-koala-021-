@@ -494,4 +494,8 @@ class MP4Remuxer {
             // allocate for raw mpeg buffer
             mdatbox = new Uint8Array(mdatBytes);
         } else {
-            // allocate 
+            // allocate for fmp4 mdat box
+            mdatbox = new Uint8Array(mdatBytes);
+            // size field
+            mdatbox[0] = (mdatBytes >>> 24) & 0xFF;
+            mdatbox[1] = (mdatBytes
