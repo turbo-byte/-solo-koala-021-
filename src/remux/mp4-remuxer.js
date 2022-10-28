@@ -508,4 +508,9 @@ class MP4Remuxer {
         // Write samples into mdatbox
         for (let i = 0; i < mp4Samples.length; i++) {
             let unit = mp4Samples[i].unit;
-            mdatbo
+            mdatbox.set(unit, offset);
+            offset += unit.byteLength;
+        }
+
+        let latest = mp4Samples[mp4Samples.length - 1];
+        lastDts = latest.dts + latest.dura
