@@ -523,4 +523,7 @@ class MP4Remuxer {
         info.beginPts = firstDts;
         info.endPts = lastDts;
         info.originalBeginDts = mp4Samples[0].originalDts;
-        info.originalEndDts = lat
+        info.originalEndDts = latest.originalDts + latest.duration;
+        info.firstSample = new SampleInfo(mp4Samples[0].dts,
+                                          mp4Samples[0].pts,
+                     
