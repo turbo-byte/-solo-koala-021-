@@ -539,4 +539,11 @@ class MP4Remuxer {
         }
 
         track.samples = mp4Samples;
-        track.sequ
+        track.sequenceNumber++;
+
+        let moofbox = null;
+
+        if (mpegRawTrack) {
+            // Generate empty buffer, because useless for raw mpeg
+            moofbox = new Uint8Array();
+        } else 
