@@ -546,4 +546,13 @@ class MP4Remuxer {
         if (mpegRawTrack) {
             // Generate empty buffer, because useless for raw mpeg
             moofbox = new Uint8Array();
-        } else 
+        } else {
+            // Generate moof for fmp4 segment
+            moofbox = MP4.moof(track, firstDts);
+        }
+
+        track.samples = [];
+        track.length = 0;
+
+        let segment = {
+     
