@@ -561,4 +561,6 @@ class MP4Remuxer {
             info: info
         };
 
-        if (mpegRawTrack 
+        if (mpegRawTrack && firstSegmentAfterSeek) {
+            // For MPEG audio stream in MSE, if seeking occurred, before appending new buffer
+            // We need explicitly set timestamp
