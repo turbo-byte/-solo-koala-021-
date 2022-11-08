@@ -555,4 +555,10 @@ class MP4Remuxer {
         track.length = 0;
 
         let segment = {
-     
+            type: 'audio',
+            data: this._mergeBoxes(moofbox, mdatbox).buffer,
+            sampleCount: mp4Samples.length,
+            info: info
+        };
+
+        if (mpegRawTrack 
