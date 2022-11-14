@@ -570,4 +570,11 @@ class MP4Remuxer {
         this._onMediaSegment('audio', segment);
     }
 
-    _remuxVid
+    _remuxVideo(videoTrack, force) {
+        if (this._videoMeta == null) {
+            return;
+        }
+
+        let track = videoTrack;
+        let samples = track.samples;
+        let dtsCo
