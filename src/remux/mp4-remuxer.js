@@ -605,4 +605,10 @@ class MP4Remuxer {
 
         // Insert [stashed lastSample in the previous batch] to the front
         if (this._videoStashedLastSample != null) {
-            let sample = this._videoStashed
+            let sample = this._videoStashedLastSample;
+            this._videoStashedLastSample = null;
+            samples.unshift(sample);
+            mdatBytes += sample.length;
+        }
+
+        // Stash the lastSa
