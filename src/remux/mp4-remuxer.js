@@ -617,4 +617,9 @@ class MP4Remuxer {
         }
 
 
-        let firstSampleOriginalDts = samples[0].dts - this._dts
+        let firstSampleOriginalDts = samples[0].dts - this._dtsBase;
+
+        // calculate dtsCorrection
+        if (this._videoNextDts) {
+            dtsCorrection = firstSampleOriginalDts - this._videoNextDts;
+        } else {  // th
