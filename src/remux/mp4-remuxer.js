@@ -611,4 +611,10 @@ class MP4Remuxer {
             mdatBytes += sample.length;
         }
 
-        // Stash the lastSa
+        // Stash the lastSample of current batch, waiting for next batch
+        if (lastSample != null) {
+            this._videoStashedLastSample = lastSample;
+        }
+
+
+        let firstSampleOriginalDts = samples[0].dts - this._dts
