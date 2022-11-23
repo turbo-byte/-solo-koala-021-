@@ -626,4 +626,6 @@ class MP4Remuxer {
             if (this._videoSegmentInfoList.isEmpty()) {
                 dtsCorrection = 0;
             } else {
-                let lastSample = this._v
+                let lastSample = this._videoSegmentInfoList.getLastSampleBefore(firstSampleOriginalDts);
+                if (lastSample != null) {
+                    let distance = (firstSampleOriginalDts - (lastSample.originalDts + lastSample
