@@ -646,4 +646,10 @@ class MP4Remuxer {
         // Correct dts for each sample, and calculate sample duration. Then output to mp4Samples
         for (let i = 0; i < samples.length; i++) {
             let sample = samples[i];
-            let originalDts = sample.dts - this._d
+            let originalDts = sample.dts - this._dtsBase;
+            let isKeyframe = sample.isKeyframe;
+            let dts = originalDts - dtsCorrection;
+            let cts = sample.cts;
+            let pts = dts + cts;
+
+            if (firstDt
