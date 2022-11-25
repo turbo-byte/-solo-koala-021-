@@ -652,4 +652,12 @@ class MP4Remuxer {
             let cts = sample.cts;
             let pts = dts + cts;
 
-            if (firstDt
+            if (firstDts === -1) {
+                firstDts = dts;
+                firstPts = pts;
+            }
+
+            let sampleDuration = 0;
+
+            if (i !== samples.length - 1) {
+                let nextDts = samp
