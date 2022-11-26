@@ -684,4 +684,8 @@ class MP4Remuxer {
                 pts: pts,
                 cts: cts,
                 units: sample.units,
-             
+                size: sample.length,
+                isKeyframe: isKeyframe,
+                duration: sampleDuration,
+                originalDts: originalDts,
+                flags: {
