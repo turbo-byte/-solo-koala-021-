@@ -677,4 +677,11 @@ class MP4Remuxer {
                 let syncPoint = new SampleInfo(dts, pts, sampleDuration, sample.dts, true);
                 syncPoint.fileposition = sample.fileposition;
                 info.appendSyncPoint(syncPoint);
-           
+            }
+
+            mp4Samples.push({
+                dts: dts,
+                pts: pts,
+                cts: cts,
+                units: sample.units,
+             
