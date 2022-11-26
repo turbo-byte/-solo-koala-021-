@@ -674,4 +674,7 @@ class MP4Remuxer {
             }
 
             if (isKeyframe) {
-                let s
+                let syncPoint = new SampleInfo(dts, pts, sampleDuration, sample.dts, true);
+                syncPoint.fileposition = sample.fileposition;
+                info.appendSyncPoint(syncPoint);
+           
