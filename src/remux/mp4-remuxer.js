@@ -689,3 +689,7 @@ class MP4Remuxer {
                 duration: sampleDuration,
                 originalDts: originalDts,
                 flags: {
+                    isLeading: 0,
+                    dependsOn: isKeyframe ? 2 : 1,
+                    isDependedOn: isKeyframe ? 1 : 0,
+                    hasRedundan
