@@ -692,4 +692,12 @@ class MP4Remuxer {
                     isLeading: 0,
                     dependsOn: isKeyframe ? 2 : 1,
                     isDependedOn: isKeyframe ? 1 : 0,
-                    hasRedundan
+                    hasRedundancy: 0,
+                    isNonSync: isKeyframe ? 0 : 1
+                }
+            });
+        }
+
+        // allocate mdatbox
+        mdatbox = new Uint8Array(mdatBytes);
+        mdatbox[0] = (mdatByt
