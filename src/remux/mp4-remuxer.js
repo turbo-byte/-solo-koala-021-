@@ -709,4 +709,8 @@ class MP4Remuxer {
         // Write samples into mdatbox
         for (let i = 0; i < mp4Samples.length; i++) {
             let units = mp4Samples[i].units;
-            while (units
+            while (units.length) {
+                let unit = units.shift();
+                let data = unit.data;
+                mdatbox.set(data, offset);
+                offset += data.byteLe
