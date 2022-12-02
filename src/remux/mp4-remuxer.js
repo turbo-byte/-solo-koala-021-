@@ -720,4 +720,9 @@ class MP4Remuxer {
         let latest = mp4Samples[mp4Samples.length - 1];
         lastDts = latest.dts + latest.duration;
         lastPts = latest.pts + latest.duration;
-    
+        this._videoNextDts = lastDts;
+
+        // fill media segment info & add to info list
+        info.beginDts = firstDts;
+        info.endDts = lastDts;
+        info.beginPts =
