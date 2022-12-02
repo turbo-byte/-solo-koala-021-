@@ -713,4 +713,11 @@ class MP4Remuxer {
                 let unit = units.shift();
                 let data = unit.data;
                 mdatbox.set(data, offset);
-                offset += data.byteLe
+                offset += data.byteLength;
+            }
+        }
+
+        let latest = mp4Samples[mp4Samples.length - 1];
+        lastDts = latest.dts + latest.duration;
+        lastPts = latest.pts + latest.duration;
+    
