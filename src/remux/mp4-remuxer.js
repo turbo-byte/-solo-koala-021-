@@ -704,4 +704,9 @@ class MP4Remuxer {
         mdatbox[1] = (mdatBytes >>> 16) & 0xFF;
         mdatbox[2] = (mdatBytes >>>  8) & 0xFF;
         mdatbox[3] = (mdatBytes) & 0xFF;
-        mdatbox.set(MP4.ty
+        mdatbox.set(MP4.types.mdat, 4);
+
+        // Write samples into mdatbox
+        for (let i = 0; i < mp4Samples.length; i++) {
+            let units = mp4Samples[i].units;
+            while (units
