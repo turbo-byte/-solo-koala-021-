@@ -732,4 +732,7 @@ class MP4Remuxer {
         info.firstSample = new SampleInfo(mp4Samples[0].dts,
                                           mp4Samples[0].pts,
                                           mp4Samples[0].duration,
-                           
+                                          mp4Samples[0].originalDts,
+                                          mp4Samples[0].isKeyframe);
+        info.lastSample = new SampleInfo(latest.dts,
+                         
