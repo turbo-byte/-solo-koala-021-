@@ -738,4 +738,12 @@ class MP4Remuxer {
                                          latest.pts,
                                          latest.duration,
                                          latest.originalDts,
-                                         latest.isKe
+                                         latest.isKeyframe);
+        if (!this._isLive) {
+            this._videoSegmentInfoList.append(info);
+        }
+
+        track.samples = mp4Samples;
+        track.sequenceNumber++;
+
+        // wor
