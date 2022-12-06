@@ -746,4 +746,7 @@ class MP4Remuxer {
         track.samples = mp4Samples;
         track.sequenceNumber++;
 
-        // wor
+        // workaround for chrome < 50: force first sample as a random access point
+        // see https://bugs.chromium.org/p/chromium/issues/detail?id=229412
+        if (this._forceFirstIDR) {
+            let flags = mp4Samples[0].f
