@@ -749,4 +749,11 @@ class MP4Remuxer {
         // workaround for chrome < 50: force first sample as a random access point
         // see https://bugs.chromium.org/p/chromium/issues/detail?id=229412
         if (this._forceFirstIDR) {
-            let flags = mp4Samples[0].f
+            let flags = mp4Samples[0].flags;
+            flags.dependsOn = 2;
+            flags.isNonSync = 0;
+        }
+
+        let moofbox = MP4.moof(track, firstDts);
+        track.samples = [];
+       
