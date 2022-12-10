@@ -756,4 +756,10 @@ class MP4Remuxer {
 
         let moofbox = MP4.moof(track, firstDts);
         track.samples = [];
-       
+        track.length = 0;
+
+        this._onMediaSegment('video', {
+            type: 'video',
+            data: this._mergeBoxes(moofbox, mdatbox).buffer,
+            sampleCount: mp4Samples.length,
+   
