@@ -85,3 +85,45 @@ function detect() {
     if (browser.rv || browser.iemobile) {
         if (browser.rv) {
             delete browser.rv;
+        }
+        let msie = 'msie';
+        matched.browser = msie;
+        browser[msie] = true;
+    }
+
+    // Microsoft Edge
+    if (browser.edge) {
+        delete browser.edge;
+        let msedge = 'msedge';
+        matched.browser = msedge;
+        browser[msedge] = true;
+    }
+
+    // Opera 15+
+    if (browser.opr) {
+        let opera = 'opera';
+        matched.browser = opera;
+        browser[opera] = true;
+    }
+
+    // Stock android browsers are marked as Safari
+    if (browser.safari && browser.android) {
+        let android = 'android';
+        matched.browser = android;
+        browser[android] = true;
+    }
+
+    browser.name = matched.browser;
+    browser.platform = matched.platform;
+
+    for (let key in Browser) {
+        if (Browser.hasOwnProperty(key)) {
+            delete Browser[key];
+        }
+    }
+    Object.assign(Browser, browser);
+}
+
+detect();
+
+export default Browser;
