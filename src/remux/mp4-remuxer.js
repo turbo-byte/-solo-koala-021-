@@ -762,4 +762,11 @@ class MP4Remuxer {
             type: 'video',
             data: this._mergeBoxes(moofbox, mdatbox).buffer,
             sampleCount: mp4Samples.length,
-   
+            info: info
+        });
+    }
+
+    _mergeBoxes(moof, mdat) {
+        let result = new Uint8Array(moof.byteLength + mdat.byteLength);
+        result.set(moof, 0);
+        result.set(
