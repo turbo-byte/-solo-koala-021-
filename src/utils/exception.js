@@ -18,4 +18,16 @@
 
 export class RuntimeException {
 
-    constr
+    constructor(message) {
+        this._message = message;
+    }
+
+    get name() {
+        return 'RuntimeException';
+    }
+
+    get message() {
+        return this._message;
+    }
+
+ 
