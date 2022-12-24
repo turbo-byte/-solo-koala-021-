@@ -30,4 +30,13 @@ export class RuntimeException {
         return this._message;
     }
 
- 
+    toString() {
+        return this.name + ': ' + this.message;
+    }
+
+}
+
+export class IllegalStateException extends RuntimeException {
+
+    constructor(message) {
+        super(m
