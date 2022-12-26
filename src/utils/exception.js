@@ -39,4 +39,17 @@ export class RuntimeException {
 export class IllegalStateException extends RuntimeException {
 
     constructor(message) {
-        super(m
+        super(message);
+    }
+
+    get name() {
+        return 'IllegalStateException';
+    }
+
+}
+
+export class InvalidArgumentException extends RuntimeException {
+
+    constructor(message) {
+        super(message);
+    
