@@ -64,3 +64,10 @@ export class NotImplementedException extends RuntimeException {
 
     constructor(message) {
         super(message);
+    }
+
+    get name() {
+        return 'NotImplementedException';
+    }
+
+}
