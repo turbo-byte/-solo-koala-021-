@@ -13,4 +13,13 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitati
+ * limitations under the License.
+ */
+
+import EventEmitter from 'events';
+
+class Log {
+
+    static e(tag, msg) {
+        if (!tag || Log.FORCE_GLOBAL_TAG)
+            tag = Log.
