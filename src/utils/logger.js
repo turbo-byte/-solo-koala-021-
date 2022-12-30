@@ -22,4 +22,12 @@ class Log {
 
     static e(tag, msg) {
         if (!tag || Log.FORCE_GLOBAL_TAG)
-            tag = Log.
+            tag = Log.GLOBAL_TAG;
+
+        let str = `[${tag}] > ${msg}`;
+
+        if (Log.ENABLE_CALLBACK) {
+            Log.emitter.emit('log', 'error', str);
+        }
+
+        if (!Log.ENABLE_ERROR)
