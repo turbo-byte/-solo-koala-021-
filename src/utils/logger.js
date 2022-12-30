@@ -30,4 +30,12 @@ class Log {
             Log.emitter.emit('log', 'error', str);
         }
 
-        if (!Log.ENABLE_ERROR)
+        if (!Log.ENABLE_ERROR) {
+            return;
+        }
+
+        if (console.error) {
+            console.error(str);
+        } else if (console.warn) {
+            console.warn(str);
+      
