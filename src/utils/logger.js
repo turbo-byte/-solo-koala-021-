@@ -38,4 +38,13 @@ class Log {
             console.error(str);
         } else if (console.warn) {
             console.warn(str);
-      
+        } else {
+            console.log(str);
+        }
+    }
+
+    static i(tag, msg) {
+        if (!tag || Log.FORCE_GLOBAL_TAG)
+            tag = Log.GLOBAL_TAG;
+
+  
