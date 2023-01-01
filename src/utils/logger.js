@@ -47,4 +47,12 @@ class Log {
         if (!tag || Log.FORCE_GLOBAL_TAG)
             tag = Log.GLOBAL_TAG;
 
-  
+        let str = `[${tag}] > ${msg}`;
+
+        if (Log.ENABLE_CALLBACK) {
+            Log.emitter.emit('log', 'info', str);
+        }
+
+        if (!Log.ENABLE_INFO) {
+            return;
+        }
