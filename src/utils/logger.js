@@ -56,3 +56,13 @@ class Log {
         if (!Log.ENABLE_INFO) {
             return;
         }
+
+        if (console.info) {
+            console.info(str);
+        } else {
+            console.log(str);
+        }
+    }
+
+    static w(tag, msg) {
+        if (!tag || Log.
