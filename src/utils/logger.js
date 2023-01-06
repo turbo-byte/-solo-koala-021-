@@ -65,4 +65,11 @@ class Log {
     }
 
     static w(tag, msg) {
-        if (!tag || Log.
+        if (!tag || Log.FORCE_GLOBAL_TAG)
+            tag = Log.GLOBAL_TAG;
+
+        let str = `[${tag}] > ${msg}`;
+
+        if (Log.ENABLE_CALLBACK) {
+            Log.emitter.emit('log', 'warn', str);
+  
