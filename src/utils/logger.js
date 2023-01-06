@@ -82,4 +82,13 @@ class Log {
             console.warn(str);
         } else {
             console.log(str);
-       
+        }
+    }
+
+    static d(tag, msg) {
+        if (!tag || Log.FORCE_GLOBAL_TAG)
+            tag = Log.GLOBAL_TAG;
+
+        let str = `[${tag}] > ${msg}`;
+
+        if (Log.ENABLE_CALLBACK) {
