@@ -72,4 +72,14 @@ class Log {
 
         if (Log.ENABLE_CALLBACK) {
             Log.emitter.emit('log', 'warn', str);
-  
+        }
+
+        if (!Log.ENABLE_WARN) {
+            return;
+        }
+
+        if (console.warn) {
+            console.warn(str);
+        } else {
+            console.log(str);
+       
