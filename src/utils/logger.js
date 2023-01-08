@@ -92,3 +92,12 @@ class Log {
         let str = `[${tag}] > ${msg}`;
 
         if (Log.ENABLE_CALLBACK) {
+            Log.emitter.emit('log', 'debug', str);
+        }
+
+        if (!Log.ENABLE_DEBUG) {
+            return;
+        }
+
+        if (console.debug) {
+            console.debug(s
