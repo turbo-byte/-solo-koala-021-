@@ -100,4 +100,14 @@ class Log {
         }
 
         if (console.debug) {
-            console.debug(s
+            console.debug(str);
+        } else {
+            console.log(str);
+        }
+    }
+
+    static v(tag, msg) {
+        if (!tag || Log.FORCE_GLOBAL_TAG)
+            tag = Log.GLOBAL_TAG;
+
+     
