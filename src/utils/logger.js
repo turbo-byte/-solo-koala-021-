@@ -117,4 +117,16 @@ class Log {
         }
 
         if (!Log.ENABLE_VERBOSE) {
-         
+            return;
+        }
+
+        console.log(str);
+    }
+
+}
+
+Log.GLOBAL_TAG = 'mpegts.js';
+Log.FORCE_GLOBAL_TAG = false;
+Log.ENABLE_ERROR = true;
+Log.ENABLE_INFO = true;
+Log.ENABL
