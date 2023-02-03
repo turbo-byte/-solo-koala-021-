@@ -39,4 +39,12 @@ class Polyfill {
                         if (source.hasOwnProperty(key)) {
                             output[key] = source[key];
                         }
-                   
+                    }
+                }
+            }
+            return output;
+        };
+
+        // ES6 Promise (missing support in IE11)
+        if (typeof self.Promise !== 'function') {
+            require('es6-
