@@ -21,4 +21,8 @@ function isAligned16(a: Uint8Array) : boolean {
 }
 
 function isAligned32(a: Uint8Array) : boolean {
-    return a.
+    return a.byteOffset % 4 === 0 && a.byteLength % 4 === 0;
+}
+
+function compareArray(a: Uint8Array | Uint16Array | Uint32Array,
+                      b: Uint8Array | Uint16Arr
