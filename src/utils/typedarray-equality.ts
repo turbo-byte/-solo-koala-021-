@@ -25,4 +25,13 @@ function isAligned32(a: Uint8Array) : boolean {
 }
 
 function compareArray(a: Uint8Array | Uint16Array | Uint32Array,
-                      b: Uint8Array | Uint16Arr
+                      b: Uint8Array | Uint16Array | Uint32Array): boolean {
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function equal8(a: Uint8A
