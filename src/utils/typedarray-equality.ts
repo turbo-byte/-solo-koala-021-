@@ -40,3 +40,9 @@ function equal8(a: Uint8Array, b: Uint8Array) : boolean {
 
 function equal16(a: Uint8Array, b: Uint8Array) : boolean {
     let a16 = new Uint16Array(a.buffer, a.byteOffset, a.byteLength / 2);
+    let b16 = new Uint16Array(b.buffer, b.byteOffset, b.byteLength / 2);
+    return compareArray(a16, b16);
+}
+
+function equal32(a: Uint8Array, b: Uint8Array) : boolean {
+    le
