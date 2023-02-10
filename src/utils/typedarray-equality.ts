@@ -50,4 +50,10 @@ function equal32(a: Uint8Array, b: Uint8Array) : boolean {
     return compareArray(a32, b32);
 }
 
-function buffersAreEqu
+function buffersAreEqual(a: Uint8Array, b: Uint8Array) : boolean {
+    if (a.byteLength !== b.byteLength) {
+        return false;
+    }
+
+    if (isAligned32(a) && isAligned32(b)) {
+        return equal32(a, b);
