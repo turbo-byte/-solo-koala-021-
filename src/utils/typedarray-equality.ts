@@ -57,3 +57,13 @@ function buffersAreEqual(a: Uint8Array, b: Uint8Array) : boolean {
 
     if (isAligned32(a) && isAligned32(b)) {
         return equal32(a, b);
+    }
+
+    if (isAligned16(a) && isAligned16(b)) {
+        return equal16(a, b);
+    }
+
+    return equal8(a, b);
+}
+
+export default buffersAreEqual;
