@@ -17,4 +17,9 @@
  * limitations under the License.
  */
 
-function checkContinuation(uint8a
+function checkContinuation(uint8array, start, checkLength) {
+    let array = uint8array;
+    if (start + checkLength < array.length) {
+        while (checkLength--) {
+            if ((array[++start] & 0xC0) !== 0x80)
+       
