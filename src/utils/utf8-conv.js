@@ -22,4 +22,14 @@ function checkContinuation(uint8array, start, checkLength) {
     if (start + checkLength < array.length) {
         while (checkLength--) {
             if ((array[++start] & 0xC0) !== 0x80)
-       
+                return false;
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function decodeUTF8(uint8array) {
+    let out = [];
+    let input = uint8arra
