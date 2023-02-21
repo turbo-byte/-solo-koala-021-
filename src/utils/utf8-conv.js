@@ -32,4 +32,12 @@ function checkContinuation(uint8array, start, checkLength) {
 
 function decodeUTF8(uint8array) {
     let out = [];
-    let input = uint8arra
+    let input = uint8array;
+    let i = 0;
+    let length = uint8array.length;
+
+    while (i < length) {
+        if (input[i] < 0x80) {
+            out.push(String.fromCharCode(input[i]));
+            ++i;
+        
