@@ -40,4 +40,9 @@ function decodeUTF8(uint8array) {
         if (input[i] < 0x80) {
             out.push(String.fromCharCode(input[i]));
             ++i;
-        
+            continue;
+        } else if (input[i] < 0xC0) {
+            // fallthrough
+        } else if (input[i] < 0xE0) {
+            if (checkContinuation(input, i, 1)) {
+                let ucs4
