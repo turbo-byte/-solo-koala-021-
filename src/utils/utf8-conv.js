@@ -58,4 +58,9 @@ function decodeUTF8(uint8array) {
                 if (ucs4 >= 0x800 && (ucs4 & 0xF800) !== 0xD800) {
                     out.push(String.fromCharCode(ucs4 & 0xFFFF));
                     i += 3;
-      
+                    continue;
+                }
+            }
+        } else if (input[i] < 0xF8) {
+            if (checkContinuation(input, i, 3)) {
+                let ucs4 = (input[i] & 
