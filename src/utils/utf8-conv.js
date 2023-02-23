@@ -63,4 +63,6 @@ function decodeUTF8(uint8array) {
             }
         } else if (input[i] < 0xF8) {
             if (checkContinuation(input, i, 3)) {
-                let ucs4 = (input[i] & 
+                let ucs4 = (input[i] & 0x7) << 18 | (input[i + 1] & 0x3F) << 12
+                         | (input[i + 2] & 0x3F) << 6 | (input[i + 3] & 0x3F);
+                if (ucs4 > 0x10000 && ucs4 < 0x110000
