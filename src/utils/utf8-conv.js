@@ -68,4 +68,11 @@ function decodeUTF8(uint8array) {
                 if (ucs4 > 0x10000 && ucs4 < 0x110000) {
                     ucs4 -= 0x10000;
                     out.push(String.fromCharCode((ucs4 >>> 10) | 0xD800));
-                    out.push(String.fromCh
+                    out.push(String.fromCharCode((ucs4 & 0x3FF) | 0xDC00));
+                    i += 4;
+                    continue;
+                }
+            }
+        }
+        out.push(String.fromCharCode(0xFFFD));
+ 
