@@ -75,4 +75,10 @@ function decodeUTF8(uint8array) {
             }
         }
         out.push(String.fromCharCode(0xFFFD));
- 
+        ++i;
+    }
+
+    return out.join('');
+}
+
+export default decodeUTF8;
